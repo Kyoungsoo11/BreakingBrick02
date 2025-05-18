@@ -1,6 +1,13 @@
 window.onload = pageLoad;
 
 function pageLoad(){
+	playBgm(0); // 브라우저에서 음악 자동실행 막아서 안됨.
+	document.getElementById("volume-range").addEventListener("input", function (e) { //볼륨조절 이벤트
+    	tempVolume = parseFloat(e.target.value);
+		if (currentBgm) {
+    		currentBgm.volume = tempVolume;
+  }
+  	});
 	document.getElementById("play-btn").onclick=goStart;
 	document.getElementById("back-btn").onclick=goMain;
 	document.getElementById("setting-btn").onclick=goSetting;
@@ -10,7 +17,7 @@ function pageLoad(){
 	document.getElementById("lv3-btn").onclick=goLv3;
 	document.getElementById("reset-btn").onclick=setReset;
 	document.getElementById("apply-btn").onclick=setApply;
-	document.getElementById("back-btn2").onclick=goMain;
+	document.getElementById("back-btn2").onclick=backSetting;
 	document.getElementById("restart-btn").onclick=restart;
 }
 
@@ -19,12 +26,21 @@ var index = 0; //현재 페이지의 인덱스 저장
 var page=["main-menu","select-level","game","setting","game-over"]
 var level= 0; //선택 난이도
 
-document.addEventListener("click", function (e) {
+document.addEventListener("click", function (e) { // 게임화면에서 메인메뉴버튼 여러개라서 이걸로 한꺼번에 처리함
 if (e.target.classList.contains("game-main-btn")) {
     gameToMain();
 }
 });
 
+let audioInitialized = false; //최초 음악 재생은 바디 클릭시 실행한다.
+document.addEventListener("DOMContentLoaded", function () {
+  document.body.addEventListener("click", function () {
+    if (!audioInitialized) {
+      playBgm(0);
+      audioInitialized = true;
+    }
+  });
+});
 
 //메뉴 선택에 따른 페이지 변경
 function changePage(i){
@@ -57,26 +73,59 @@ function goQuit() {
 function goLv1() {
 	level=1;
 	changePage(2);
+	playBgm(1);
 }
 function goLv2() {
 	level=2;
 	changePage(2);
+	playBgm(2);
 }
 function goLv3() {
 	level=3;
 	changePage(2);
+	playBgm(3);
 }
 function gameToMain(){
   const result = confirm("메인 화면으로 돌아가시겠습니까?");
   if (result) {
-     goMain();
+    goMain();
+    playBgm(0);
   } else return;
 }
 
 // setting 관련
+const mainBgm = new Audio("sound/main.mp3");
+const lv1Bgm = new Audio("sound/lv1.mp3");
+const lv2Bgm = new Audio("sound/lv2.mp3");
+const lv3Bgm = new Audio("sound/lv3.mp3");
+const bgmList = [mainBgm,lv1Bgm,lv2Bgm,lv3Bgm];
+let currentBgm = mainBgm; // 현재 재생 중인 음악 추적용
+let tempVolume=0.5;
+let volume = 0.5;
+bgmList.forEach(bgm => {
+  bgm.loop = true;
+  bgm.volume = volume;
+});
+function playBgm(i) { //음악 재생 함수
+  if (currentBgm) currentBgm.pause();
+  currentBgm = bgmList[i];
+  currentBgm.volume = volume;
+  currentBgm.currentTime=0;
+  currentBgm.play();
+}
 function setReset(){
+	tempVolume=0.5;
+  	currentBgm.volume = tempVolume;
+	document.getElementById("volume-range").value = tempVolume;
 }
 function setApply(){
+	volume=tempVolume;
+  	goMain();
+}
+function backSetting(){
+  currentBgm.volume = volume;
+  document.getElementById("volume-range").value = volume;
+  goMain();
 }
 
 //게임 오버

@@ -3,6 +3,7 @@
 	margin: 0;
 	padding: 0;
     color: white;
+	font-family: "VT323";
 }
 a:link{text-decoration: none;}
 button {
@@ -20,12 +21,11 @@ body{
 
 /*헤더 영역(메인메뉴 타이틀)*/
 .header{
-	margin: 200px auto 100px auto;
+	margin: 250px auto 100px auto;
 	width: 920px;
 	height: 200px;
 }
 
-/*메인 메뉴 타이틀*/
 .main-title{
 	font-family: "VT323";
 	font-size: 100px;
@@ -61,7 +61,7 @@ body{
 	border-right: none;
 }
 
-/*서브타이틀(setting 화면)*/
+/* setting 구성 */
 .sub-header{
 	margin: 100px auto 100px auto;
 	width: 920px;
@@ -69,27 +69,47 @@ body{
 }
 .sub-title{
 	font-family: "VT323";
-	font-size: 60px;
+	font-size: 70px;
+}
+#setting-tool{
+	margin: 50px auto;
+	font-size: 40px;
+	line-height: 100px;
 }
 
 /* 게임 화면 구성 */
 .game-wrapper{
-    box-shadow: 0 0 10px white;
-    margin: 150px auto 0 auto;
+    margin: 100px auto 0 auto;
     overflow: hidden;
-    width:1166px;
+    width:1050px;
 }
 .game-area {
-    width: 960px;
-    height: 540px;
+    box-shadow: 0 0 10px white;
+    width: 800px;
+    height: 600px;
     border: 2px solid white;
     float: left;
 }
 .game-info{
+    box-shadow: 0 0 10px white;
+	margin-left: 30px;
     width: 200px;
-    height: 540px;
+    height: 600px;
     border: 2px solid white;
-    border-left: 0;
     float: left;
     text-align: center;
+	font-size: 30px;
 }
+.timer{
+	margin-top:50px;
+}
+.game-main-btn{
+	width:150px;
+	height: 50px;
+	margin-top: 150px;
+    border: 1px solid white;
+}
+.game-main-btn:hover{
+	background-color: white;
+	color:black;
+}	
