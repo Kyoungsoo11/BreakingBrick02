@@ -2,6 +2,7 @@
 *{
 	margin: 0;
 	padding: 0;
+    color: white;
 }
 a:link{text-decoration: none;}
 button {
@@ -12,7 +13,7 @@ body{
 }
 
 /*섹션 비가시화*/
-#select-level, #game, #setting{
+#select-level, #game, #setting, #level1, #level2, #level3{
 	display: none;
 }
 
@@ -27,7 +28,6 @@ body{
 /*메인 메뉴 타이틀*/
 .main-title{
 	font-family: "VT323";
-	color:white;
 	font-size: 100px;
 	text-align: center;
 }
@@ -44,7 +44,6 @@ body{
 /*메인메뉴 버튼*/
 .main-menu{
 	font-family: "VT323";
-	color:white;
 	width: 299px;
 	text-align: center;
 	line-height: 50px;
@@ -56,7 +55,7 @@ body{
 	color:black;
 }	
 .main-menu {
-  border-right: 1px solid lightgray;
+  border-right: 1px solid white;
 }
 .main-menu.last-btn{
 	border-right: none;
@@ -70,6 +69,27 @@ body{
 }
 .sub-title{
 	font-family: "VT323";
-	color:white;
 	font-size: 60px;
+}
+
+/* 게임 화면 구성 */
+.game-wrapper{
+    box-shadow: 0 0 10px white;
+    margin: 150px auto 0 auto;
+    overflow: hidden;
+    width:1166px;
+}
+.game-area {
+    width: 960px;
+    height: 540px;
+    border: 2px solid white;
+    float: left;
+}
+.game-info{
+    width: 200px;
+    height: 540px;
+    border: 2px solid white;
+    border-left: 0;
+    float: left;
+    text-align: center;
 }
