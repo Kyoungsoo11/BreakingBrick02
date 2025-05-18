@@ -50,8 +50,9 @@ function changePage(i){
 	document.getElementById(page[index]).style.display = "none";
 	index=i;
 	document.getElementById(page[index]).style.display = "block";
-    if(i==2){ //난이도 선택 완료 후 게임 시작 시 아래 코드 실행
+    if(i==2){ //난이도 선택 완료 후 게임 시작 시 아래 코드 실행, 노래재생 코드 포함
         document.getElementById("level"+level).style.display="block";
+		playBgm(level);
         gameStart();
     }
 }
@@ -73,17 +74,14 @@ function goQuit() {
 function goLv1() {
 	level=1;
 	changePage(2);
-	playBgm(1);
 }
 function goLv2() {
 	level=2;
 	changePage(2);
-	playBgm(2);
 }
 function goLv3() {
 	level=3;
 	changePage(2);
-	playBgm(3);
 }
 function gameToMain(){
   const result = confirm("메인 화면으로 돌아가시겠습니까?");
@@ -98,7 +96,7 @@ const mainBgm = new Audio("sound/main.mp3");
 const lv1Bgm = new Audio("sound/lv1.mp3");
 const lv2Bgm = new Audio("sound/lv2.mp3");
 const lv3Bgm = new Audio("sound/lv3.mp3");
-const bgmList = [mainBgm,lv1Bgm,lv2Bgm,lv3Bgm];
+const bgmList = [mainBgm,lv1Bgm,lv2Bgm,lv3Bgm]; //난이도랑 인덱스랑 맞춰놓음.
 let currentBgm = mainBgm; // 현재 재생 중인 음악 추적용
 let tempVolume=0.5;
 let volume = 0; // 편의성 위해 초기볼륨 0으로 설정함 추후에 0.5로 수정 필요.
