@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Breaking</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="Breaking.js"></script>
+    <link rel="stylesheet" href="Breaking.css" />
+  </head>
+  <body>
+    <div id="container">
+      <section id="menu">
+        <!--이미지로 대체 가능-->
+        <header><h1>BREAKING</h1></header>
+        <nav>
+          <button class="menu-btn" onclick="play()">게임 시작</button>
+          <button class="menu-btn" onclick="openSetting()">환경 설정</button>
+          <button class="menu-btn" onclick="openInfo()">정보</button>
+        </nav>
+      </section>
+      <section id="game"></section>
+      <section id="setting"></section>
+      <section id="info"></section>
+    </div>
+  </body>
+</html>
