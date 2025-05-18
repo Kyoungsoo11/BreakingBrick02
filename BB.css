@@ -1,0 +1,75 @@
+/*각종 초기화 및 배경색 설정*/
+*{
+	margin: 0;
+	padding: 0;
+}
+a:link{text-decoration: none;}
+button {
+  all: unset;
+}
+body{
+	background-color: black;
+}
+
+/*섹션 비가시화*/
+#select-level, #game, #setting{
+	display: none;
+}
+
+
+/*헤더 영역(메인메뉴 타이틀)*/
+.header{
+	margin: 200px auto 100px auto;
+	width: 920px;
+	height: 200px;
+}
+
+/*메인 메뉴 타이틀*/
+.main-title{
+	font-family: "VT323";
+	color:white;
+	font-size: 100px;
+	text-align: center;
+}
+
+/*메인메뉴 바*/
+.navigation{
+	margin: 0 auto;
+	width: 900px;
+	height: 50px;
+	border-top: 1px solid white;
+	border-bottom: 1px solid white;
+}
+
+/*메인메뉴 버튼*/
+.main-menu{
+	font-family: "VT323";
+	color:white;
+	width: 299px;
+	text-align: center;
+	line-height: 50px;
+	font-size: 30px;
+	float: left;
+}
+.main-menu:hover{
+	background-color: white;
+	color:black;
+}	
+.main-menu {
+  border-right: 1px solid lightgray;
+}
+.main-menu.last-btn{
+	border-right: none;
+}
+
+/*서브타이틀(setting 화면)*/
+.sub-header{
+	margin: 100px auto 100px auto;
+	width: 920px;
+	height: 200px;
+}
+.sub-title{
+	font-family: "VT323";
+	color:white;
+	font-size: 60px;
+}

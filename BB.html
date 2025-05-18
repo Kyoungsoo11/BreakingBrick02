@@ -1,19 +1,53 @@
-<!DOCTYPE html>
-<html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>The Forgotten</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="Breaking.js"></script>
-    <link rel="stylesheet" href="Breaking.css" />
-  </head>
-  <body>
-    <div id="startMenu">
-      <p>공이 벽돌을 깨는 일러스트 이미지(ai 그림 생성하면 좋을듯?)</p>
-      <p>dohyun push test</p>
-      <p>hi</p>
-      <button id="startButton">시작</button>
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <title>The Forgotten</title>
+      <link rel="stylesheet" href="BB.css" />
+      <meta charset="utf-8">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+      <script src="BB.js"></script>
+    <body>
+      <div id="container">
+        <!-- 메인 메뉴 화면 -->
+        <section id="main-menu">
+          <header class="header">
+            <h1 class="main-title">The Forgotten</h1>
+          </header>
+          <nav class="navigation">
+            <button id="play-btn" class="main-menu">Play</button>
+            <button id="setting-btn" class="main-menu">Setting</button>
+            <button id="quit-btn" class="main-menu last-btn">Quit</button>
+          </nav>
+        </section>
+
+        <!-- 난이도 선택 화면 -->
+        <section id="select-level">
+          <header class="header">
+            <h1 class="main-title">The Forgotten</h1>
+          </header>
+          <nav class="navigation">
+            <button id="lv1-btn" class="main-menu">level 1</button>
+            <button id="lv2-btn" class="main-menu">level 2</button>
+            <button id="lv3-btn" class="main-menu last-btn">level 3</button>
+            <button id="back-btn" class="main-menu last-btn">back</button>
+          </nav>
+        </section>
+
+        <!-- 게임 플레이 -->
+        <section id="game">
+        </section>
+
+        <!-- 설정 화면 -->
+        <section id="setting">
+          <header class="sub-header">
+            <h1 class="sub-title">Setting</h1>
+            <button id="apply-btn" class="main-menu">Apply</button>
+            <button id="reset-btn" class="main-menu">Reset</button>
+            <button id="back-btn2" class="main-menu">Back</button>
+          </header>
+        </section>
     </div>
-  </body>dfdfd
-</html>
+    </body>
+  </html>
