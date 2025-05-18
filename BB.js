@@ -12,16 +12,19 @@ function pageLoad(){
 	document.getElementById("apply-btn").onclick=setApply;
 	document.getElementById("back-btn2").onclick=goMain;
 	document.getElementById("restart-btn").onclick=restart;
-    const buttons = document.querySelectorAll(".game-main-btn");
-    buttons.forEach(button => {
-        button.onclick = gameToMain;
-    });
 }
 
 
 var index = 0; //현재 페이지의 인덱스 저장
 var page=["main-menu","select-level","game","setting","game-over"]
 var level= 0; //선택 난이도
+
+document.addEventListener("click", function (e) {
+if (e.target.classList.contains("game-main-btn")) {
+    gameToMain();
+}
+});
+
 
 //메뉴 선택에 따른 페이지 변경
 function changePage(i){
