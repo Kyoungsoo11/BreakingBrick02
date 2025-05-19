@@ -1,5 +1,7 @@
 window.onload = pageLoad;
 
+let colorPicker;
+
 function pageLoad(){
 	playBgm(0); // 브라우저에서 음악 자동실행 막아서 안됨.
 	document.getElementById("volume-range").addEventListener("input", function (e) { //볼륨조절 이벤트
@@ -8,6 +10,10 @@ function pageLoad(){
     		currentBgm.volume = tempVolume;
   }
   	});
+  colorPicker = document.getElementById("ballColorPicker");
+  colorPicker.addEventListener("input", (e) => { //공 색상 변경
+    tempColor = e.target.value;
+  }); 
 	document.getElementById("play-btn").onclick=goStart;
 	document.getElementById("back-btn").onclick=goMain;
 	document.getElementById("setting-btn").onclick=goSetting;
@@ -23,8 +29,11 @@ function pageLoad(){
 
 
 var index = 0; //현재 페이지의 인덱스 저장
-var page=["main-menu","select-level","game","setting","game-over"]
+var page=["main-menu","select-level","game","setting","game-over"] // 페이지 추가는 맨뒤에 해주세요
 var level= 0; //선택 난이도
+let ballColor = "#FFFFFF"; //공 색상
+let volume = 0; // 초기 볼륨. 편의성 위해 0으로 설정함 추후에 0.5로 수정 필요.
+
 
 document.addEventListener("click", function (e) { // 게임화면에서 메인메뉴버튼 여러개라서 이걸로 한꺼번에 처리함
 if (e.target.classList.contains("game-main-btn")) {
@@ -99,7 +108,6 @@ const lv3Bgm = new Audio("sound/lv3.mp3");
 const bgmList = [mainBgm,lv1Bgm,lv2Bgm,lv3Bgm]; //난이도랑 인덱스랑 맞춰놓음.
 let currentBgm = mainBgm; // 현재 재생 중인 음악 추적용
 let tempVolume=0.5;
-let volume = 0; // 편의성 위해 초기볼륨 0으로 설정함 추후에 0.5로 수정 필요.
 bgmList.forEach(bgm => {
   bgm.loop = true;
   bgm.volume = volume;
@@ -111,18 +119,22 @@ function playBgm(i) { //음악 재생 함수
   currentBgm.currentTime=0;
   currentBgm.play();
 }
+let tempColor="#FFFFFF";
 function setReset(){
 	tempVolume=0.5;
-  	currentBgm.volume = tempVolume;
+  tempColor= colorPicker.value ="#FFFFFF"
+  currentBgm.volume = tempVolume;
 	document.getElementById("volume-range").value = tempVolume;
 }
 function setApply(){
 	volume=tempVolume;
-  	goMain();
+  ballColor=tempColor;
+  goMain();
 }
 function backSetting(){
   currentBgm.volume = volume;
-  document.getElementById("volume-range").value = volume;
+  tempVolume = document.getElementById("volume-range").value = volume;
+  tempColor = colorPicker.value = ballColor;
   goMain();
 }
 
@@ -134,6 +146,6 @@ function restart(){
     changePage(2);
 }
 
-// 게임 시작 (여기부터 게임 구현), 참고: level= 1,2,3 난이도 저장되어있음.
+// 게임 시작 (여기부터 게임 구현), 참고: level= 1,2,3 난이도 저장되어있음, 공 색상은 ballColor에 지정.
 function gameStart(){
 }
