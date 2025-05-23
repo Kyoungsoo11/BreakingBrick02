@@ -112,4 +112,8 @@ body{
 .game-main-btn:hover{
 	background-color: white;
 	color:black;
-}	
+}
+#InGameCharacter {
+	width: 100px;
+	height: 150px;
+}
