@@ -26,11 +26,43 @@ function pageLoad(){
 	document.getElementById("back-btn2").onclick=backSetting;
 	document.getElementById("restart-btn").onclick=restart;
   document.getElementById("game-main-btn").onclick=gameToMain;
+  document.getElementById("skip-btn").onclick=introToMain;
+
+  const introParagraphs = document.querySelectorAll("#intro p");
+
+  function typeText(element, text, speed = 50) {
+    let idx = 0;
+    element.textContent = "";
+    element.style.display = "block";
+
+    function typeChar() {
+      if (idx < text.length) {
+        element.textContent += text.charAt(idx);
+        idx++;
+        setTimeout(typeChar, speed);
+      }
+    }
+
+    typeChar();
+  }
+
+  introParagraphs.forEach((p, i) => {
+    const text = p.getAttribute("data-text");
+
+    setTimeout(() => {
+      typeText(p, text, 50);
+
+      // 문단이 등장한 시점 기준 10초 후 사라짐
+      setTimeout(() => {
+        p.style.display = "none";
+      }, 10000);
+    }, i * 10000); // 10초 간격으로 등장
+  });
 }
 
 
-var index = 0; //현재 페이지의 인덱스 저장
-var page=["main-menu","select-level","game","setting","game-over"] // 페이지 추가는 맨뒤에 해주세요
+var index = 5; //현재 페이지의 인덱스 저장
+var page=["main-menu","select-level","game","setting","game-over", "intro", "epilogue"] // 페이지 추가는 맨뒤에 해주세요
 var level= 0; //선택 난이도
 let ballColor = "#FFFFFF"; //공 색상
 let volume = 0; // 초기 볼륨. 편의성 위해 0으로 설정함 추후에 0.5로 수정 필요.
@@ -105,6 +137,15 @@ function gameToMain(){
     playBgm(0);
   } else return;
 }
+function introToMain(){
+  const result = confirm("스토리를 건너뛰시겠습니까?");
+  if (result) {
+    goMain();
+    playBgm(0);
+  } else return;
+}
+
+
 
 // setting 관련
 const mainBgm = new Audio("sound/main.mp3");
@@ -179,3 +220,13 @@ function gameStart(level) {
     }
   }, 1000);
 }
+
+function showParagraphs() {
+  const paragraphs = document.querySelectorAll("#intro p");
+  paragraphs.forEach((p, i) => {
+    setTimeout(() => {
+      p.style.display = "block";
+    }, i * 10000); // 10초 간격 (10000ms)
+  });
+}
+

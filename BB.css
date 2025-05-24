@@ -14,7 +14,7 @@ body{
 }
 
 /*섹션 비가시화*/
-#select-level, #game, #setting, #level1, #level2, #level3, #game-over {
+#select-level, #game, #setting, #level1, #level2, #level3, #game-over, #main-menu {
 	display: none;
 }
 
@@ -136,4 +136,19 @@ body{
 	margin: 30px auto 50px 350px;
 	width: 200px;
 	height: 300px;
+}
+
+#intro p {
+	margin: 540px 40px 40px 40px;
+	font-size: 28px;
+	line-height: 1.6;
+	text-align: center;
+	font-family: "IBM Plex Sans KR", sans-serif;
+	white-space: pre-wrap;
+	display: none;
+}
+
+#skip-btn {
+	font-size: 30px;
+	margin: 20px auto auto 20px;
 }
