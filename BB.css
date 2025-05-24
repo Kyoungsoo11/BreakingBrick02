@@ -114,6 +114,16 @@ body{
 	color:black;
 }
 #InGameCharacter {
-	width: 100px;
+	width: 120px;
+	height: 150px;
+}
+#InGameCharacterLong {
+	display: none;
+	width: 180px;
+	height: 150px;
+}
+#InGameCharacterShort {
+	display: none;
+	width: 70px;
 	height: 150px;
 }
