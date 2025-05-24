@@ -33,7 +33,11 @@ var page=["main-menu","select-level","game","setting","game-over"] // 페이지 
 var level= 0; //선택 난이도
 let ballColor = "#FFFFFF"; //공 색상
 let volume = 0; // 초기 볼륨. 편의성 위해 0으로 설정함 추후에 0.5로 수정 필요.
-
+const initialTimes = {
+  1: 300,
+  2: 350,
+  3: 400
+};
 
 document.addEventListener("click", function (e) { // 게임화면에서 메인메뉴버튼 여러개라서 이걸로 한꺼번에 처리함
 if (e.target.classList.contains("game-main-btn")) {
@@ -56,12 +60,12 @@ function changePage(i){
     if(index==2){
         document.getElementById("level"+level).style.display="none";
     }
-	document.getElementById(page[index]).style.display = "none";
-	index=i;
-	document.getElementById(page[index]).style.display = "block";
+	  document.getElementById(page[index]).style.display = "none";
+	  index=i;
+	  document.getElementById(page[index]).style.display = "block";
     if(i==2){ //난이도 선택 완료 후 게임 시작 시 아래 코드 실행, 노래재생 코드 포함
         document.getElementById("level"+level).style.display="block";
-		playBgm(level);
+		    playBgm(level);
         gameStart(level);
     }
 }
@@ -156,9 +160,9 @@ function gameStart(level) {
 
   let lv = document.getElementById("level"+level);
   let timeLeftEl = lv.querySelector(".time-left");
-
-  let left = parseInt(timeLeftEl.textContent); // 정확한 초기 시간
-  timeLeftEl.innerHTML = left; // 혹시 모를 DOM 초기화
+  
+  let left = initialTimes[level]; // 항상 초기값으로 시작
+  timeLeftEl.innerHTML = left;
 
   console.log(`Level ${level} 시작: ${left}초`);
 
