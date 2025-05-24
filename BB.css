@@ -14,16 +14,16 @@ body{
 }
 
 /*섹션 비가시화*/
-#select-level, #game, #setting, #level1, #level2, #level3, #game-over{
+#select-level, #game, #setting, #level1, #level2, #level3, #game-over {
 	display: none;
 }
 
 
 /*헤더 영역(메인메뉴 타이틀)*/
 .header{
-	margin: 250px auto 100px auto;
+	margin: 100px auto 100px auto;
 	width: 920px;
-	height: 200px;
+	height: 400px;
 }
 
 .main-title{
@@ -126,4 +126,14 @@ body{
 	display: none;
 	width: 70px;
 	height: 150px;
+}
+#menuImage {
+	margin: 30px auto 50px 180px;
+	width: 560px;
+	height: 330px;
+}
+#overImage {
+	margin: 30px auto 50px 350px;
+	width: 200px;
+	height: 300px;
 }

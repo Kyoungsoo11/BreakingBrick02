@@ -25,6 +25,7 @@ function pageLoad(){
 	document.getElementById("apply-btn").onclick=setApply;
 	document.getElementById("back-btn2").onclick=backSetting;
 	document.getElementById("restart-btn").onclick=restart;
+  document.getElementById("game-main-btn").onclick=gameToMain;
 }
 
 
@@ -42,6 +43,7 @@ const initialTimes = {
 document.addEventListener("click", function (e) { // 게임화면에서 메인메뉴버튼 여러개라서 이걸로 한꺼번에 처리함
 if (e.target.classList.contains("game-main-btn")) {
     gameToMain();
+    clearInterval(timerId);
 }
 });
 
