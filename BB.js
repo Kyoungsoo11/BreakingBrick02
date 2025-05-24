@@ -62,7 +62,7 @@ function changePage(i){
     if(i==2){ //난이도 선택 완료 후 게임 시작 시 아래 코드 실행, 노래재생 코드 포함
         document.getElementById("level"+level).style.display="block";
 		playBgm(level);
-        gameStart();
+        gameStart(level);
     }
 }
 function goStart(){
@@ -147,5 +147,29 @@ function restart(){
 }
 
 // 게임 시작 (여기부터 게임 구현), 참고: level= 1,2,3 난이도 저장되어있음, 공 색상은 ballColor에 지정.
-function gameStart(){
+let timerId = null;
+
+function gameStart(level) {
+  if (timerId !== null) {
+    clearInterval(timerId);
+  }
+
+  let lv = document.getElementById("level"+level);
+  let timeLeftEl = lv.querySelector(".time-left");
+
+  let left = parseInt(timeLeftEl.textContent); // 정확한 초기 시간
+  timeLeftEl.innerHTML = left; // 혹시 모를 DOM 초기화
+
+  console.log(`Level ${level} 시작: ${left}초`);
+
+  timerId = setInterval(() => {
+    left -= 1;
+    timeLeftEl.innerHTML = left;
+
+    if (left <= 0) {
+      clearInterval(timerId);
+      timerId = null;
+      gameOver();
+    }
+  }, 1000);
 }
