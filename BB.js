@@ -1,7 +1,9 @@
 window.onload = pageLoad;
 
 let colorPicker;
+let brickPicker;
 const clickSfx = new Audio("sound/click.mp3");
+clickSfx.volume = 0.5; // 클릭 효과음 초기값 설정
 
 function pageLoad(){
 	playBgm(0); // 브라우저에서 음악 자동실행 막아서 안됨.
@@ -14,6 +16,10 @@ function pageLoad(){
   colorPicker = document.getElementById("ballColorPicker");
   colorPicker.addEventListener("input", (e) => { //공 색상 변경
     tempColor = e.target.value;
+  }); 
+  brickPicker = document.getElementById("brickColorPicker");
+  brickPicker.addEventListener("input", (e) => { //공 색상 변경
+    tempBrickColor = e.target.value;
   }); 
   document.getElementById("play-btn").onclick = () => { playClickSfx(); goStart(); };
   document.getElementById("back-btn").onclick = () => { playClickSfx(); goMain(); };
@@ -111,6 +117,7 @@ var index = 5; //현재 페이지의 인덱스 저장
 var page=["main-menu","select-level","game","setting","game-over", "intro", "epilogue"] // 페이지 추가는 맨뒤에 해주세요
 var level= 0; //선택 난이도
 let ballColor = "#FFFFFF"; //공 색상
+let brickColor = "5F5F5FF"; //벽돌 색상
 let volume = 0.5; // 초기 볼륨.
 const initialTimes = {
   1: 300,
@@ -120,8 +127,9 @@ const initialTimes = {
 
 document.addEventListener("click", function (e) { // 게임화면에서 메인메뉴버튼 여러개라서 이걸로 한꺼번에 처리함
 if (e.target.classList.contains("game-main-btn")) {
-    gameToMain();
-    clearInterval(timerId);
+  playClickSfx();
+  gameToMain();
+  clearInterval(timerId);
 }
 });
 
@@ -212,28 +220,32 @@ function playBgm(i) { //음악 재생 함수
   currentBgm.currentTime=0;
   currentBgm.play();
 }
-function playClickSfx() {
+function playClickSfx() { // 클릭 효과음 함수
   clickSfx.pause();           // 정지하고
   clickSfx.currentTime = 0;   // 되감고
   clickSfx.play();            // 재생
 }
 let tempColor="#FFFFFF";
+let tempBrickColor="#5F5F5F";
 function setReset(){
 	tempVolume=0.5;
   tempColor= colorPicker.value ="#FFFFFF"
+  tempBrickColor= brickPicker.value ="#5F5F5F"
   currentBgm.volume = tempVolume;
 	document.getElementById("volume-range").value = tempVolume;
 }
 function setApply(){
 	volume=tempVolume;
   ballColor=tempColor;
-  clickSfx.volume = volume;
+  brickColor=tempBrickColor;
+  clickSfx.volume = volume; // 클릭 효과음 볼륨 설정  
   goMain();
 }
 function backSetting(){
   currentBgm.volume = volume;
   tempVolume = document.getElementById("volume-range").value = volume;
   tempColor = colorPicker.value = ballColor;
+  tempBrickColor= brickPicker.value =brickColor;
   goMain();
 }
 
@@ -245,7 +257,7 @@ function restart(){
     changePage(2);
 }
 
-// 게임 시작 (여기부터 게임 구현), 참고: level= 1,2,3 난이도 저장되어있음, 공 색상은 ballColor에 지정.
+// 게임 시작 (여기부터 게임 구현), 참고: level= 1,2,3 난이도 저장되어있음, 벽돌 색상은 brickColor, 공 색상은 ballColor에 지정.
 let timerId = null;
 
 function gameStart(level) {
