@@ -1,6 +1,7 @@
 window.onload = pageLoad;
 
 let colorPicker;
+const clickSfx = new Audio("sound/click.mp3");
 
 function pageLoad(){
 	playBgm(0); // 브라우저에서 음악 자동실행 막아서 안됨.
@@ -14,19 +15,21 @@ function pageLoad(){
   colorPicker.addEventListener("input", (e) => { //공 색상 변경
     tempColor = e.target.value;
   }); 
-	document.getElementById("play-btn").onclick=goStart;
-	document.getElementById("back-btn").onclick=goMain;
-	document.getElementById("setting-btn").onclick=goSetting;
-	document.getElementById("quit-btn").onclick=goQuit;
-	document.getElementById("lv1-btn").onclick=goLv1;
-	document.getElementById("lv2-btn").onclick=goLv2;
-	document.getElementById("lv3-btn").onclick=goLv3;
-	document.getElementById("reset-btn").onclick=setReset;
-	document.getElementById("apply-btn").onclick=setApply;
-	document.getElementById("back-btn2").onclick=backSetting;
-	document.getElementById("restart-btn").onclick=restart;
-  document.getElementById("game-main-btn").onclick=gameToMain;
-  document.getElementById("skip-btn").onclick=introToMain;
+  document.getElementById("play-btn").onclick = () => { playClickSfx(); goStart(); };
+  document.getElementById("back-btn").onclick = () => { playClickSfx(); goMain(); };
+  document.getElementById("setting-btn").onclick = () => { playClickSfx(); goSetting(); };
+  document.getElementById("quit-btn").onclick = () => { playClickSfx(); goQuit(); };
+  document.getElementById("lv1-btn").onclick = () => { playClickSfx(); goLv1(); };
+  document.getElementById("lv2-btn").onclick = () => { playClickSfx(); goLv2(); };
+  document.getElementById("lv3-btn").onclick = () => { playClickSfx(); goLv3(); };
+  document.getElementById("reset-btn").onclick = () => { playClickSfx(); setReset(); };
+  document.getElementById("apply-btn").onclick = () => { playClickSfx(); setApply(); };
+  document.getElementById("back-btn2").onclick = () => { playClickSfx(); backSetting(); };
+  document.getElementById("restart-btn").onclick = () => { playClickSfx(); restart(); };
+  document.getElementById("game-main-btn").onclick=() => { playClickSfx(); gameToMain(); };
+  document.getElementById("skip-btn").onclick=() => { playClickSfx(); introToMain(); };
+  clickSfx.preload = "auto";
+clickSfx.load();  // 명시적 로드
 
   const introParagraphs = document.querySelectorAll("#intro p");
 
@@ -71,7 +74,7 @@ var index = 5; //현재 페이지의 인덱스 저장
 var page=["main-menu","select-level","game","setting","game-over", "intro", "epilogue"] // 페이지 추가는 맨뒤에 해주세요
 var level= 0; //선택 난이도
 let ballColor = "#FFFFFF"; //공 색상
-let volume = 0; // 초기 볼륨. 편의성 위해 0으로 설정함 추후에 0.5로 수정 필요.
+let volume = 0.5; // 초기 볼륨.
 const initialTimes = {
   1: 300,
   2: 350,
@@ -172,6 +175,11 @@ function playBgm(i) { //음악 재생 함수
   currentBgm.currentTime=0;
   currentBgm.play();
 }
+function playClickSfx() {
+  clickSfx.pause();           // 정지하고
+  clickSfx.currentTime = 0;   // 되감고
+  clickSfx.play();            // 재생
+}
 let tempColor="#FFFFFF";
 function setReset(){
 	tempVolume=0.5;
@@ -182,6 +190,7 @@ function setReset(){
 function setApply(){
 	volume=tempVolume;
   ballColor=tempColor;
+  clickSfx.volume = volume;
   goMain();
 }
 function backSetting(){

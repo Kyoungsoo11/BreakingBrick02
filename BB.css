@@ -86,7 +86,7 @@ body{
 .game-area {
     box-shadow: 0 0 10px white;
     width: 800px;
-    height: 600px;
+    height: 650px;
     border: 2px solid white;
     float: left;
 }
@@ -94,7 +94,7 @@ body{
     box-shadow: 0 0 10px white;
 	margin-left: 30px;
     width: 200px;
-    height: 600px;
+    height: 650px;
     border: 2px solid white;
     float: left;
     text-align: center;

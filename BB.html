@@ -1,158 +1,228 @@
-  <!DOCTYPE html>
-  <html>
-    <head>
-      <title>The Forgotten</title>
-      <link rel="stylesheet" href="BB.css" />
-      <meta charset="utf-8">
-      <link rel="preconnect" href="https://fonts.googleapis.com">
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-      <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR&family=VT323&display=swap" rel="stylesheet">
-      <script src="BB.js"></script>
-    </head>
-    <body>
-      <div id="container">
-        <!-- 메인 메뉴 화면 -->
-        <section id="main-menu">
-          <header class="header">
-            <h1 class="main-title">The Forgotten</h1>
-            <img id="menuImage" src="image/MainMenu.jpg" alt="menuImage">
-          </header>
-          <nav class="navigation">
-            <button id="play-btn" class="main-menu">Play</button>
-            <button id="setting-btn" class="main-menu">Setting</button>
-            <button id="quit-btn" class="main-menu last-btn">Quit</button>
-          </nav>
-        </section>
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>The Forgotten</title>
+    <link rel="stylesheet" href="BB.css" />
+    <meta charset="utf-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR&family=VT323&display=swap"
+      rel="stylesheet"
+    />
+    <script src="BB.js"></script>
+  </head>
+  <body>
+    <div id="container">
+      <!-- 메인 메뉴 화면 -->
+      <section id="main-menu">
+        <header class="header">
+          <h1 class="main-title">The Forgotten</h1>
+          <img id="menuImage" src="image/MainMenu.jpg" alt="menuImage" />
+        </header>
+        <nav class="navigation">
+          <button id="play-btn" class="main-menu">Play</button>
+          <button id="setting-btn" class="main-menu">Setting</button>
+          <button id="quit-btn" class="main-menu last-btn">Quit</button>
+        </nav>
+      </section>
 
-        <!-- 시나리오 전개 오프닝 화면 -->
-        <section id="intro">
-          <button id="skip-btn">Skip</button>
-          <p data-text="옛날 옛적부터 지옥의 검을 지키는 가업을 수행하는 형제가 있었다."></p>
-          <p data-text="지옥의 검은 막강한 힘을 자랑하지만 그와 동시에 사람을 난폭하게 만드는 아주 위험한 검이다."></p>
-          <p data-text="형과 동생은 검의 힘에 대해서 느껴본 바는 없었다만 서로 생각하는 부분은 달랐다."></p>
-          <p data-text="형은 오로지 검을 개방해서는 안된다는 생각을 가지고 있었고 반면 동생은 검을 사용하고자 갈망하고 있었다."></p>
-          <p data-text="검에 대한 호기심과 강력한 힘에 대한 갈망에 형이 자리를 비운 사이 동생이 검 강탈을 시도하는데..."></p>
-          <p data-text="검을 훔친 동생은 막강한 힘을 누리는 듯 싶더니..."></p>
-          <p data-text="결국 힘을 주체하지 못하고 밖으로 뛰쳐나가버린다."></p>
-          <p data-text="뒤늦게 이를 알아차린 형은 동생을 지키기 위해 그리고 가업을 마저 수행하기 위해 검을 찾으러 나선다."></p>
-          <p data-text="&quot;동생 성격이라면 분명 검의 성능을 테스트하러 우리 마을을 수호하는 기사들이 모여있는 성으로 갔을거야!&quot;"></p>
-        </section>
+      <!-- 시나리오 전개 오프닝 화면 -->
+      <section id="intro">
+        <button id="skip-btn">Skip</button>
+        <p data-text="옛날 옛적부터 지옥의 검을 지키는 가업을 수행하는 형제가 있었다."></p>
+        <p data-text="지옥의 검은 막강한 힘을 자랑하지만 그와 동시에 사람을 난폭하게 만드는 아주 위험한 검이다."></p>
+        <p data-text="형과 동생은 검의 힘에 대해서 느껴본 바는 없었다만 서로 생각하는 부분은 달랐다."></p>
+        <p data-text="형은 오로지 검을 개방해서는 안된다는 생각을 가지고 있었고 반면 동생은 검을 사용하고자 갈망하고 있었다."></p>
+        <p data-text="검에 대한 호기심과 강력한 힘에 대한 갈망에 형이 자리를 비운 사이 동생이 검 강탈을 시도하는데..."></p>
+        <p data-text="검을 훔친 동생은 막강한 힘을 누리는 듯 싶더니..."></p>
+        <p data-text="결국 힘을 주체하지 못하고 밖으로 뛰쳐나가버린다."></p>
+        <p data-text="뒤늦게 이를 알아차린 형은 동생을 지키기 위해 그리고 가업을 마저 수행하기 위해 검을 찾으러 나선다."></p>
+        <p data-text="&quot;동생 성격이라면 분명 검의 성능을 테스트하러 우리 마을을 수호하는 기사들이 모여있는 성으로 갔을거야!&quot;"></p>
+      </section>
 
-        <!-- 시나리오 전개 엔딩 화면 -->
-        <section id="epilogue">
+      <!-- 시나리오 전개 엔딩 화면 -->
+      <section id="epilogue"></section>
 
-        </section>
+      <!-- 난이도 선택 화면 -->
+      <section id="select-level">
+        <header class="header">
+          <h1 class="main-title">The Forgotten</h1>
+          <img id="menuImage" src="image/MainMenu.jpg" alt="menuImage" />
+        </header>
+        <nav class="navigation">
+          <button id="lv1-btn" class="main-menu">level 1</button>
+          <button id="lv2-btn" class="main-menu">level 2</button>
+          <button id="lv3-btn" class="main-menu last-btn">level 3</button>
+          <button id="back-btn" class="main-menu last-btn">back</button>
+        </nav>
+      </section>
 
-        <!-- 난이도 선택 화면 -->
-        <section id="select-level">
-          <header class="header">
-            <h1 class="main-title">The Forgotten</h1>
-            <img id="menuImage" src="image/MainMenu.jpg" alt="menuImage">
-          </header>
-          <nav class="navigation">
-            <button id="lv1-btn" class="main-menu">level 1</button>
-            <button id="lv2-btn" class="main-menu">level 2</button>
-            <button id="lv3-btn" class="main-menu last-btn">level 3</button>
-            <button id="back-btn" class="main-menu last-btn">back</button>
-          </nav>
-        </section>
-
-        <!-- 게임 플레이 -->
-        <section id="game">
-          <!-- 난이도 1 -->
-          <div id="level1">
-            <div class="game-wrapper"> 
-              <!-- 게임영역 -->
-              <div class="game-area">
-                게임 영역
-                <img id="InGameCharacter" src="image/InGameCharacter.png" alt="InGameCharacter">
-                <img id="InGameCharacterLong" src="image/InGameCharacterLong.png" alt="InGameCharacter">
-                <img id="InGameCharacterShort" src="image/InGameCharacterShort.png" alt="InGameCharacterShort">
+      <!-- 게임 플레이 -->
+      <section id="game">
+        <!-- 난이도 1 -->
+        <div id="level1">
+          <div class="game-wrapper">
+            <!-- 게임영역 -->
+            <div class="game-area">
+              게임 영역
+              <img
+                id="InGameCharacter"
+                src="image/InGameCharacter.png"
+                alt="InGameCharacter"
+              />
+              <img
+                id="InGameCharacterLong"
+                src="image/InGameCharacterLong.png"
+                alt="InGameCharacter"
+              />
+              <img
+                id="InGameCharacterShort"
+                src="image/InGameCharacterShort.png"
+                alt="InGameCharacterShort"
+              />
+            </div>
+            <!-- 정보영역 -->
+            <aside class="game-info">
+              <div class="timer">
+                Time<br /><span class="time-left">300</span><br /><br />
               </div>
-              <!-- 정보영역 -->
-              <aside class="game-info"> 
-                <div class="timer">Time<br><span class="time-left">300</span><br><br></div>
-                <div class="score">Score<br><span class="current-score">0</span><br><br></div>
-                <div class="high-score">High score<br> <span class="best-score">0</span><br><br></div>
-                <div class="controls">
-                  <button class="game-main-btn">Main Menu</button>
-                </div>
-              </aside>
-            </div>
-          </div>
-          <!-- 난이도 2 -->
-          <div id="level2">
-            <div class="game-wrapper"> 
-              <!-- 게임영역 -->
-              <div class="game-area">
-                게임 영역
-                <img id="InGameCharacter" src="image/InGameCharacter.png" alt="InGameCharacter">
-                <img id="InGameCharacterLong" src="image/InGameCharacterLong.png" alt="InGameCharacter">
-                <img id="InGameCharacterShort" src="image/InGameCharacterShort.png" alt="InGameCharacterShort">
+              <div class="score">
+                Score<br /><span class="current-score">0</span><br /><br />
               </div>
-              <!-- 정보영역 -->
-              <aside class="game-info">
-                <div class="timer">Time<br><span class="time-left">350</span><br><br></div>
-                <div class="score">Score<br><span class="current-score">0</span><br><br></div>
-                <div class="high-score">High score<br> <span class="best-score">0</span><br><br></div>
-                <div class="controls">
-                  <button class="game-main-btn">Main Menu</button>
-                </div>
-              </aside>
-            </div>
-          </div>
-          <!-- 난이도 3 -->
-          <div id="level3">
-            <div class="game-wrapper"> 
-              <!-- 게임영역 -->
-              <div class="game-area">
-                게임 영역
-                <img id="InGameCharacter" src="image/InGameCharacter.png" alt="InGameCharacter">
-                <img id="InGameCharacterLong" src="image/InGameCharacterLong.png" alt="InGameCharacter">
-                <img id="InGameCharacterShort" src="image/InGameCharacterShort.png" alt="InGameCharacterShort">
+              <div class="high-score">
+                High score<br />
+                <span class="best-score">0</span><br /><br />
               </div>
-              <!-- 정보영역 -->
-              <aside class="game-info">
-                <div class="timer">Time<br><span class="time-left">400</span><br><br></div>
-                <div class="score">Score<br><span class="current-score">0</span><br><br></div>
-                <div class="high-score">High score<br> <span class="best-score">0</span><br><br></div>
-                <div class="controls">
-                  <button class="game-main-btn">Main Menu</button>
-                </div>
-              </aside>
-            </div>
+              <div class="controls">
+                <button class="game-main-btn">Main Menu</button>
+              </div>
+            </aside>
           </div>
-        </section>
-        
-        <!-- 게임오버 화면 -->
-        <section id="game-over">
-          <header class="header">
-            <h1 class="main-title">Game Over!</h1>
-            <img id="overImage" src="image/GameOver.jpg" alt="overImage">
-          </header>
-          <nav class="navigation">
-            <button id="restart-btn" class="main-menu">Restart</button>
-            <button id="game-main-btn" class="main-menu last-btn">Main Menu</button>
-          </nav>
-        </section>
+        </div>
+        <!-- 난이도 2 -->
+        <div id="level2">
+          <div class="game-wrapper">
+            <!-- 게임영역 -->
+            <div class="game-area">
+              게임 영역
+              <img
+                id="InGameCharacter"
+                src="image/InGameCharacter.png"
+                alt="InGameCharacter"
+              />
+              <img
+                id="InGameCharacterLong"
+                src="image/InGameCharacterLong.png"
+                alt="InGameCharacter"
+              />
+              <img
+                id="InGameCharacterShort"
+                src="image/InGameCharacterShort.png"
+                alt="InGameCharacterShort"
+              />
+            </div>
+            <!-- 정보영역 -->
+            <aside class="game-info">
+              <div class="timer">
+                Time<br /><span class="time-left">350</span><br /><br />
+              </div>
+              <div class="score">
+                Score<br /><span class="current-score">0</span><br /><br />
+              </div>
+              <div class="high-score">
+                High score<br />
+                <span class="best-score">0</span><br /><br />
+              </div>
+              <div class="controls">
+                <button class="game-main-btn">Main Menu</button>
+              </div>
+            </aside>
+          </div>
+        </div>
+        <!-- 난이도 3 -->
+        <div id="level3">
+          <div class="game-wrapper">
+            <!-- 게임영역 -->
+            <div class="game-area">
+              게임 영역
+              <img
+                id="InGameCharacter"
+                src="image/InGameCharacter.png"
+                alt="InGameCharacter"
+              />
+              <img
+                id="InGameCharacterLong"
+                src="image/InGameCharacterLong.png"
+                alt="InGameCharacter"
+              />
+              <img
+                id="InGameCharacterShort"
+                src="image/InGameCharacterShort.png"
+                alt="InGameCharacterShort"
+              />
+            </div>
+            <!-- 정보영역 -->
+            <aside class="game-info">
+              <div class="timer">
+                Time<br /><span class="time-left">400</span><br /><br />
+              </div>
+              <div class="score">
+                Score<br /><span class="current-score">0</span><br /><br />
+              </div>
+              <div class="high-score">
+                High score<br />
+                <span class="best-score">0</span><br /><br />
+              </div>
+              <div class="controls">
+                <button class="game-main-btn">Main Menu</button>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
 
-        <!-- 설정 화면 -->
-        <section id="setting">
-          <header class="sub-header">
-            <h1 class="sub-title">Setting</h1>
-            <div id="setting-tool">
-              <label>Volume: <input type="range" min="0" max="1" step="0.01" id="volume-range" value="0.5"></label><br>
-              <p>Change Theme: </p><!--이미지 나열하고 클릭시 해당 이미지로 바꿔줌-->
-              <label for="ballColorPicker">Ball Style: </label>
-              <input type="color" id="ballColorPicker" value="#FFFFFF">
-            </div>
-            <nav class="navigation">
+      <!-- 게임오버 화면 -->
+      <section id="game-over">
+        <header class="header">
+          <h1 class="main-title">Game Over!</h1>
+          <img id="overImage" src="image/GameOver.jpg" alt="overImage" />
+        </header>
+        <nav class="navigation">
+          <button id="restart-btn" class="main-menu">Restart</button>
+          <button id="game-main-btn" class="main-menu last-btn">
+            Main Menu
+          </button>
+        </nav>
+      </section>
+
+      <!-- 설정 화면 -->
+      <section id="setting">
+        <header class="sub-header">
+          <h1 class="sub-title">Setting</h1>
+          <div id="setting-tool">
+            <label
+              >Volume:
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                id="volume-range"
+                value="0.5" /></label
+            ><br />
+            <p>Change Theme:</p>
+            <!--이미지 나열하고 클릭시 해당 이미지로 바꿔줌-->
+            <label for="ballColorPicker">Ball Style: </label>
+            <input type="color" id="ballColorPicker" value="#FFFFFF" />
+          </div>
+          <nav class="navigation">
             <button id="apply-btn" class="main-menu">Apply</button>
             <button id="reset-btn" class="main-menu">Reset</button>
             <button id="back-btn2" class="main-menu last-btn">Back</button>
-            </nav>
-          </header>
-        </section>
+          </nav>
+        </header>
+      </section>
     </div>
-    </body>
-  </html>
+  </body>
+</html>
