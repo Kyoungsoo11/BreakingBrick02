@@ -4,6 +4,7 @@ let colorPicker;
 let brickPicker;
 const clickSfx = new Audio("sound/click.mp3");
 clickSfx.volume = 0.5; // 클릭 효과음 초기값 설정
+let clickGameToMain=false; // pause랑 main 안 겹치게 체크
 
 function pageLoad(){
 	playBgm(0); // 브라우저에서 음악 자동실행 막아서 안됨.
@@ -107,9 +108,9 @@ function pageLoad(){
         currentIndex++;
         showNextParagraph();
       }
-    }else if(index==2&&paused==false){ //스페이스바 이벤트라서 여기에 일시정지 기능도 추가함.
+    }else if(index==2&&paused==false&&clickGameToMain==false){ //스페이스바 이벤트라서 여기에 일시정지 기능도 추가함.
       pause();
-    }else if(index==2&&paused==true){
+    }else if(index==2&&paused==true&&clickGameToMain==false){
       resume();
     }
     }
@@ -135,6 +136,7 @@ const initialTimes = {
 
 document.addEventListener("click", function (e) { // 게임화면에서 메인메뉴버튼 여러개라서 이걸로 한꺼번에 처리함
 if (e.target.classList.contains("game-main-btn")) {
+  clickGameToMain=true;
   playClickSfx();
   document.getElementById("gameToMain").style.display="block";
   paused=true;
@@ -193,13 +195,16 @@ function goLv3() {
 	changePage(2);
 }
 function gameToMain(){
+  clickGameToMain=false;
   paused=false;
   document.getElementById("gameToMain").style.display="none";
+  document.getElementById("pause").style.display="none";
   goMain();
   playBgm(0);
   clearInterval(timerId);
 }
 function gameToMainNo(){
+  clickGameToMain=false;
   paused=false;
   document.getElementById("gameToMain").style.display="none";
 }
