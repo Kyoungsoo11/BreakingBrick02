@@ -32,7 +32,8 @@ function pageLoad(){
   document.getElementById("apply-btn").onclick = () => { playClickSfx(); setApply(); };
   document.getElementById("back-btn2").onclick = () => { playClickSfx(); backSetting(); };
   document.getElementById("restart-btn").onclick = () => { playClickSfx(); restart(); };
-  document.getElementById("game-main-btn").onclick=() => { playClickSfx(); gameToMain(); };
+  document.getElementById("game-main-yes-btn").onclick=() => { playClickSfx(); gameToMain(); };
+  document.getElementById("game-main-no-btn").onclick=() => { playClickSfx(); gameToMainNo(); };
   document.getElementById("skip-btn").onclick=() => { playClickSfx(); introToMain(); };
   clickSfx.preload = "auto";
   clickSfx.load();  // 명시적 로드
@@ -79,12 +80,12 @@ function pageLoad(){
     const text = p.getAttribute("data-text");
 
     typeText(p, text, 50, () => {
-      // 10초 기다렸다가 다음 문장
+      // 5초 기다렸다가 다음 문장
       waitTimeout = setTimeout(() => {
         p.style.display = "none";
         currentIndex++;
         showNextParagraph();
-      }, 10000);
+      }, 5000);
     });
   }
 
@@ -93,6 +94,7 @@ function pageLoad(){
     if (e.code === "Space" || e.code === "Enter") {
       e.preventDefault();
 
+      if(index==5){
       if (isTyping) {
         // 타이핑 중이면 즉시 완료
         clearTimeout(currentTimeout);
@@ -105,12 +107,18 @@ function pageLoad(){
         currentIndex++;
         showNextParagraph();
       }
+    }else if(index==2&&paused==false){ //스페이스바 이벤트라서 여기에 일시정지 기능도 추가함.
+      pause();
+    }else if(index==2&&paused==true){
+      resume();
+    }
     }
   });
 
   // 시작
   showNextParagraph();
 }
+//여기까지 pageLoad()
 
 
 var index = 5; //현재 페이지의 인덱스 저장
@@ -128,8 +136,8 @@ const initialTimes = {
 document.addEventListener("click", function (e) { // 게임화면에서 메인메뉴버튼 여러개라서 이걸로 한꺼번에 처리함
 if (e.target.classList.contains("game-main-btn")) {
   playClickSfx();
-  gameToMain();
-  clearInterval(timerId);
+  document.getElementById("gameToMain").style.display="block";
+  paused=true;
 }
 });
 
@@ -185,11 +193,15 @@ function goLv3() {
 	changePage(2);
 }
 function gameToMain(){
-  const result = confirm("메인 화면으로 돌아가시겠습니까?");
-  if (result) {
-    goMain();
-    playBgm(0);
-  } else return;
+  paused=false;
+  document.getElementById("gameToMain").style.display="none";
+  goMain();
+  playBgm(0);
+  clearInterval(timerId);
+}
+function gameToMainNo(){
+  paused=false;
+  document.getElementById("gameToMain").style.display="none";
 }
 function introToMain(){
   const result = confirm("스토리를 건너뛰시겠습니까?");
@@ -249,6 +261,19 @@ function backSetting(){
   goMain();
 }
 
+//일시 정지
+let paused=false;
+function pause(){
+  playClickSfx();
+  paused=true;
+  document.getElementById("pause").style.display="block";
+}
+function resume(){
+  playClickSfx();
+  paused=false;
+  document.getElementById("pause").style.display="none";
+}
+
 //게임 오버
 function gameOver(){
     changePage(4);
@@ -258,6 +283,7 @@ function restart(){
 }
 
 // 게임 시작 (여기부터 게임 구현), 참고: level= 1,2,3 난이도 저장되어있음, 벽돌 색상은 brickColor, 공 색상은 ballColor에 지정.
+// ****************setInterval할때 반드시 paused==false 체크해주세요!!!!!!!!!!
 let timerId = null;
 
 function gameStart(level) {
@@ -274,6 +300,7 @@ function gameStart(level) {
   console.log(`Level ${level} 시작: ${left}초`);
 
   timerId = setInterval(() => {
+    if(paused==false){
     left -= 1;
     timeLeftEl.innerHTML = left;
 
@@ -282,6 +309,7 @@ function gameStart(level) {
       timerId = null;
       gameOver();
     }
+  }
   }, 1000);
 }
 
