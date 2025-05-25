@@ -40,6 +40,8 @@ function pageLoad(){
         element.textContent += text.charAt(idx);
         idx++;
         setTimeout(typeChar, speed);
+      } else if (callback) {
+        callback();
       }
     }
 
@@ -51,10 +53,14 @@ function pageLoad(){
 
     setTimeout(() => {
       typeText(p, text, 50);
-
-      // 문단이 등장한 시점 기준 10초 후 사라짐
       setTimeout(() => {
         p.style.display = "none";
+
+        // 마지막 문장이 끝났을 때 메인 메뉴로 이동
+        if (i === introParagraphs.length - 1) {
+          goMain();
+          playBgm(0);
+        }
       }, 10000);
     }, i * 10000); // 10초 간격으로 등장
   });
@@ -219,14 +225,5 @@ function gameStart(level) {
       gameOver();
     }
   }, 1000);
-}
-
-function showParagraphs() {
-  const paragraphs = document.querySelectorAll("#intro p");
-  paragraphs.forEach((p, i) => {
-    setTimeout(() => {
-      p.style.display = "block";
-    }, i * 10000); // 10초 간격 (10000ms)
-  });
 }
 
