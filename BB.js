@@ -29,12 +29,22 @@ function pageLoad(){
   document.getElementById("game-main-btn").onclick=() => { playClickSfx(); gameToMain(); };
   document.getElementById("skip-btn").onclick=() => { playClickSfx(); introToMain(); };
   clickSfx.preload = "auto";
-clickSfx.load();  // 명시적 로드
+  clickSfx.load();  // 명시적 로드
 
   const introParagraphs = document.querySelectorAll("#intro p");
 
-  function typeText(element, text, speed = 50) {
+  let currentIndex = 0;
+  let isTyping = false;
+  let currentTimeout;
+  let currentText = "";
+  let currentElement = null;
+  let waitTimeout = null;
+
+  function typeText(element, text, speed = 50, callback) {
     let idx = 0;
+    isTyping = true;
+    currentElement = element;
+    currentText = text;
     element.textContent = "";
     element.style.display = "block";
 
@@ -42,31 +52,58 @@ clickSfx.load();  // 명시적 로드
       if (idx < text.length) {
         element.textContent += text.charAt(idx);
         idx++;
-        setTimeout(typeChar, speed);
-      } else if (callback) {
-        callback();
+        currentTimeout = setTimeout(typeChar, speed);
+      } else {
+        isTyping = false;
+        if (callback) callback();
       }
     }
 
     typeChar();
   }
 
-  introParagraphs.forEach((p, i) => {
+  function showNextParagraph() {
+    if (currentIndex >= introParagraphs.length) {
+      goMain();
+      playBgm(0);
+      return;
+    }
+
+    const p = introParagraphs[currentIndex];
     const text = p.getAttribute("data-text");
 
-    setTimeout(() => {
-      typeText(p, text, 50);
-      setTimeout(() => {
+    typeText(p, text, 50, () => {
+      // 10초 기다렸다가 다음 문장
+      waitTimeout = setTimeout(() => {
         p.style.display = "none";
-
-        // 마지막 문장이 끝났을 때 메인 메뉴로 이동
-        if (i === introParagraphs.length - 1) {
-          goMain();
-          playBgm(0);
-        }
+        currentIndex++;
+        showNextParagraph();
       }, 10000);
-    }, i * 10000); // 10초 간격으로 등장
+    });
+  }
+
+  // 사용자가 넘길 수 있도록
+  document.addEventListener("keydown", (e) => {
+    if (e.code === "Space" || e.code === "Enter") {
+      e.preventDefault();
+
+      if (isTyping) {
+        // 타이핑 중이면 즉시 완료
+        clearTimeout(currentTimeout);
+        currentElement.textContent = currentText;
+        isTyping = false;
+      } else {
+        // 타이핑이 끝났고 기다리는 중이면 즉시 다음 문장으로
+        clearTimeout(waitTimeout);
+        if (currentElement) currentElement.style.display = "none";
+        currentIndex++;
+        showNextParagraph();
+      }
+    }
   });
+
+  // 시작
+  showNextParagraph();
 }
 
 
