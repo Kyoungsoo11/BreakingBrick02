@@ -40,6 +40,9 @@ function pageLoad(){
   let currentElement = null;
   let waitTimeout = null;
 
+  let currentImageIndex = 0;
+  const totalImages = 9;
+
   function typeText(element, text, speed = 50, callback) {
     let idx = 0;
     isTyping = true;
@@ -71,6 +74,7 @@ function pageLoad(){
 
     const p = introParagraphs[currentIndex];
     const text = p.getAttribute("data-text");
+    showNextImage();
 
     typeText(p, text, 50, () => {
       // 10초 기다렸다가 다음 문장
@@ -92,6 +96,12 @@ function pageLoad(){
         clearTimeout(currentTimeout);
         currentElement.textContent = currentText;
         isTyping = false;
+
+        waitTimeout = setTimeout(() => {
+          if (currentElement) currentElement.style.display = "none";
+          currentIndex++;
+          showNextParagraph();
+        }, 10000);
       } else {
         // 타이핑이 끝났고 기다리는 중이면 즉시 다음 문장으로
         clearTimeout(waitTimeout);
@@ -102,7 +112,33 @@ function pageLoad(){
     }
   });
 
-  // 시작
+  async function showImage(i) {
+    let prevImage = document.getElementById("intro-image" + currentImageIndex);
+    let nextImage = document.getElementById("intro-image" + i);
+
+    // 페이드 아웃
+    prevImage.classList.remove("visible");
+
+    await delay(200);
+
+    // 페이드 인
+    nextImage.classList.add("visible");
+
+    currentImageIndex = i;
+  }
+
+  function showNextImage() {
+    let nextImageIndex = currentImageIndex + 1;
+    if (nextImageIndex > totalImages) nextImageIndex = 1;
+
+    showImage(nextImageIndex);
+  }
+
+  function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  document.getElementById("intro-image1").classList.add("visible");
   showNextParagraph();
 }
 
