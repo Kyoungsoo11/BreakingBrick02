@@ -33,6 +33,7 @@ function pageLoad(){
   document.getElementById("apply-btn").onclick = () => { playClickSfx(); setApply(); };
   document.getElementById("back-btn2").onclick = () => { playClickSfx(); backSetting(); };
   document.getElementById("restart-btn").onclick = () => { playClickSfx(); restart(); };
+  document.getElementById("game-over-main-btn").onclick=() => { playClickSfx(); overToMain(); };
   document.getElementById("game-main-yes-btn").onclick=() => { playClickSfx(); gameToMain(); };
   document.getElementById("game-main-no-btn").onclick=() => { playClickSfx(); gameToMainNo(); };
   document.getElementById("skip-btn").onclick=() => { playClickSfx(); introToMain(); };
@@ -75,8 +76,10 @@ function pageLoad(){
 
   function showNextParagraph() {
     if (currentIndex >= introParagraphs.length) {
-      goMain();
-      playBgm(0);
+      if(index==5){
+        goMain();
+        playBgm(0);
+      }
       clearTimeout(waitTimeout);
       return;
     }
@@ -176,7 +179,7 @@ if (e.target.classList.contains("game-main-btn")) {
   clickGameToMain=true;
   playClickSfx();
   document.getElementById("gameToMain").style.display="block";
-  paused=true;
+  pause();
 }
 });
 
@@ -231,6 +234,9 @@ function goLv3() {
 	level=3;
 	changePage(2);
 }
+function overToMain(){
+  document.getElementById("gameToMain").style.display="block";
+}
 function gameToMain(){
   clickGameToMain=false;
   paused=false;
@@ -242,7 +248,6 @@ function gameToMain(){
 }
 function gameToMainNo(){
   clickGameToMain=false;
-  paused=false;
   document.getElementById("gameToMain").style.display="none";
 }
 function introToMain(){
