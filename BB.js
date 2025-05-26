@@ -77,6 +77,7 @@ function pageLoad(){
     if (currentIndex >= introParagraphs.length) {
       goMain();
       playBgm(0);
+      clearTimeout(waitTimeout);
       return;
     }
 
@@ -96,7 +97,7 @@ function pageLoad(){
 
   // 사용자가 넘길 수 있도록
   document.addEventListener("keydown", (e) => {
-    if (e.code === "Space" || e.code === "Enter") {
+    if (e.code === "Space") {
       e.preventDefault();
 
       if(index==5){
@@ -249,7 +250,7 @@ function introToMain(){
   if (result) {
     goMain();
     playBgm(0);
-    clearTimeout(currentTimeout);
+    clearTimeout(waitTimeout);
   } else return;
 }
 
