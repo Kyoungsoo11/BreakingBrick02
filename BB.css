@@ -14,7 +14,7 @@ body{
 }
 
 /*섹션 비가시화*/
-#select-level, #game, #setting, #level1, #level2, #level3, #game-over, #main-menu, #pause, #gameToMain {
+#select-level, #game, #setting, #level1, #level2, #level3, #main-menu, #pause, #gameToMain, #game-over {
 	display: none;
 }
 
@@ -111,22 +111,33 @@ body{
 	font-size: 30px;
 	padding-top:10px;
 }
-#game-main-nav {
+#game-main-nav,#game-over-nav {
 	margin-top:10px;
   display: flex;
   justify-content: center; /* 가로 중앙 정렬 */
   gap: 30px; /* 버튼 사이 간격 */
+  text-align: center;
 }
 #game-main-yes-btn:hover,
-#game-main-no-btn:hover {
+#game-main-no-btn:hover,
+#game-over-main-btn:hover,
+#restart-btn:hover {
 	background-color: white;
 	color:black;
 }
 #game-main-yes-btn,
-#game-main-no-btn {
+#game-main-no-btn{
   height: 50px;
   border: 1px solid white;
   width: 100px;
+}
+
+#game-over-main-btn,
+#restart-btn{
+  height: 50px;
+  border: 1px solid white;
+  width: 200px;
+  font-size:30px;
 }
 
 /* 게임 화면 구성 */

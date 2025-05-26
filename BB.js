@@ -33,6 +33,7 @@ function pageLoad(){
   document.getElementById("apply-btn").onclick = () => { playClickSfx(); setApply(); };
   document.getElementById("back-btn2").onclick = () => { playClickSfx(); backSetting(); };
   document.getElementById("restart-btn").onclick = () => { playClickSfx(); restart(); };
+  document.getElementById("game-over-main-btn").onclick=() => { playClickSfx(); overToMain(); };
   document.getElementById("game-main-yes-btn").onclick=() => { playClickSfx(); gameToMain(); };
   document.getElementById("game-main-no-btn").onclick=() => { playClickSfx(); gameToMainNo(); };
   document.getElementById("skip-btn").onclick=() => { playClickSfx(); introToMain(); };
@@ -232,6 +233,9 @@ function goLv2() {
 function goLv3() {
 	level=3;
 	changePage(2);
+}
+function overToMain(){
+  document.getElementById("gameToMain").style.display="block";
 }
 function gameToMain(){
   clickGameToMain=false;
