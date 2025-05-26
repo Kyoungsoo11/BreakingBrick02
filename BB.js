@@ -206,6 +206,9 @@ function changePage(i){
 		    playBgm(level);
         gameStart(level);
     }
+    if(i==6) {
+      
+    }
 }
 function goStart(){
 	changePage(1);
