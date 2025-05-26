@@ -14,7 +14,7 @@ body{
 }
 
 /*섹션 비가시화*/
-#select-level, #game, #setting, #level1, #level2, #level3, #game-over, #main-menu, #pause, #gameToMain {
+#select-level, #game, #setting, #level1, #level2, #level3, #game-over, #main-menu, #pause, #gameToMain, #epilogue {
 	display: none;
 }
 
