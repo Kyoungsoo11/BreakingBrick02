@@ -19,7 +19,7 @@ function pageLoad(){
     tempColor = e.target.value;
   }); 
   brickPicker = document.getElementById("brickColorPicker");
-  brickPicker.addEventListener("input", (e) => { //공 색상 변경
+  brickPicker.addEventListener("input", (e) => { //벽돌 색상 변경
     tempBrickColor = e.target.value;
   }); 
   document.getElementById("play-btn").onclick = () => { playClickSfx(); goStart(); };
@@ -162,7 +162,7 @@ var index = 5; //현재 페이지의 인덱스 저장
 var page=["main-menu","select-level","game","setting","game-over", "intro", "epilogue"] // 페이지 추가는 맨뒤에 해주세요
 var level= 0; //선택 난이도
 let ballColor = "#FFFFFF"; //공 색상
-let brickColor = "5F5F5FF"; //벽돌 색상
+let brickColor = "#5F5F5F"; //벽돌 색상
 let volume = 0.5; // 초기 볼륨.
 const initialTimes = {
   1: 300,
