@@ -14,7 +14,7 @@ body{
 }
 
 /*섹션 비가시화*/
-#select-level, #game, #setting, #level1, #level2, #level3, #game-over, #main-menu {
+#select-level, #game, #setting, #level1, #level2, #level3, #game-over, #main-menu, #pause, #gameToMain {
 	display: none;
 }
 
@@ -62,7 +62,7 @@ body{
 
 /* setting 구성 */
 .sub-header{
-	margin: 100px auto 100px auto;
+	margin: 130px auto 100px auto;
 	width: 920px;
 	height: 200px;
 }
@@ -74,6 +74,56 @@ body{
 	margin: 50px auto;
 	font-size: 40px;
 	line-height: 100px;
+}
+
+/* 정지 화면 구성 */
+#pause{
+	width:600px;
+	height:200px;
+    border: 1px solid white;
+	position:fixed;
+	transform: translate(-50%, -50%);
+	top:50%;
+	left: 50%;
+	background-color: black;
+	text-align: center;
+	font-size: 30px;
+}
+#pause-title{
+	font-size: 50px;
+	text-align: center;
+}
+
+/* gameToMain 화면 구성 */
+#gameToMain{
+	width:600px;
+	height:200px;
+    border: 1px solid white;
+	position:fixed;
+	transform: translate(-50%, -50%);
+	top:50%;
+	left: 50%;
+	background-color: black;
+	text-align: center;
+	font-size: 30px;
+	padding-top:10px;
+}
+#game-main-nav {
+	margin-top:10px;
+  display: flex;
+  justify-content: center; /* 가로 중앙 정렬 */
+  gap: 30px; /* 버튼 사이 간격 */
+}
+#game-main-yes-btn:hover,
+#game-main-no-btn:hover {
+	background-color: white;
+	color:black;
+}
+#game-main-yes-btn,
+#game-main-no-btn {
+  height: 50px;
+  border: 1px solid white;
+  width: 100px;
 }
 
 /* 게임 화면 구성 */
