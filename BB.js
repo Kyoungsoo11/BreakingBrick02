@@ -249,7 +249,7 @@ function introToMain(){
   if (result) {
     goMain();
     playBgm(0);
-    clearTimeout(waitTimeout);
+    clearTimeout(currentTimeout);
   } else return;
 }
 
