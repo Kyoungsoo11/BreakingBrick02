@@ -75,8 +75,10 @@ function pageLoad(){
 
   function showNextParagraph() {
     if (currentIndex >= introParagraphs.length) {
-      goMain();
-      playBgm(0);
+      if(index==5){
+        goMain();
+        playBgm(0);
+      }
       clearTimeout(waitTimeout);
       return;
     }
@@ -176,7 +178,7 @@ if (e.target.classList.contains("game-main-btn")) {
   clickGameToMain=true;
   playClickSfx();
   document.getElementById("gameToMain").style.display="block";
-  paused=true;
+  pause();
 }
 });
 
@@ -242,7 +244,6 @@ function gameToMain(){
 }
 function gameToMainNo(){
   clickGameToMain=false;
-  paused=false;
   document.getElementById("gameToMain").style.display="none";
 }
 function introToMain(){

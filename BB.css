@@ -93,7 +93,10 @@ body{
 	font-size: 50px;
 	text-align: center;
 }
-
+.pause-info{
+	font-size:30px;
+	text-align: center;
+}
 /* gameToMain 화면 구성 */
 #gameToMain{
 	width:600px;
