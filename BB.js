@@ -290,6 +290,7 @@ function gameToMain(){
 function gameToMainNo(){
   clickGameToMain=false;
   document.getElementById("gameToMain").style.display="none";
+  requestAnimationFrame(draw);
 }
 function storyToMain() {
   const result = confirm("스토리를 건너뛰시겠습니까?");
@@ -387,6 +388,7 @@ function resume(){
   playClickSfx();
   paused=false;
   document.getElementById("pause").style.display="none";
+  requestAnimationFrame(draw);
 }
 
 //게임 오버
@@ -399,32 +401,168 @@ function restart(){
 
 // 게임 시작 (여기부터 게임 구현), 참고: level= 1,2,3 난이도 저장되어있음, 벽돌 색상은 brickColor, 공 색상은 ballColor에 지정.
 // ****************setInterval할때 반드시 paused==false 체크해주세요!!!!!!!!!!
-let timerId = null;
+// 게임 시작 (여기부터 게임 구현), 참고: level= 1,2,3 난이도 저장되어있음, 벽돌 색상은 brickColor, 공 색상은 ballColor에 지정.
+// ****************setInterval할때 반드시 paused==false 체크해주세요!!!!!!!!!!
+const paddleHeight = 10,
+paddleWidth      = 200,
+brickColumnCount = 8,
+brickHeight      = 20,
+initialBrickRows = 3;
 
+let canvas, ctx, paddleX;
+let bricks = [], brickRowCount, brickWidth;
+let ballRadius = 8, x, y, dx, dy;
+let rightPressed=false, leftPressed=false;
+let timerId=null, addRowIntervalId=null;
+
+const charImg = new Image();
+charImg.src = "image/InGameCharacterDefault.png";
+
+// ──────────── 3) 게임 시작 (여기부터 게임 구현) ────────────
 function gameStart(level) {
-  if (timerId !== null) {
-    clearInterval(timerId);
-  }
+  // 초기화
+  if(timerId){ clearInterval(timerId); timerId=null; }
+  if(addRowIntervalId){ clearInterval(addRowIntervalId); addRowIntervalId=null; }
 
-  let lv = document.getElementById("level"+level);
-  let timeLeftEl = lv.querySelector(".time-left");
-  
-  let left = initialTimes[level]; // 항상 초기값으로 시작
-  timeLeftEl.innerHTML = left;
+  // 남은 시간
+  const sec = document.getElementById("level"+level).querySelector(".time-left");
+  let left = initialTimes[level];   // ex) 1단계 : 300초
+  sec.textContent = left;
+  timerId = setInterval(()=>{
+    if(!paused){
+      left--; sec.textContent=left;
+      if(left<=0){ clearInterval(timerId); timerId=null; gameOver(); }
+    }
+  },1000);
 
-  console.log(`Level ${level} 시작: ${left}초`);
+  // canvas
+  const lv = document.getElementById("level"+level);
+  canvas = lv.querySelector("canvas");
+  ctx    = canvas.getContext("2d");
 
-  timerId = setInterval(() => {
-    if(paused==false){
-    left -= 1;
-    timeLeftEl.innerHTML = left;
+  canvas.addEventListener("mousemove", e => {
+  const rect = canvas.getBoundingClientRect();  // <canvas>가 차지하는 영역의 위치와 크기 정보를 구함
+  // 마우스 X 좌표를 캔버스 기준으로 계산
+  const mx = e.clientX - rect.left;
+  // 패들 중앙이 마우스 위치에 오도록
+  paddleX = mx - paddleWidth / 2;
+  // 패들이 캔버스 바깥으로 나가지 않도록 경계 체크
+  if (paddleX < 0) paddleX = 0;
+  if (paddleX > canvas.width - paddleWidth) paddleX = canvas.width - paddleWidth;
+});
 
-    if (left <= 0) {
-      clearInterval(timerId);
-      timerId = null;
-      gameOver();
+  // 공/패들
+  paddleX = (canvas.width-paddleWidth)/2;
+  x = canvas.width/2; y = canvas.height-30;
+  dx = 2 + level*0.5; dy = -(2 + level * 0.5);
+
+  // 벽돌
+  brickRowCount = initialBrickRows;
+  initBricks();
+  addRowIntervalId = setInterval(()=>{    // 벽돌 10초에 한줄씩 추가
+    if(!paused) addBrickRow();
+  }, 10000);
+
+  // 시작
+  paused = false;
+  requestAnimationFrame(draw);  // draw 함수에서 재호출
+}
+
+// 벽돌 배열 초기화
+function initBricks(){
+  bricks=[]; brickWidth=canvas.width/brickColumnCount;
+  for(let c=0;c<brickColumnCount;c++){
+    bricks[c]=[];
+    for(let r=0;r<brickRowCount;r++){
+      bricks[c][r]={status:1};
     }
   }
-  }, 1000);
 }
+// 벽돌 위에서 한줄 추가
+function addBrickRow(){
+  brickRowCount++;
+  for(let c=0;c<brickColumnCount;c++){
+    bricks[c].unshift({status:1});
+  }
+}
+
+// 그리기 루프
+function draw(){
+
+  const imgW = 50;  // 캐릭터 너비
+  const imgH = 75;  // 캐릭터 높이
+  
+
+  if(paused) return;
+  ctx.clearRect(0,0,canvas.width,canvas.height);    // 캔버스 지우기
+  // 벽돌
+  ctx.fillStyle=brickColor;
+  for(let c=0;c<brickColumnCount;c++){
+    for(let r=0;r<bricks[c].length;r++){
+      if(bricks[c][r].status){
+        const bx=c*brickWidth, by=r*brickHeight;
+        ctx.fillRect(bx+1,by+1,brickWidth-2,brickHeight-2);
+      }
+    }
+  }
+  // 공
+  ctx.beginPath();
+  ctx.arc(x,y,ballRadius,0,Math.PI*2);
+  ctx.fillStyle=ballColor;
+  ctx.fill(); ctx.closePath();
+
+  // 충돌
+  for(let c=0;c<brickColumnCount;c++){        // 벽돌 충돌
+    for(let r=0;r<bricks[c].length;r++){
+      let b=bricks[c][r];
+      if(b.status && x>c*brickWidth && x<c*brickWidth+brickWidth &&
+         y>r*brickHeight && y<r*brickHeight+brickHeight){
+        dy=-dy; b.status=0;
+      }
+    }
+  }
+
+const nextX     = x + dx;
+const nextY     = y + dy;
+const paddleTop = canvas.height - paddleHeight - imgH + 20;
+
+// 1) 좌우 벽 충돌
+if (nextX + ballRadius > canvas.width || nextX - ballRadius < 0) {
+  dx = -dx;
+}
+// 2) 천장 충돌
+else if (nextY - ballRadius < 0) {
+  dy = -dy;
+}
+// 3) 패들 충돌
+else if (nextY + ballRadius >= paddleTop) {
+  if (nextX > paddleX && nextX < paddleX + paddleWidth) {
+    dy = -dy;
+    // 공이 패들 아래로 내려가지 않도록
+    y  = paddleTop - ballRadius;
+  }
+}
+
+// 4) 바닥 충돌 (항상 검사)
+if (nextY + ballRadius > canvas.height) {
+  gameOver();
+  return;
+}
+
+  if (charImg.complete) {
+    const imgX = paddleX + (paddleWidth - imgW) / 2;
+    const imgY = canvas.height - imgH;
+    ctx.drawImage(charImg, imgX, imgY, imgW, imgH);
+  }
+
+  // 패들
+  ctx.beginPath();
+  ctx.rect(paddleX,canvas.height-paddleHeight-imgH + 20,paddleWidth,paddleHeight);
+  ctx.fillStyle="white"; ctx.fill(); ctx.closePath();
+
+  // 이동
+  x+=dx; y+=dy;
+  requestAnimationFrame(draw);
+}
+
 
