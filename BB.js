@@ -6,6 +6,21 @@ const clickSfx = new Audio("sound/click.mp3");
 clickSfx.volume = 0.5; // 클릭 효과음 초기값 설정
 let clickGameToMain=false; // pause랑 main 안 겹치게 체크
 
+let introParagraphs;
+let epilogueParagraphs;
+
+let isTyping;
+let currentTimeout;
+let currentText;
+let currentElement;
+let waitTimeout;
+
+let currentIndex;
+let currentImageIndex;
+let totalImages;
+
+let spaceLock = false;
+
 function pageLoad(){
 	playBgm(0); // 브라우저에서 음악 자동실행 막아서 안됨.
 	document.getElementById("volume-range").addEventListener("input", function (e) { //볼륨조절 이벤트
@@ -36,60 +51,67 @@ function pageLoad(){
   document.getElementById("game-over-main-btn").onclick=() => { playClickSfx(); overToMain(); };
   document.getElementById("game-main-yes-btn").onclick=() => { playClickSfx(); gameToMain(); };
   document.getElementById("game-main-no-btn").onclick=() => { playClickSfx(); gameToMainNo(); };
-  document.getElementById("skip-btn").onclick=() => { playClickSfx(); introToMain(); };
+  document.getElementById("skip-btn1").onclick=() => { playClickSfx(); storyToMain(); };
+  document.getElementById("skip-btn2").onclick=() => { playClickSfx(); storyToMain(); };
+  // document.getElementById("epilogue-btn").onclick=() => { playClickSfx(); changePage(6); };
   clickSfx.preload = "auto";
   clickSfx.load();  // 명시적 로드
 
-  const introParagraphs = document.querySelectorAll("#intro p");
+  introParagraphs = document.querySelectorAll("#intro p");
 
-  let currentIndex = 0;
-  let isTyping = false;
-  let currentTimeout;
-  let currentText = "";
-  let currentElement = null;
-  let waitTimeout = null;
+  currentIndex = 0;
+  isTyping = false;
+  currentTimeout = null;
+  currentText = "";
+  currentElement = null;
+  waitTimeout = null;
 
-  let currentImageIndex = 0;
-  const totalImages = 9;
+  currentImageIndex = 0;
+  totalImages = 9;
 
-  function typeText(element, text, speed = 50, callback) {
-    let idx = 0;
-    isTyping = true;
-    currentElement = element;
-    currentText = text;
-    element.textContent = "";
-    element.style.display = "block";
+  document.getElementById("intro-image1").classList.add("visible");
+  showNextParagraph();
+}
+// 여기까지 pageLoad()
 
-    function typeChar() {
-      if (idx < text.length) {
-        element.textContent += text.charAt(idx);
-        idx++;
-        currentTimeout = setTimeout(typeChar, speed);
-      } else {
-        isTyping = false;
-        if (callback) callback();
-      }
+// 인트로/에필로그 관련 메소드들
+function typeText(element, text, speed = 50, callback) {
+  let idx = 0;
+  isTyping = true;
+  currentElement = element;
+  currentText = text;
+  element.textContent = "";
+  element.style.display = "block";
+
+  function typeChar() {
+    if (idx < text.length) {
+      element.textContent += text.charAt(idx);
+      idx++;
+      currentTimeout = setTimeout(typeChar, speed);
+    } else {
+      isTyping = false;
+      if (callback) callback();
     }
-
-    typeChar();
   }
 
-  function showNextParagraph() {
-    if (currentIndex >= introParagraphs.length) {
-      if(index==5){
-        goMain();
-        playBgm(0);
-      }
-      clearTimeout(waitTimeout);
+  typeChar();
+}
+
+function showNextParagraph() {
+  if(index==5 || index==6) {
+    const paragraphs = index == 5 ? introParagraphs : epilogueParagraphs;
+
+    if (currentIndex >= paragraphs.length) {
+      initStory();
       return;
     }
 
-    const p = introParagraphs[currentIndex];
+    const p = paragraphs[currentIndex];
     const text = p.getAttribute("data-text");
-    showNextImage();
+
+    showNextImage(); // 자동으로 index에 따라 처리됨
 
     typeText(p, text, 50, () => {
-      // 5초 기다렸다가 다음 문장
       waitTimeout = setTimeout(() => {
         p.style.display = "none";
         currentIndex++;
@@ -97,15 +119,20 @@ function pageLoad(){
       }, 5000);
     });
   }
+}
 
-  // 사용자가 넘길 수 있도록
-  document.addEventListener("keydown", (e) => {
-    if (e.code === "Space") {
-      e.preventDefault();
+// 사용자가 넘길 수 있도록
+document.addEventListener("keydown", (e) => {
+  if (e.code === "Space") {
+    e.preventDefault();
 
-      if(index==5){
+    // 연타 방지
+    if (spaceLock) return;
+    spaceLock = true;
+    setTimeout(() => spaceLock = false, 300); 
+
+    if(index==5 || index==6){
       if (isTyping) {
-        // 타이핑 중이면 즉시 완료
         clearTimeout(currentTimeout);
         currentElement.textContent = currentText;
         isTyping = false;
@@ -116,23 +143,25 @@ function pageLoad(){
           showNextParagraph();
         }, 10000);
       } else {
-        // 타이핑이 끝났고 기다리는 중이면 즉시 다음 문장으로
         clearTimeout(waitTimeout);
         if (currentElement) currentElement.style.display = "none";
         currentIndex++;
         showNextParagraph();
       }
-    }else if(index==2&&paused==false&&clickGameToMain==false){ //스페이스바 이벤트라서 여기에 일시정지 기능도 추가함.
+    } else if(index==2 && paused==false && clickGameToMain==false){
       pause();
-    }else if(index==2&&paused==true&&clickGameToMain==false){
+    } else if(index==2 && paused==true && clickGameToMain==false){
       resume();
     }
-    }
-  });
+  }
+});
 
-  async function showImage(i) {
-    let prevImage = document.getElementById("intro-image" + currentImageIndex);
-    let nextImage = document.getElementById("intro-image" + i);
+async function showImage(i) {
+  if(index==5 || index==6) {
+    const imgPrefix = index == 5 ? "intro-image" : "epilogue-image";
+
+    let prevImage = document.getElementById(imgPrefix + currentImageIndex);
+    let nextImage = document.getElementById(imgPrefix + i);
 
     // 페이드 아웃
     prevImage.classList.remove("visible");
@@ -144,23 +173,18 @@ function pageLoad(){
 
     currentImageIndex = i;
   }
-
-  function showNextImage() {
-    let nextImageIndex = currentImageIndex + 1;
-    if (nextImageIndex > totalImages) nextImageIndex = 1;
-
-    showImage(nextImageIndex);
-  }
-
-  function delay(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
-  document.getElementById("intro-image1").classList.add("visible");
-  showNextParagraph();
 }
-//여기까지 pageLoad()
 
+function showNextImage() {
+  let nextImageIndex = currentImageIndex + 1;
+  if (nextImageIndex > totalImages) nextImageIndex = 1;
+
+  showImage(nextImageIndex);
+}
+
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 var index = 5; //현재 페이지의 인덱스 저장
 var page=["main-menu","select-level","game","setting","game-over", "intro", "epilogue"] // 페이지 추가는 맨뒤에 해주세요
@@ -195,20 +219,34 @@ document.addEventListener("DOMContentLoaded", function () {
 
 //메뉴 선택에 따른 페이지 변경
 function changePage(i){
-    if(index==2){
-        document.getElementById("level"+level).style.display="none";
-    }
-	  document.getElementById(page[index]).style.display = "none";
-	  index=i;
-	  document.getElementById(page[index]).style.display = "block";
-    if(i==2){ //난이도 선택 완료 후 게임 시작 시 아래 코드 실행, 노래재생 코드 포함
-        document.getElementById("level"+level).style.display="block";
-		    playBgm(level);
-        gameStart(level);
-    }
-    if(i==6) {
-      
-    }
+  if(index==2){
+    document.getElementById("level"+level).style.display="none";
+  }
+  document.getElementById(page[index]).style.display = "none";
+  index=i;
+  document.getElementById(page[index]).style.display = "block";
+
+  if(i==2){ // 게임 시작
+    document.getElementById("level"+level).style.display="block";
+    playBgm(level);
+    gameStart(level);
+  }
+
+  if(i==6) {
+    epilogueParagraphs = document.querySelectorAll("#epilogue p");
+
+    currentIndex = 0;
+    isTyping = false;
+    currentTimeout = null;
+    currentText = "";
+    currentElement = null;
+    waitTimeout = null;
+
+    currentImageIndex = 0;
+    totalImages = 5;
+
+    showNextParagraph();
+  }
 }
 function goStart(){
 	changePage(1);
@@ -253,16 +291,42 @@ function gameToMainNo(){
   clickGameToMain=false;
   document.getElementById("gameToMain").style.display="none";
 }
-function introToMain(){
+function storyToMain() {
   const result = confirm("스토리를 건너뛰시겠습니까?");
   if (result) {
-    goMain();
-    playBgm(0);
-    clearTimeout(waitTimeout);
-  } else return;
+    initStory();
+    return;
+  }
 }
+function initStory() {
+  clearTimeout(waitTimeout);
+  clearTimeout(currentTimeout);
 
+  if (index === 5 || index === 6) {
+    const imgPrefix = index === 5 ? "intro-image" : "epilogue-image";
+    const paragraphs = index === 5 ? introParagraphs : epilogueParagraphs;
 
+    // 모든 이미지 숨김
+    for (let i = 1; i <= totalImages; i++) {
+      const img = document.getElementById(imgPrefix + i);
+      if (img) img.classList.remove("visible");
+    }
+
+    // 모든 문단 숨김 및 초기화
+    paragraphs.forEach(p => {
+      p.style.display = "none";
+      p.textContent = ""; // 타이핑 중이던 텍스트도 지움
+    });
+
+    isTyping = false;
+    currentIndex = 0;
+    currentElement = null;
+    currentText = "";
+  }
+
+  goMain();
+  playBgm(0);
+}
 
 // setting 관련
 const mainBgm = new Audio("sound/main.mp3");
