@@ -3,6 +3,7 @@ window.onload = pageLoad;
 let colorPicker;
 let brickPicker;
 const clickSfx = new Audio("sound/click.mp3");
+const keyboard = new Audio("sound/keyboard.mp3");
 clickSfx.volume = 0.5; // 클릭 효과음 초기값 설정
 let clickGameToMain=false; // pause랑 main 안 겹치게 체크
 
@@ -70,6 +71,7 @@ function pageLoad(){
   totalImages = 9;
 
   document.getElementById("intro-image1").classList.add("visible");
+  if (keyboard.paused) startKeyboardSfx();
   showNextParagraph();
 }
 // 여기까지 pageLoad()
@@ -87,8 +89,10 @@ function typeText(element, text, speed = 50, callback) {
     if (idx < text.length) {
       element.textContent += text.charAt(idx);
       idx++;
+      if (keyboard.paused) startKeyboardSfx();
       currentTimeout = setTimeout(typeChar, speed);
     } else {
+      stopKeyboardSfx();
       isTyping = false;
       if (callback) callback();
     }
@@ -134,6 +138,7 @@ document.addEventListener("keydown", (e) => {
     if(index==5 || index==6){
       if (isTyping) {
         clearTimeout(currentTimeout);
+        stopKeyboardSfx();
         currentElement.textContent = currentText;
         isTyping = false;
 
@@ -185,6 +190,19 @@ function showNextImage() {
 function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+function startKeyboardSfx() {
+  if (!keyboard.paused) return;
+  keyboard.loop = true;
+  keyboard.currentTime = 0;
+  keyboard.play();
+}
+
+function stopKeyboardSfx() {
+  keyboard.pause();
+  keyboard.currentTime = 0;
+}
+
 
 var index = 5; //현재 페이지의 인덱스 저장
 var page=["main-menu","select-level","game","setting","game-over", "intro", "epilogue"] // 페이지 추가는 맨뒤에 해주세요
