@@ -178,6 +178,10 @@ async function showImage(i) {
     if(index == 5 && i == 5) {
       playBgm(5);
     }
+
+    if(index == 5 && i == 5) {
+      playBgm(5);
+    }
     
     currentImageIndex = i;
   }
