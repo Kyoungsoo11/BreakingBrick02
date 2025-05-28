@@ -6,6 +6,7 @@ const clickSfx = new Audio("sound/click.mp3");
 const keyboard = new Audio("sound/keyboard.mp3");
 clickSfx.volume = 0.5; // 클릭 효과음 초기값 설정
 let clickGameToMain = false; // pause랑 main 안 겹치게 체크
+let volume = 0.5; // 초기 볼륨.
 
 let introParagraphs;
 let epilogueParagraphs;
@@ -70,8 +71,6 @@ function pageLoad() {
   currentImageIndex = 0;
   totalImages = 9;
 
-  document.getElementById("intro-image1").classList.add("visible");
-  showNextParagraph();
 }
 // 여기까지 pageLoad()
 
@@ -193,6 +192,7 @@ function delay(ms) {
 function startKeyboardSfx() {
   if (!keyboard.paused) return;
   keyboard.loop = true;
+  keyboard.volume=volume*0.5;
   keyboard.currentTime = 0;
   keyboard.play();
 }
@@ -203,12 +203,11 @@ function stopKeyboardSfx() {
 }
 
 
-var index = 5; //현재 페이지의 인덱스 저장
-var page = ["main-menu", "select-level", "game", "setting", "game-over", "intro", "epilogue"] // 페이지 추가는 맨뒤에 해주세요
+var index = 7; //현재 페이지의 인덱스 저장
+var page = ["main-menu", "select-level", "game", "setting", "game-over", "intro", "epilogue","start-screen"] // 페이지 추가는 맨뒤에 해주세요
 var level = 0; //선택 난이도
 let ballColor = "#FFFFFF"; //공 색상
 let brickColor = "#5F5F5F"; //벽돌 색상
-let volume = 0.5; // 초기 볼륨.
 const initialTimes = {
   1: 300,
   2: 350,
@@ -228,8 +227,9 @@ let audioInitialized = false; //최초 음악 재생은 바디 클릭시 실행�
 document.addEventListener("DOMContentLoaded", function () {
   document.body.addEventListener("click", function () {
     if (!audioInitialized) {
-      playBgm(0);
+      // playBgm(0); //여기에 인트로 브금 나중에 넣기
       audioInitialized = true;
+      goIntro();
     }
   });
 });
@@ -291,6 +291,11 @@ function goLv2() {
 function goLv3() {
   level = 3;
   changePage(2);
+}
+function goIntro(){
+  changePage(5);
+  document.getElementById("intro-image1").classList.add("visible");
+  showNextParagraph();
 }
 function overToMain() {
   document.getElementById("gameToMain").style.display = "block";
