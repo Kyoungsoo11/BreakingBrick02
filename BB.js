@@ -175,6 +175,10 @@ async function showImage(i) {
     // 페이드 인
     nextImage.classList.add("visible");
 
+    if(index == 5 && i == 5) {
+      playBgm(5);
+    }
+    
     currentImageIndex = i;
   }
 }
@@ -205,8 +209,8 @@ function stopKeyboardSfx() {
 
 
 var index = 7; //현재 페이지의 인덱스 저장
-var page = ["main-menu", "select-level", "game", "setting", "game-over", "intro", "epilogue","start-screen"] // 페이지 추가는 맨뒤에 해주세요
-var level = 0; //선택 난이도
+var page = ["main-menu", "select-level", "game", "setting", "game-over", "intro", "epilogue","start-screen", "game-clear"]; // 페이지 추가는 맨뒤에 해주세요
+var level = 0;
 let ballColor = "#FFFFFF"; //공 색상
 let brickColor = "#5F5F5F"; //벽돌 색상
 const initialTimes = {
@@ -228,7 +232,7 @@ let audioInitialized = false; //최초 음악 재생은 바디 클릭시 실행�
 document.addEventListener("DOMContentLoaded", function () {
   document.body.addEventListener("click", function () {
     if (!audioInitialized) {
-      // playBgm(0); //여기에 인트로 브금 나중에 넣기
+      playBgm(4);
       audioInitialized = true;
       goIntro();
     }
@@ -298,7 +302,7 @@ function goNextLevel(){ //클리어 후 다음 레벨로
   if(level>=3){
     paused=false;
     changePage(6); //에필로그 실행
-    playBgm(0); //나중에 에필로그 음악으로 변경 혹은 changePage에 추가하고 이 줄 삭제
+    playBgm(6); //나중에 에필로그 음악으로 변경 혹은 changePage에 추가하고 이 줄 삭제
   }else{
     changePage(0); //현재 페이지 일단 숨기고 레벨 올리고 다시 페이지 변경인데 게임중에 누르니까 이상함 나중에 게임 완성되면 확인 필요
     level++;
@@ -378,7 +382,10 @@ const mainBgm = new Audio("sound/main.mp3");
 const lv1Bgm = new Audio("sound/lv1.mp3");
 const lv2Bgm = new Audio("sound/lv2.mp3");
 const lv3Bgm = new Audio("sound/lv3.mp3");
-const bgmList = [mainBgm, lv1Bgm, lv2Bgm, lv3Bgm]; //난이도랑 인덱스랑 맞춰놓음.
+const IntroSound1 = new Audio("sound/IntroSound1.mp3");
+const IntroSound2 = new Audio("sound/IntroSound2.mp3");
+const epilogueSound = new Audio("sound/epilogueSound.mp3");
+const bgmList = [mainBgm, lv1Bgm, lv2Bgm, lv3Bgm, IntroSound1, IntroSound2, epilogueSound]; //난이도랑 인덱스랑 맞춰놓음.
 let currentBgm = mainBgm; // 현재 재생 중인 음악 추적용
 let tempVolume = 0.5;
 bgmList.forEach(bgm => {
@@ -437,11 +444,24 @@ function resume() {
 
 //게임 오버
 function gameOver() {
-  let lifeEl = document.querySelector(".current-life");
+  const info = document.getElementById(`level${level}`);
+  const lifeEl = info.querySelector(".current-life");
   let currentLife = parseInt(lifeEl.textContent);
   currentLife--;  // 목숨 1 깎기
   lifeEl.textContent = currentLife;
-  if (currentLife <= 0) changePage(4);
+
+  if (currentLife <= 0) {
+    // 게임 오버 직전에 best score 갱신
+    if (score > bestScores[level]) {
+      bestScores[level] = score;
+    }
+    // 정보영역 best-score 업데이트
+    document
+      .getElementById(`level${level}`)
+      .querySelector(".best-score")
+      .textContent = bestScores[level];
+    changePage(4);
+  }
   else {
     // 공의 상태만 게임 처음 시작처럼 초기화
     // (목숨은 깎지 않고, 벽돌/점수/시간 등은 그대로)
@@ -458,22 +478,53 @@ function restart() {
   changePage(2);
 }
 function gameClear() { // 게임 클리어 함수. 나중에 텍스트 수정 구현
+  document.getElementById("game").style.display = "none";
+  document.getElementById("pause").style.display = "none";
+
   paused=true;
+ 
+  // Clear Time 계산 & 반영
+  const secEl = document
+    .getElementById(`level${level}`)
+    .querySelector(".time-left");
+  const origTime = initialTimes[level];
+  const timeLeft = parseInt(secEl.textContent, 10);
+  const clearTime = origTime - timeLeft;
+  document.getElementById("clear-time").textContent = clearTime;
+
+  // Life 반영
+  const lifeEl = document.querySelector(
+    `#level${level} .current-life`
+  );
+  const life = parseInt(lifeEl.textContent, 10);
+  document.querySelector("#game-clear .current-life").textContent = life;
+
+  // Current Score 반영
+  document.querySelector("#game-clear .current-score").textContent = score;
+
+  // Best Score 갱신 & 반영
+  if (score > bestScores[level]) {
+    bestScores[level] = score;
+  }
+  document.querySelector("#game-clear .best-score").textContent = bestScores[level];
+
   document.getElementById("game-clear").style.display="block";
 }
 // 게임 시작 (여기부터 게임 구현), 참고: level= 1,2,3 난이도 저장되어있음, 벽돌 색상은 brickColor, 공 색상은 ballColor에 지정.
 // ****************setInterval할때 반드시 paused==false 체크해주세요!!!!!!!!!!
 const paddleHeight = 10,
-  paddleWidth = 200,
-  brickColumnCount = 8,
-  brickHeight = 20,
-  initialBrickRows = 3;
+paddleWidth = 200,
+brickColumnCount = 8,
+brickHeight = 20,
+initialBrickRows = 3;
 
 let canvas, ctx, paddleX;
 let bricks = [], brickRowCount, brickWidth;
 let ballRadius = 8, x, y, dx, dy;
 let rightPressed = false, leftPressed = false;
 let timerId = null, addRowIntervalId = null;
+let score = 0;
+const bestScores = { 1: 0, 2: 0, 3: 0 };  // 레벨별 bestScores 객체 선언
 
 const charImg = new Image();
 charImg.src = "image/InGameCharacterDefault.png";
@@ -483,8 +534,24 @@ function gameStart(level) {
   // 초기화
   if (timerId) { clearInterval(timerId); timerId = null; }
   if (addRowIntervalId) { clearInterval(addRowIntervalId); addRowIntervalId = null; }
-  document.querySelector(".current-life").textContent = 3;
-  document.querySelector(".score").textContent = 0;
+  
+  const info = document.getElementById(`level${level}`);
+  // 레벨별 life/score/best-score 초기화
+  info.querySelector(".current-life").textContent = 3;
+  info.querySelector(".current-score").textContent = 0;
+  info.querySelector(".best-score").textContent  = bestScores[level];
+
+  score = 0;
+   // 현재 레벨의 current-score 초기화
+  document  
+    .getElementById(`level${level}`)
+    .querySelector(".current-score")
+    .textContent = 0;
+  // 현재 레벨의 best-score 표시**
+  document
+    .getElementById(`level${level}`)
+    .querySelector(".best-score")
+    .textContent = bestScores[level];
 
   // 남은 시간
   const sec = document.getElementById("level" + level).querySelector(".time-left");
@@ -521,9 +588,9 @@ function gameStart(level) {
   // 벽돌
   brickRowCount = initialBrickRows;
   initBricks();
-  addRowIntervalId = setInterval(() => {    // 벽돌 10초에 한줄씩 추가
-    if (!paused) addBrickRow();
-  }, 10000);
+  // addRowIntervalId = setInterval(() => {    // 벽돌 10초에 한줄씩 추가 => 게임 클리어 작동하는지 확인용. 주석 해제하셔도 됩니다
+  //   if (!paused) addBrickRow();
+  // }, 10000);
 
   // 시작
   paused = false;
@@ -554,6 +621,8 @@ function draw() {
   const imgW = 50;  // 캐릭터 너비
   const imgH = 75;  // 캐릭터 높이
 
+  const info = document.getElementById(`level${level}`);
+  info.querySelector(".current-score").textContent = score;
 
   if (paused) return;
   ctx.clearRect(0, 0, canvas.width, canvas.height);    // 캔버스 지우기
@@ -601,9 +670,27 @@ function draw() {
         }
 
         b.status = 0;
+        score += 100;
+        info.querySelector(".current-score").textContent = score;
       }
     }
   }
+
+  let allCleared = true;
+  for (let c = 0; c < brickColumnCount; c++) {
+    for (let r = 0; r < bricks[c].length; r++) {
+      if (bricks[c][r].status === 1) {
+        allCleared = false;
+        break;
+      }
+    }
+    if (!allCleared) break;
+  }
+  if (allCleared) {
+    gameClear();
+    return;  // draw 루프 종료
+  }
+
   // 1) 좌우 벽 충돌
   if (nextX + ballRadius > canvas.width || nextX - ballRadius < 0) {
     dx = -dx;
