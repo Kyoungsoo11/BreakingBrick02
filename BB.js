@@ -71,7 +71,6 @@ function pageLoad(){
   totalImages = 9;
 
   document.getElementById("intro-image1").classList.add("visible");
-  if (keyboard.paused) startKeyboardSfx();
   showNextParagraph();
 }
 // 여기까지 pageLoad()
@@ -89,7 +88,7 @@ function typeText(element, text, speed = 50, callback) {
     if (idx < text.length) {
       element.textContent += text.charAt(idx);
       idx++;
-      if (keyboard.paused) startKeyboardSfx();
+      if (keyboard.paused && audioInitialized == true) startKeyboardSfx();
       currentTimeout = setTimeout(typeChar, speed);
     } else {
       stopKeyboardSfx();
