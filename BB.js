@@ -24,7 +24,6 @@ let totalImages;
 let spaceLock = false;
 
 function pageLoad() {
-  playBgm(0); // 브라우저에서 음악 자동실행 막아서 안됨.
   document.getElementById("volume-range").addEventListener("input", function (e) { //볼륨조절 이벤트
     tempVolume = parseFloat(e.target.value);
     if (currentBgm) {
@@ -51,10 +50,12 @@ function pageLoad() {
   document.getElementById("back-btn2").onclick = () => { playClickSfx(); backSetting(); };
   document.getElementById("restart-btn").onclick = () => { playClickSfx(); restart(); };
   document.getElementById("game-over-main-btn").onclick = () => { playClickSfx(); overToMain(); };
+  document.getElementById("game-clear-main-btn").onclick = () => { playClickSfx(); clearToMain(); };
   document.getElementById("game-main-yes-btn").onclick = () => { playClickSfx(); gameToMain(); };
   document.getElementById("game-main-no-btn").onclick = () => { playClickSfx(); gameToMainNo(); };
   document.getElementById("skip-btn1").onclick = () => { playClickSfx(); storyToMain(); };
   document.getElementById("skip-btn2").onclick = () => { playClickSfx(); storyToMain(); };
+  document.getElementById("next-level-btn").onclick = () => { playClickSfx(); goNextLevel(); };
   // document.getElementById("epilogue-btn").onclick=() => { playClickSfx(); changePage(6); };
   clickSfx.preload = "auto";
   clickSfx.load();  // 명시적 로드
@@ -292,10 +293,29 @@ function goLv3() {
   level = 3;
   changePage(2);
 }
+function goNextLevel(){ //클리어 후 다음 레벨로 
+  document.getElementById("game-clear").style.display="none";
+  if(level>=3){
+    paused=false;
+    changePage(6); //에필로그 실행
+    playBgm(0); //나중에 에필로그 음악으로 변경 혹은 changePage에 추가하고 이 줄 삭제
+  }else{
+    changePage(0); //현재 페이지 일단 숨기고 레벨 올리고 다시 페이지 변경인데 게임중에 누르니까 이상함 나중에 게임 완성되면 확인 필요
+    level++;
+    changePage(2);
+    paused=false;
+  }
+}
 function goIntro(){
   changePage(5);
   document.getElementById("intro-image1").classList.add("visible");
   showNextParagraph();
+}
+function clearToMain() {
+  document.getElementById("game-clear").style.display="none";
+  goMain();
+  playBgm(0);
+  paused=false;
 }
 function overToMain() {
   document.getElementById("gameToMain").style.display = "block";
@@ -437,9 +457,10 @@ function gameOver() {
 function restart() {
   changePage(2);
 }
-
-// 게임 시작 (여기부터 게임 구현), 참고: level= 1,2,3 난이도 저장되어있음, 벽돌 색상은 brickColor, 공 색상은 ballColor에 지정.
-// ****************setInterval할때 반드시 paused==false 체크해주세요!!!!!!!!!!
+function gameClear() { // 게임 클리어 함수. 나중에 텍스트 수정 구현
+  paused=true;
+  document.getElementById("game-clear").style.display="block";
+}
 // 게임 시작 (여기부터 게임 구현), 참고: level= 1,2,3 난이도 저장되어있음, 벽돌 색상은 brickColor, 공 색상은 ballColor에 지정.
 // ****************setInterval할때 반드시 paused==false 체크해주세요!!!!!!!!!!
 const paddleHeight = 10,
