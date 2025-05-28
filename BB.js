@@ -175,6 +175,10 @@ async function showImage(i) {
     // 페이드 인
     nextImage.classList.add("visible");
 
+    if(index == 5 && i == 5) {
+      playBgm(5);
+    }
+
     currentImageIndex = i;
   }
 }
@@ -228,7 +232,7 @@ let audioInitialized = false; //최초 음악 재생은 바디 클릭시 실행�
 document.addEventListener("DOMContentLoaded", function () {
   document.body.addEventListener("click", function () {
     if (!audioInitialized) {
-      // playBgm(0); //여기에 인트로 브금 나중에 넣기
+      playBgm(4);
       audioInitialized = true;
       goIntro();
     }
@@ -298,7 +302,7 @@ function goNextLevel(){ //클리어 후 다음 레벨로
   if(level>=3){
     paused=false;
     changePage(6); //에필로그 실행
-    playBgm(0); //나중에 에필로그 음악으로 변경 혹은 changePage에 추가하고 이 줄 삭제
+    playBgm(6); //나중에 에필로그 음악으로 변경 혹은 changePage에 추가하고 이 줄 삭제
   }else{
     changePage(0); //현재 페이지 일단 숨기고 레벨 올리고 다시 페이지 변경인데 게임중에 누르니까 이상함 나중에 게임 완성되면 확인 필요
     level++;
@@ -378,7 +382,10 @@ const mainBgm = new Audio("sound/main.mp3");
 const lv1Bgm = new Audio("sound/lv1.mp3");
 const lv2Bgm = new Audio("sound/lv2.mp3");
 const lv3Bgm = new Audio("sound/lv3.mp3");
-const bgmList = [mainBgm, lv1Bgm, lv2Bgm, lv3Bgm]; //난이도랑 인덱스랑 맞춰놓음.
+const IntroSound1 = new Audio("sound/IntroSound1.mp3");
+const IntroSound2 = new Audio("sound/IntroSound2.mp3");
+const epilogueSound = new Audio("sound/epilogueSound.mp3");
+const bgmList = [mainBgm, lv1Bgm, lv2Bgm, lv3Bgm, IntroSound1, IntroSound2, epilogueSound]; //난이도랑 인덱스랑 맞춰놓음.
 let currentBgm = mainBgm; // 현재 재생 중인 음악 추적용
 let tempVolume = 0.5;
 bgmList.forEach(bgm => {
