@@ -324,6 +324,8 @@ function initStory() {
     const imgPrefix = index === 5 ? "intro-image" : "epilogue-image";
     const paragraphs = index === 5 ? introParagraphs : epilogueParagraphs;
 
+    stopKeyboardSfx();
+
     // 모든 이미지 숨김
     for (let i = 1; i <= totalImages; i++) {
       const img = document.getElementById(imgPrefix + i);
