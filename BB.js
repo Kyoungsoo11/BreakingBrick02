@@ -194,6 +194,13 @@ function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+function startBumpSfx() {
+  const bumpSfx = new Audio("sound/bump.mp3");
+  bumpSfx.volume = volume;
+  bumpSfx.currentTime = 0;
+  bumpSfx.play();
+}
+
 function startKeyboardSfx() {
   if (!keyboard.paused) return;
   keyboard.loop = true;
@@ -658,6 +665,7 @@ function draw() {
       if (b.status &&
         x > bx && x < bx + bw &&
         y > by && y < by + bh) {
+          startBumpSfx();
 
         // 이전 위치로 방향 판정
         const prevX = x - dx;
