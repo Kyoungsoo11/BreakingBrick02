@@ -175,10 +175,10 @@ async function showImage(i) {
     // 페이드 인
     nextImage.classList.add("visible");
 
-    if(index == 5 && i == 5) {
+    if (index == 5 && i == 5) {
       playBgm(5);
     }
-    
+
     currentImageIndex = i;
   }
 }
@@ -197,7 +197,7 @@ function delay(ms) {
 function startKeyboardSfx() {
   if (!keyboard.paused) return;
   keyboard.loop = true;
-  keyboard.volume=volume*0.5;
+  keyboard.volume = volume * 0.5;
   keyboard.currentTime = 0;
   keyboard.play();
 }
@@ -209,7 +209,7 @@ function stopKeyboardSfx() {
 
 
 var index = 7; //현재 페이지의 인덱스 저장
-var page = ["main-menu", "select-level", "game", "setting", "game-over", "intro", "epilogue","start-screen", "game-clear"]; // 페이지 추가는 맨뒤에 해주세요
+var page = ["main-menu", "select-level", "game", "setting", "game-over", "intro", "epilogue", "start-screen", "game-clear"]; // 페이지 추가는 맨뒤에 해주세요
 var level = 0;
 let ballColor = "#FFFFFF"; //공 색상
 let brickColor = "#5F5F5F"; //벽돌 색상
@@ -297,29 +297,29 @@ function goLv3() {
   level = 3;
   changePage(2);
 }
-function goNextLevel(){ //클리어 후 다음 레벨로 
-  document.getElementById("game-clear").style.display="none";
-  if(level>=3){
-    paused=false;
+function goNextLevel() { //클리어 후 다음 레벨로 
+  document.getElementById("game-clear").style.display = "none";
+  if (level >= 3) {
+    paused = false;
     changePage(6); //에필로그 실행
     playBgm(6); //나중에 에필로그 음악으로 변경 혹은 changePage에 추가하고 이 줄 삭제
-  }else{
+  } else {
     changePage(0); //현재 페이지 일단 숨기고 레벨 올리고 다시 페이지 변경인데 게임중에 누르니까 이상함 나중에 게임 완성되면 확인 필요
     level++;
     changePage(2);
-    paused=false;
+    paused = false;
   }
 }
-function goIntro(){
+function goIntro() {
   changePage(5);
   document.getElementById("intro-image1").classList.add("visible");
   showNextParagraph();
 }
 function clearToMain() {
-  document.getElementById("game-clear").style.display="none";
+  document.getElementById("game-clear").style.display = "none";
   goMain();
   playBgm(0);
-  paused=false;
+  paused = false;
 }
 function overToMain() {
   document.getElementById("gameToMain").style.display = "block";
@@ -481,8 +481,8 @@ function gameClear() { // 게임 클리어 함수. 나중에 텍스트 수정 �
   document.getElementById("game").style.display = "none";
   document.getElementById("pause").style.display = "none";
 
-  paused=true;
- 
+  paused = true;
+
   // Clear Time 계산 & 반영
   const secEl = document
     .getElementById(`level${level}`)
@@ -508,15 +508,15 @@ function gameClear() { // 게임 클리어 함수. 나중에 텍스트 수정 �
   }
   document.querySelector("#game-clear .best-score").textContent = bestScores[level];
 
-  document.getElementById("game-clear").style.display="block";
+  document.getElementById("game-clear").style.display = "block";
 }
 // 게임 시작 (여기부터 게임 구현), 참고: level= 1,2,3 난이도 저장되어있음, 벽돌 색상은 brickColor, 공 색상은 ballColor에 지정.
 // ****************setInterval할때 반드시 paused==false 체크해주세요!!!!!!!!!!
 const paddleHeight = 10,
-paddleWidth = 200,
-brickColumnCount = 8,
-brickHeight = 20,
-initialBrickRows = 3;
+  paddleWidth = 200,
+  brickColumnCount = 8,
+  brickHeight = 20,
+  initialBrickRows = 3;
 
 let canvas, ctx, paddleX;
 let bricks = [], brickRowCount, brickWidth;
@@ -534,16 +534,16 @@ function gameStart(level) {
   // 초기화
   if (timerId) { clearInterval(timerId); timerId = null; }
   if (addRowIntervalId) { clearInterval(addRowIntervalId); addRowIntervalId = null; }
-  
+
   const info = document.getElementById(`level${level}`);
   // 레벨별 life/score/best-score 초기화
   info.querySelector(".current-life").textContent = 3;
   info.querySelector(".current-score").textContent = 0;
-  info.querySelector(".best-score").textContent  = bestScores[level];
+  info.querySelector(".best-score").textContent = bestScores[level];
 
   score = 0;
-   // 현재 레벨의 current-score 초기화
-  document  
+  // 현재 레벨의 current-score 초기화
+  document
     .getElementById(`level${level}`)
     .querySelector(".current-score")
     .textContent = 0;
