@@ -305,6 +305,10 @@ function goLv3() {
   changePage(2);
 }
 function goNextLevel() { //클리어 후 다음 레벨로 
+  if(level==3){ //난이도 3 클리어 후 ui변경된거 다시 초기화
+    document.getElementById("next-level-btn").innerHTML="Next Level";
+    document.getElementById("game-clear-main-btn").style.display="block";
+  }
   document.getElementById("game-clear").style.display = "none";
   if (level >= 3) {
     paused = false;
@@ -485,7 +489,6 @@ function restart() {
   changePage(2);
 }
 function gameClear() { // 게임 클리어 함수. 나중에 텍스트 수정 구현
-  document.getElementById("game").style.display = "none";
   document.getElementById("pause").style.display = "none";
 
   paused = true;
@@ -515,6 +518,10 @@ function gameClear() { // 게임 클리어 함수. 나중에 텍스트 수정 �
   }
   document.querySelector("#game-clear .best-score").textContent = bestScores[level];
 
+  if(level==3){ // 난이도 3 클리어일 경우 next버튼만 나오게.
+    document.getElementById("next-level-btn").innerHTML="Next";
+    document.getElementById("game-clear-main-btn").style.display="none";
+  }
   document.getElementById("game-clear").style.display = "block";
 }
 // 게임 시작 (여기부터 게임 구현), 참고: level= 1,2,3 난이도 저장되어있음, 벽돌 색상은 brickColor, 공 색상은 ballColor에 지정.
