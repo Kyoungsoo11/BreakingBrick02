@@ -200,6 +200,12 @@ function startBumpSfx() {
   bumpSfx.currentTime = 0;
   bumpSfx.play();
 }
+function startShieldSfx() {
+  const shieldSfx = new Audio("sound/shield.mp3");
+  shieldSfx.volume = volume;
+  shieldSfx.currentTime = 0;
+  shieldSfx.play();
+}
 
 function startKeyboardSfx() {
   if (!keyboard.paused) return;
@@ -720,6 +726,7 @@ function draw() {
   // 3) 패들 충돌
   else if (nextY + ballRadius >= paddleTop) {
     if (nextX > paddleX && nextX < paddleX + paddleWidth) {
+      startShieldSfx();
       dy = -dy;
       // 공이 패들 아래로 내려가지 않도록
       y = paddleTop - ballRadius;
