@@ -475,6 +475,11 @@ function resume() {
 
 //게임 오버
 function gameOver() {
+  if (startIntervalId) {
+    clearInterval(startIntervalId);
+    startIntervalId = null;
+  }
+
   isGameOver=true;
   const info = document.getElementById(`level${level}`);
   const lifeEl = info.querySelector(".current-life");
@@ -575,6 +580,25 @@ function getRandomOutlineColor() {
   return colors[Math.floor(Math.random() * colors.length)];
 }
 
+function makeRandomItemBrick() {
+  const activeBricks = [];
+  for (let c = 0; c < brickColumnCount; c++) {
+    for (let r = 0; r < bricks[c].length; r++) {
+      const b = bricks[c][r];
+      if (b.status === 1 && !b.isItem) {
+        activeBricks.push({ c, r });
+      }
+    }
+  }
+
+  if (activeBricks.length === 0) return;
+
+  const { c, r } = activeBricks[Math.floor(Math.random() * activeBricks.length)];
+  const color = getRandomOutlineColor();
+  bricks[c][r].isItem = true;
+  bricks[c][r].outlineColor = color;
+}
+
 function lifeAdd() {
   const info = document.getElementById(`level${level}`);
   const lifeEl = info.querySelector(".current-life");
@@ -592,6 +616,7 @@ function timeAdd() {
 }
 
 function gameStart(level) {
+  
   // 초기화
   if (timerId) { clearInterval(timerId); timerId = null; }
   if (addRowIntervalId) { clearInterval(addRowIntervalId); addRowIntervalId = null; }
@@ -624,6 +649,16 @@ function gameStart(level) {
       if (left <= 0) { clearInterval(timerId); timerId = null; gameOver(); }
     }
   }, 1000);
+
+  // 게임 시작 스톱워치
+  setTimeout(() => {
+    makeRandomItemBrick();  // 첫 실행
+    startIntervalId = setInterval(() => {
+      if (!paused) {
+        makeRandomItemBrick();
+      }
+    }, 30000);
+  }, 10000);
 
   // canvas
   const lv = document.getElementById("level" + level);
@@ -691,9 +726,26 @@ function draw() {
   ctx.fillStyle = brickColor;
   for (let c = 0; c < brickColumnCount; c++) {
     for (let r = 0; r < bricks[c].length; r++) {
-      if (bricks[c][r].status) {
-        const bx = c * brickWidth, by = r * brickHeight;
+      const b = bricks[c][r];
+      if (b.status) {
+        const bx = c * brickWidth;
+        const by = r * brickHeight;
+  
+        // 배경색 결정
+        if (b.isItem) {
+          ctx.fillStyle = "black";  // 아이템 벽돌 내부는 검정
+        } else {
+          ctx.fillStyle = brickColor;  // 일반 벽돌 색
+        }
+  
         ctx.fillRect(bx + 1, by + 1, brickWidth - 2, brickHeight - 2);
+  
+        if (b.isItem) {
+          // 아이템 벽돌일 때만 테두리 그림
+          ctx.strokeStyle = b.outlineColor;
+          ctx.lineWidth = 2;
+          ctx.strokeRect(bx + 1, by + 1, brickWidth - 2, brickHeight - 2);
+        }
       }
     }
   }
