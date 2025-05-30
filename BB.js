@@ -206,6 +206,12 @@ function startShieldSfx() {
   shieldSfx.currentTime = 0;
   shieldSfx.play();
 }
+function startDamageSfx() {
+  const damageSfx = new Audio("sound/damage.mp3");
+  damageSfx.volume = volume;
+  damageSfx.currentTime = 0;
+  damageSfx.play();
+}
 
 function startKeyboardSfx() {
   if (!keyboard.paused) return;
@@ -405,7 +411,8 @@ const epilogueSound = new Audio("sound/epilogueSound.mp3");
 const bose1Bgm = new Audio("sound/lv1bose.mp3");
 const bose2Bgm = new Audio("sound/lv2bose.mp3");
 const bose3Bgm = new Audio("sound/lv3bose.mp3");
-const bgmList = [mainBgm, lv1Bgm, lv2Bgm, lv3Bgm, IntroSound1, IntroSound2, epilogueSound,bose1Bgm,bose2Bgm,bose3Bgm]; //난이도랑 인덱스랑 맞춰놓음. 789가 bosebgm
+const overBgm = new Audio("sound/gameover.mp3");
+const bgmList = [mainBgm, lv1Bgm, lv2Bgm, lv3Bgm, IntroSound1, IntroSound2, epilogueSound,bose1Bgm,bose2Bgm,bose3Bgm,overBgm]; //난이도랑 인덱스랑 맞춰놓음. 789가 bosebgm
 let currentBgm = mainBgm; // 현재 재생 중인 음악 추적용
 let tempVolume = 0.5;
 bgmList.forEach(bgm => {
@@ -469,9 +476,11 @@ function gameOver() {
   let currentLife = parseInt(lifeEl.textContent);
   currentLife--;  // 목숨 1 깎기
   lifeEl.textContent = currentLife;
+  startDamageSfx();
 
   if (currentLife <= 0) {
     // 게임 오버 직전에 best score 갱신
+    playBgm(10);
     if (score > bestScores[level]) {
       bestScores[level] = score;
     }
