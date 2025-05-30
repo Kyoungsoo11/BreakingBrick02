@@ -575,6 +575,20 @@ charImg.src = "image/InGameCharacterDefault.png";
 // ──────────── 3) 게임 시작 (여기부터 게임 구현) ────────────
 let startIntervalId = null;
 
+const itemTypes = [
+  { type: "lifeAdd", image: new Image(), outlineColor: "#1bffca" },     // 초록
+  { type: "timeAdd", image: new Image(), outlineColor: "#1bffca" },  // 초록
+  { type: "damageBuff", image: new Image(), outlineColor: "#f6ff08" },  // 노랑
+  { type: "attack", image: new Image(), outlineColor: "#f6ff08" }, // 노랑
+  { type: "invisiblity", image: new Image(), outlineColor: "#f6ff08" }    // 노랑
+];
+
+itemTypes[0].image.src = "image/item/LifeAdd.jpg";
+itemTypes[1].image.src = "image/item/TimeAdd.jpg";
+itemTypes[2].image.src = "image/item/DamageBuff.jpg";
+itemTypes[3].image.src = "image/item/Attack.jpg";
+itemTypes[4].image.src = "image/item/Invisiblity.jpg";
+
 function getRandomOutlineColor() {
   const colors = ["#1bffca", "#f6ff08"]; // 즉발형, 저장형 나뉨
   return colors[Math.floor(Math.random() * colors.length)];
@@ -593,10 +607,21 @@ function makeRandomItemBrick() {
 
   if (activeBricks.length === 0) return;
 
+  // 랜덤한 벽돌 하나 선택
   const { c, r } = activeBricks[Math.floor(Math.random() * activeBricks.length)];
-  const color = getRandomOutlineColor();
+
+  // 랜덤한 아이템 하나 선택 (20% 확률 균등)
+  const selectedItem = itemTypes[Math.floor(Math.random() * itemTypes.length)];
+
   bricks[c][r].isItem = true;
-  bricks[c][r].outlineColor = color;
+  bricks[c][r].itemType = selectedItem.type;
+  bricks[c][r].itemImage = selectedItem.image;
+  bricks[c][r].outlineColor = selectedItem.outlineColor;
+
+  // const { c, r } = activeBricks[Math.floor(Math.random() * activeBricks.length)];
+  // const color = getRandomOutlineColor();
+  // bricks[c][r].isItem = true;
+  // bricks[c][r].outlineColor = color;
 }
 
 function lifeAdd() {
@@ -745,6 +770,13 @@ function draw() {
           ctx.strokeStyle = b.outlineColor;
           ctx.lineWidth = 2;
           ctx.strokeRect(bx + 1, by + 1, brickWidth - 2, brickHeight - 2);
+
+          if (b.itemImage?.complete) {
+            const imgW = 15, imgH = 15;
+            const imgX = bx + (brickWidth - imgW) / 2;
+            const imgY = by + (brickHeight - imgH) / 2;
+            ctx.drawImage(b.itemImage, imgX, imgY, imgW, imgH);
+          }
         }
       }
     }
@@ -784,7 +816,11 @@ function draw() {
         }
 
         b.status = 0;
-        score += 100;
+        if(b.isItem) {
+          score += 200;
+        } else {
+          score += 100;
+        }
         info.querySelector(".current-score").textContent = score;
       }
     }
