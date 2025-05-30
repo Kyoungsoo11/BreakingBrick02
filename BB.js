@@ -562,6 +562,29 @@ const charImg = new Image();
 charImg.src = "image/InGameCharacterDefault.png";
 
 // ──────────── 3) 게임 시작 (여기부터 게임 구현) ────────────
+let startIntervalId = null;
+
+function getRandomOutlineColor() {
+  const colors = ["#1bffca", "#f6ff08"]; // 즉발형, 저장형 나뉨
+  return colors[Math.floor(Math.random() * colors.length)];
+}
+
+function lifeAdd() {
+  const info = document.getElementById(`level${level}`);
+  const lifeEl = info.querySelector(".current-life");
+  let currentLife = parseInt(lifeEl.textContent);
+  currentLife++;  // 목숨 1 추가
+  lifeEl.textContent = currentLife;
+}
+
+function timeAdd() {
+  const info = document.getElementById(`level${level}`);
+  const timeEl = info.querySelector(".clear-time");
+  let currentTime = parseInt(timeEl.textContent);
+  currentTime += 10;
+  timeEl.textContent = currentTime;
+}
+
 function gameStart(level) {
   // 초기화
   if (timerId) { clearInterval(timerId); timerId = null; }
