@@ -486,6 +486,8 @@ function gameOver() {
   let currentLife = parseInt(lifeEl.textContent);
   currentLife--;  // 목숨 1 깎기
   lifeEl.textContent = currentLife;
+
+  paddleWidth -= 40;
   startDamageSfx();
 
   if (currentLife <= 0) {
@@ -556,11 +558,11 @@ function gameClear() { // 게임 클리어 함수. 나중에 텍스트 수정 �
 // 게임 시작 (여기부터 게임 구현), 참고: level= 1,2,3 난이도 저장되어있음, 벽돌 색상은 brickColor, 공 색상은 ballColor에 지정.
 // ****************setInterval할때 반드시 paused==false 체크해주세요!!!!!!!!!!
 const paddleHeight = 10,
-  paddleWidth = 200,
   brickColumnCount = 8,
   brickHeight = 20,
   initialBrickRows = 3;
 
+let paddleWidth = 170;
 let canvas, ctx, paddleX;
 let bricks = [], brickRowCount, brickWidth;
 let ballRadius = 8, x, y, dx, dy;
@@ -574,6 +576,7 @@ charImg.src = "image/InGameCharacterDefault.png";
 
 // ──────────── 3) 게임 시작 (여기부터 게임 구현) ────────────
 let startIntervalId = null;
+let left;
 
 const itemTypes = [
   { type: "lifeAdd", image: new Image(), outlineColor: "#1bffca" },     // 초록
@@ -617,11 +620,28 @@ function makeRandomItemBrick() {
   bricks[c][r].itemType = selectedItem.type;
   bricks[c][r].itemImage = selectedItem.image;
   bricks[c][r].outlineColor = selectedItem.outlineColor;
+}
 
-  // const { c, r } = activeBricks[Math.floor(Math.random() * activeBricks.length)];
-  // const color = getRandomOutlineColor();
-  // bricks[c][r].isItem = true;
-  // bricks[c][r].outlineColor = color;
+function applyItemEffect(type) {
+  switch (type) {
+    case "lifeAdd":
+      lifeAdd();
+      break;
+    case "timeAdd":
+      timeAdd();
+      break;
+    case "damageBuff":
+      // 구현 예정
+      break;
+    case "attack":
+      // 구현 예정
+      break;
+    case "invisiblity":
+      // 구현 예정
+      break;
+    default:
+      console.warn("알 수 없는 아이템 타입:", type);
+  }
 }
 
 function lifeAdd() {
@@ -630,14 +650,14 @@ function lifeAdd() {
   let currentLife = parseInt(lifeEl.textContent);
   currentLife++;  // 목숨 1 추가
   lifeEl.textContent = currentLife;
+
+  if(currentLife < 4) {
+    paddleWidth += 40;
+  }
 }
 
 function timeAdd() {
-  const info = document.getElementById(`level${level}`);
-  const timeEl = info.querySelector(".clear-time");
-  let currentTime = parseInt(timeEl.textContent);
-  currentTime += 10;
-  timeEl.textContent = currentTime;
+  left += 10;
 }
 
 function gameStart(level) {
@@ -666,7 +686,7 @@ function gameStart(level) {
 
   // 남은 시간
   const sec = document.getElementById("level" + level).querySelector(".time-left");
-  let left = initialTimes[level];   // ex) 1단계 : 300초
+  left = initialTimes[level];   // ex) 1단계 : 300초
   sec.textContent = left;
   timerId = setInterval(() => {
     if (!paused) {
@@ -712,6 +732,8 @@ function gameStart(level) {
   // addRowIntervalId = setInterval(() => {    // 벽돌 10초에 한줄씩 추가 => 게임 클리어 작동하는지 확인용. 주석 해제하셔도 됩니다
   //   if (!paused) addBrickRow();
   // }, 10000);
+
+  paddleWidth = 170;
 
   // 시작
   paused = false;
@@ -818,6 +840,7 @@ function draw() {
         b.status = 0;
         if(b.isItem) {
           score += 200;
+          applyItemEffect(b.itemType);
         } else {
           score += 100;
         }
