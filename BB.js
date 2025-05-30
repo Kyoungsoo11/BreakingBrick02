@@ -509,6 +509,7 @@ function gameOver() {
   }
 }
 function restart() {
+  isGameOver=false;
   changePage(2);
 }
 function gameClear() { // 게임 클리어 함수. 나중에 텍스트 수정 구현
