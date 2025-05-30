@@ -642,7 +642,7 @@ function addBrickRow() {
 function draw() {
 
   const imgW = 50;  // 캐릭터 너비
-  const imgH = 75;  // 캐릭터 높이
+  const imgH = 60;  // 캐릭터 높이
 
   const info = document.getElementById(`level${level}`);
   info.querySelector(".current-score").textContent = score;
@@ -668,7 +668,7 @@ function draw() {
   // 충돌
   const nextX = x + dx;
   const nextY = y + dy;
-  const paddleTop = canvas.height - paddleHeight - imgH + 20;
+  const paddleTop = canvas.height - paddleHeight - imgH + 10;
   // 벽돌 충돌
   for (let c = 0; c < brickColumnCount; c++) {
     for (let r = 0; r < bricks[c].length; r++) {
@@ -747,7 +747,7 @@ function draw() {
 
   // 패들
   ctx.beginPath();
-  ctx.rect(paddleX, canvas.height - paddleHeight - imgH + 20, paddleWidth, paddleHeight);
+  ctx.rect(paddleX, canvas.height - paddleHeight - imgH + 6, paddleWidth, paddleHeight);
   ctx.fillStyle = "white"; ctx.fill(); ctx.closePath();
 
   // 이동
