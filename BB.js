@@ -7,6 +7,7 @@ const keyboard = new Audio("sound/keyboard.mp3");
 clickSfx.volume = 0.5; // 클릭 효과음 초기값 설정
 let clickGameToMain = false; // pause랑 main 안 겹치게 체크
 let volume = 0.5; // 초기 볼륨.
+let isGameOver=false;
 
 let introParagraphs;
 let epilogueParagraphs;
@@ -350,6 +351,7 @@ function overToMain() {
 function gameToMain() {
   clickGameToMain = false;
   paused = false;
+  isGameOver=false;
   document.getElementById("gameToMain").style.display = "none";
   document.getElementById("pause").style.display = "none";
   goMain();
@@ -359,7 +361,9 @@ function gameToMain() {
 function gameToMainNo() {
   clickGameToMain = false;
   document.getElementById("gameToMain").style.display = "none";
+  if(!isGameOver){
   requestAnimationFrame(draw);
+  }
 }
 function storyToMain() {
   const result = confirm("스토리를 건너뛰시겠습니까?");
@@ -471,6 +475,7 @@ function resume() {
 
 //게임 오버
 function gameOver() {
+  isGameOver=true;
   const info = document.getElementById(`level${level}`);
   const lifeEl = info.querySelector(".current-life");
   let currentLife = parseInt(lifeEl.textContent);
@@ -504,6 +509,7 @@ function gameOver() {
   }
 }
 function restart() {
+  isGameOver=false;
   changePage(2);
 }
 function gameClear() { // 게임 클리어 함수. 나중에 텍스트 수정 구현
