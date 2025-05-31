@@ -531,17 +531,12 @@ function restart() {
 function gameClear() { // 게임 클리어 함수. 나중에 텍스트 수정 구현
   document.getElementById("pause").style.display = "none";
   clearInterval(stopWatchId);
-  step = 0;
   paused = true;
 
   // Clear Time 계산 & 반영
-  const secEl = document
-    .getElementById(`level${level}`)
-    .querySelector(".time-left");
-  const origTime = initialTimes[level];
-  const timeLeft = parseInt(secEl.textContent, 10);
-  const clearTime = origTime - timeLeft;
+  const clearTime = step;
   document.getElementById("clear-time").textContent = clearTime;
+  step = 0;
 
   // Life 반영
   const lifeEl = document.querySelector(
