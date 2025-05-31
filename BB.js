@@ -1112,15 +1112,19 @@ function draw() {
   else if (nextY - ballRadius < 0) {
     dy = -dy;
   }
-  // 3) 패들 충돌
-  else if (nextY + ballRadius >= paddleTop) {
-    if (nextX > paddleX && nextX < paddleX + paddleWidth) {
-      startShieldSfx();
-      dy = -dy;
-      // 공이 패들 아래로 내려가지 않도록
-      y = paddleTop - ballRadius;
-    }
-  }
+  // 3) 패들 충돌 (공이 위에서 내려올 때만)
+  else if (dy > 0                             // ↓ 방향일 때
+          && y + ballRadius <= paddleTop      // 현재는 패들 면 위에 있고
+          && nextY + ballRadius >= paddleTop  // 다음 프레임에 패들 면을 넘길 때
+        ) {
+  // 공이 패들 위에 있을 때만 X범위 체크
+  if (nextX > paddleX && nextX < paddleX + paddleWidth) {
+     startShieldSfx();
+     dy = -dy;
+     // 튕긴 후 위치 보정
+     y = paddleTop - ballRadius;
+   }
+ }
 
   // 4) 바닥 충돌 (항상 검사)
   if (nextY + ballRadius > canvas.height) {
