@@ -456,11 +456,16 @@ body{
 	position: absolute;
 	height: 50px;
 	width: 50px;
-	left: 23%;
+	left: 15%;
 	top: 10%;
 }
 .attack-status, .damageBuff-status, .invisiblity-status {
 	position: absolute;
 	top: 18%;
-	right: 30%;
+	right: 39%;
+}
+.attack-time, .damageBuff-time, .invisiblity-time {
+	position: absolute;
+	top: 18%;
+	right: 14%;
 }

@@ -580,6 +580,9 @@ charImg.src = "image/InGameCharacterDefault.png";
 // let startIntervalId = null;
 let left;
 let step;
+let availableAttack;
+let availableDamage;
+let availableInv;
 
 const itemTypes = [
   { type: "lifeAdd", image: new Image(), outlineColor: "#1bffca" },     // 초록
@@ -634,34 +637,98 @@ function applyItemEffect(type) {
       timeAdd();
       break;
     case "damageBuff":
-      // 구현 예정
+      damageBuff(1);
       break;
     case "attack":
-      // 구현 예정
+      attack(1);
       break;
     case "invisiblity":
-      // 구현 예정
+      invisiblity(1);
       break;
     default:
       console.warn("알 수 없는 아이템 타입:", type);
   }
 }
 
+function initItem() {
+  damageBuff(0);
+  attack(0);
+  invisiblity(0);
+}
+
 function lifeAdd() {
   const info = document.getElementById(`level${level}`);
   const lifeEl = info.querySelector(".current-life");
-  let currentLife = parseInt(lifeEl.textContent);
-  currentLife++;  // 목숨 1 추가
-  lifeEl.textContent = currentLife;
-
   if(currentLife < 4) {
     paddleWidth += 40;
   }
+  let currentLife = parseInt(lifeEl.textContent);
+  currentLife++;  // 목숨 1 추가
+  lifeEl.textContent = currentLife;
 }
 
 function timeAdd() {
   left += 10;
 }
+
+function damageBuff(i) {
+  const info = document.getElementById(`level${level}`);
+  const damageEl = info.querySelector(".damageBuff-status");
+  availableDamage = parseInt(damageEl.textContent);
+  if(i == 0) {
+    availableDamage = 0;
+  } else {
+    availableDamage += i;
+  }
+  damageEl.textContent = availableDamage;
+}
+
+function attack(i) {
+  const info = document.getElementById(`level${level}`);
+  const attackEl = info.querySelector(".attack-status");
+  availableAttack = parseInt(attackEl.textContent);
+  if(i == 0) {
+    availableAttack = 0;
+  } else {
+    availableAttack += i;
+  }
+  attackEl.textContent = availableAttack;
+}
+
+function invisiblity(i) {
+  const info = document.getElementById(`level${level}`);
+  const invEl = info.querySelector(".invisiblity-status");
+  availableInv = parseInt(invEl.textContent);
+  if(i == 0) {
+    availableInv = 0;
+  } else {
+    availableInv += i;
+  }
+  invEl.textContent = availableInv;
+}
+
+document.addEventListener("keydown", function (e) {
+  if (e.key === "a" || e.key === "A") {
+    if (availableAttack > 0) {
+      attack(-1);
+      // 실제 attack 기능 추가 가능
+    }
+  }
+
+  if (e.key === "s" || e.key === "S") {
+    if (availableDamage > 0) {
+      damageBuff(-1);
+      // 실제 damage buff 기능 추가 가능
+    }
+  }
+
+  if (e.key === "d" || e.key === "D") {
+    if (availableInv > 0) {
+      invisiblity(-1);
+      // 실제 invisibility 기능 추가 가능
+    }
+  }
+});
 
 function gameStart(level) {
   
@@ -669,6 +736,7 @@ function gameStart(level) {
   if (stopWatchId) { clearInterval(stopWatchId); stopWatchId = null; step = 0;}
   if (timerId) { clearInterval(timerId); timerId = null; }
   if (addRowIntervalId) { clearInterval(addRowIntervalId); addRowIntervalId = null; }
+  initItem();
 
   const info = document.getElementById(`level${level}`);
   // 레벨별 life/score/best-score 초기화
