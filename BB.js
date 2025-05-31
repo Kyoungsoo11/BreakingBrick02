@@ -959,7 +959,10 @@ function draw() {
   info.querySelector(".current-score").textContent = score;
 
   if (paused) return;
-  ctx.clearRect(0, 0, canvas.width, canvas.height);    // 캔버스 지우기
+
+  // 배경
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
   // 벽돌
   ctx.fillStyle = brickColor;
   for (let c = 0; c < brickColumnCount; c++) {
@@ -994,11 +997,43 @@ function draw() {
       }
     }
   }
-  // 공
-  ctx.beginPath();
-  ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
-  ctx.fillStyle = ballColor;
-  ctx.fill(); ctx.closePath();
+
+  function drawBall() {
+    ctx.beginPath();
+    ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
+  
+    if (invEnable && damageEnable) {
+      ctx.shadowColor = "red";
+      ctx.shadowBlur = 30;
+      ctx.strokeStyle = ballColor;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    } else if (invEnable) {
+      ctx.shadowBlur = 0;
+      ctx.strokeStyle = ballColor;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    } else {
+      ctx.fillStyle = ballColor;
+  
+      if (damageEnable) {
+        ctx.shadowColor = "red";
+        ctx.shadowBlur = 30;
+      } else {
+        ctx.shadowBlur = 0;
+      }
+  
+      ctx.fill();
+    }
+  
+    ctx.closePath();
+  
+    // 공 외 오브젝트에 영향 없도록 초기화
+    ctx.shadowBlur = 0;
+    ctx.shadowColor = 'transparent';
+  }
+
+  drawBall();
 
   // 충돌
   const nextX = x + dx;
