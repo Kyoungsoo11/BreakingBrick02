@@ -232,6 +232,7 @@ body{
     float: left;
 }
 .game-info{
+	position: relative;
     box-shadow: 0 0 10px white;
 	margin-left: 30px;
     width: 200px;
@@ -241,13 +242,23 @@ body{
     text-align: center;
 	font-size: 30px;
 }
+.game-info div {
+	height: 77px;
+}
 .timer{
-	margin-top:30px;
+	margin-top:28px;
+}
+.controls {
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
+	bottom: 1%;
+	height: 75px;
 }
 .game-main-btn{
 	width:150px;
 	height: 50px;
-	margin-top: 200px;
+	bottom: 10%;
     border: 1px solid white;
 }
 .game-main-btn:hover{
@@ -437,4 +448,19 @@ body{
 	transform: translateX(-50%);
 	width: 800px;
 	height: 500px;
+}
+.attack, .damageBuff, .invisiblity {
+	position: relative;
+}
+#attack, #damageBuff, #invisiblity {
+	position: absolute;
+	height: 50px;
+	width: 50px;
+	left: 23%;
+	top: 10%;
+}
+.attack-status, .damageBuff-status, .invisiblity-status {
+	position: absolute;
+	top: 18%;
+	right: 30%;
 }

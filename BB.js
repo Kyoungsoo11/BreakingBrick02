@@ -354,6 +354,8 @@ function gameToMain() {
   isGameOver=false;
   document.getElementById("gameToMain").style.display = "none";
   document.getElementById("pause").style.display = "none";
+  clearInterval(stopWatchId);
+  step = 0;
   goMain();
   playBgm(0);
   clearInterval(timerId);
@@ -475,10 +477,6 @@ function resume() {
 
 //게임 오버
 function gameOver() {
-  if (startIntervalId) {
-    clearInterval(startIntervalId);
-    startIntervalId = null;
-  }
 
   isGameOver=true;
   const info = document.getElementById(`level${level}`);
@@ -502,6 +500,9 @@ function gameOver() {
       .querySelector(".best-score")
       .textContent = bestScores[level];
     changePage(4);
+
+    clearInterval(stopWatchId);
+    step = 0;
   }
   else {
     // 공의 상태만 게임 처음 시작처럼 초기화
@@ -521,7 +522,8 @@ function restart() {
 }
 function gameClear() { // 게임 클리어 함수. 나중에 텍스트 수정 구현
   document.getElementById("pause").style.display = "none";
-
+  clearInterval(stopWatchId);
+  step = 0;
   paused = true;
 
   // Clear Time 계산 & 반영
@@ -567,7 +569,7 @@ let canvas, ctx, paddleX;
 let bricks = [], brickRowCount, brickWidth;
 let ballRadius = 8, x, y, dx, dy;
 let rightPressed = false, leftPressed = false;
-let timerId = null, addRowIntervalId = null;
+let timerId = null, addRowIntervalId = null, stopWatchId = null;
 let score = 0;
 const bestScores = { 1: 0, 2: 0, 3: 0 };  // 레벨별 bestScores 객체 선언
 
@@ -575,8 +577,9 @@ const charImg = new Image();
 charImg.src = "image/InGameCharacterDefault.png";
 
 // ──────────── 3) 게임 시작 (여기부터 게임 구현) ────────────
-let startIntervalId = null;
+// let startIntervalId = null;
 let left;
+let step;
 
 const itemTypes = [
   { type: "lifeAdd", image: new Image(), outlineColor: "#1bffca" },     // 초록
@@ -663,6 +666,7 @@ function timeAdd() {
 function gameStart(level) {
   
   // 초기화
+  if (stopWatchId) { clearInterval(stopWatchId); stopWatchId = null; step = 0;}
   if (timerId) { clearInterval(timerId); timerId = null; }
   if (addRowIntervalId) { clearInterval(addRowIntervalId); addRowIntervalId = null; }
 
@@ -696,14 +700,16 @@ function gameStart(level) {
   }, 1000);
 
   // 게임 시작 스톱워치
-  setTimeout(() => {
-    makeRandomItemBrick();  // 첫 실행
-    startIntervalId = setInterval(() => {
-      if (!paused) {
+  step = 0;
+  stopWatchId = setInterval(() => {
+    if (!paused) {
+      step++;
+      console.log(step);
+      if((step + 10) % 20 == 0) {
         makeRandomItemBrick();
       }
-    }, 30000);
-  }, 10000);
+    }
+  }, 1000);
 
   // canvas
   const lv = document.getElementById("level" + level);
