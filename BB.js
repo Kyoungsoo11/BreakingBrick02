@@ -522,6 +522,10 @@ function gameOver() {
 }
 function restart() {
   isGameOver=false;
+  clearInterval(stopWatchId);
+  clearInterval(timerId);
+  step = 0;
+  gameFlag = false;
   changePage(2);
 }
 function gameClear() { // 게임 클리어 함수. 나중에 텍스트 수정 구현
