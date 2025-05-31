@@ -482,10 +482,10 @@ function gameOver() {
   isGameOver=true;
   const info = document.getElementById(`level${level}`);
   const lifeEl = info.querySelector(".current-life");
+  let currentLife = parseInt(lifeEl.textContent);
   if(currentLife < 4) {
     paddleWidth -= 40;
   }
-  let currentLife = parseInt(lifeEl.textContent);
   currentLife--;  // 목숨 1 깎기
   lifeEl.textContent = currentLife;
   startDamageSfx();
@@ -590,6 +590,11 @@ let availableInv;
 
 let damageEnable = false;
 let invEnable = false;
+
+let damageCool = false;
+let attackCool = false;
+let invCool = false;
+
 let damageSec;
 let attackSec;
 let invSec;
@@ -673,10 +678,10 @@ function initItem() {
 function lifeAdd() {
   const info = document.getElementById(`level${level}`);
   const lifeEl = info.querySelector(".current-life");
+  let currentLife = parseInt(lifeEl.textContent);
   if(currentLife < 4) {
     paddleWidth += 40;
   }
-  let currentLife = parseInt(lifeEl.textContent);
   currentLife++;  // 목숨 1 추가
   lifeEl.textContent = currentLife;
 }
@@ -732,6 +737,7 @@ function damageTime(i) {
         clearInterval(damageTimerId);
         damageTimerId = null;
         damageEnable = false;
+        damageCool = false;
         sec.style.color = "white";
         sec.textContent = '\'S\'';
       }
@@ -743,6 +749,7 @@ function damageTime(i) {
           sec.style.color = "red";
           damageTime(10);
         } else {
+          damageCool = false;
           sec.style.color = "white";
           sec.textContent = '\'S\'';
         }
@@ -762,12 +769,14 @@ function attackTime(i) {
       if (gameFlag == false) {
         clearInterval(attackTimerId);
         attackTimerId = null;
+        attackCool = false;
         sec.style.color = "white";
         sec.textContent = '\'A\'';
       }
       if (attackSec <= 0) { 
         clearInterval(attackTimerId);
         attackTimerId = null;
+        attackCool = false;
         sec.style.color = "white";
         sec.textContent = '\'A\'';
       }
@@ -786,6 +795,7 @@ function invTime(i) {
         clearInterval(invTimerId);
         invTimerId = null;
         invEnable = false;
+        invCool = false;
         sec.style.color = "white";
         sec.textContent = '\'D\'';
       }
@@ -797,6 +807,7 @@ function invTime(i) {
           sec.style.color = "red";
           invTime(15);
         } else {
+          invCool = false;
           sec.style.color = "white";
           sec.textContent = '\'D\'';
         }
@@ -807,15 +818,17 @@ function invTime(i) {
 
 document.addEventListener("keydown", function (e) {
   if (e.key === "a" || e.key === "A") {
-    if (availableAttack > 0) {
+    if (availableAttack > 0 && attackCool == false) {
       attack(-1);
+      attackCool = true;
       attackTime(10);
       // 실제 attack 기능 추가 가능
     }
   }
 
   if (e.key === "s" || e.key === "S") {
-    if (availableDamage > 0) {
+    if (availableDamage > 0 && damageCool == false) {
+      damageCool = true;
       damageBuff(-1);
       damageEnable = true;
       damageTime(30);
@@ -824,9 +837,10 @@ document.addEventListener("keydown", function (e) {
   }
 
   if (e.key === "d" || e.key === "D") {
-    if (availableInv > 0) {
-      invisiblity(-1);
+    if (availableInv > 0 && invCool == false) {
       invEnable = true;
+      invCool = true;
+      invisiblity(-1);
       invTime(10);
       // 실제 invisibility 기능 추가 가능
     }
