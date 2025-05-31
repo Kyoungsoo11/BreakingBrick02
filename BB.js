@@ -1016,18 +1016,20 @@ function draw() {
       if (b.status &&
         x > bx && x < bx + bw &&
         y > by && y < by + bh) {
-          startBumpSfx();
+        startBumpSfx();
 
         // 이전 위치로 방향 판정
-        const prevX = x - dx;
-        const prevY = y - dy;
+        if(invEnable == false) {
+          const prevX = x - dx;
+          const prevY = y - dy;
 
-        if (prevY <= by || prevY >= by + bh) {
-          dy = -dy;  // 위아래에서 충돌
-        } else {
-          dx = -dx;  // 좌우에서 충돌
+          if (prevY <= by || prevY >= by + bh) {
+            dy = -dy;  // 위아래에서 충돌
+          } else {
+            dx = -dx;  // 좌우에서 충돌
+          }
         }
-
+        
         b.status = 0;
         if(b.isItem) {
           if(damageEnable == true) {
