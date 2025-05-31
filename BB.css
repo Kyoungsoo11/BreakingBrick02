@@ -460,11 +460,13 @@ body{
 	top: 10%;
 }
 .attack-status, .damageBuff-status, .invisiblity-status {
+	text-align: center;
 	position: absolute;
 	top: 18%;
-	right: 39%;
+	right: 41%;
 }
 .attack-time, .damageBuff-time, .invisiblity-time {
+	text-align: center;
 	position: absolute;
 	top: 18%;
 	right: 14%;
