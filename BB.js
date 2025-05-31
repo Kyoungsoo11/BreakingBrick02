@@ -7,7 +7,7 @@ const keyboard = new Audio("sound/keyboard.mp3");
 clickSfx.volume = 0.5; // 클릭 효과음 초기값 설정
 let clickGameToMain = false; // pause랑 main 안 겹치게 체크
 let volume = 0.5; // 초기 볼륨.
-let isGameOver=false;
+let isGameOver = false;
 
 let introParagraphs;
 let epilogueParagraphs;
@@ -318,9 +318,9 @@ function goLv3() {
   changePage(2);
 }
 function goNextLevel() { //클리어 후 다음 레벨로 
-  if(level==3){ //난이도 3 클리어 후 ui변경된거 다시 초기화
-    document.getElementById("next-level-btn").innerHTML="Next Level";
-    document.getElementById("game-clear-main-btn").style.display="block";
+  if (level == 3) { //난이도 3 클리어 후 ui변경된거 다시 초기화
+    document.getElementById("next-level-btn").innerHTML = "Next Level";
+    document.getElementById("game-clear-main-btn").style.display = "block";
   }
   document.getElementById("game-clear").style.display = "none";
   if (level >= 3) {
@@ -351,7 +351,7 @@ function overToMain() {
 function gameToMain() {
   clickGameToMain = false;
   paused = false;
-  isGameOver=false;
+  isGameOver = false;
   document.getElementById("gameToMain").style.display = "none";
   document.getElementById("pause").style.display = "none";
   clearInterval(stopWatchId);
@@ -364,8 +364,8 @@ function gameToMain() {
 function gameToMainNo() {
   clickGameToMain = false;
   document.getElementById("gameToMain").style.display = "none";
-  if(!isGameOver){
-  requestAnimationFrame(draw);
+  if (!isGameOver) {
+    requestAnimationFrame(draw);
   }
 }
 function storyToMain() {
@@ -419,7 +419,7 @@ const bose1Bgm = new Audio("sound/lv1bose.mp3");
 const bose2Bgm = new Audio("sound/lv2bose.mp3");
 const bose3Bgm = new Audio("sound/lv3bose.mp3");
 const overBgm = new Audio("sound/gameover.mp3");
-const bgmList = [mainBgm, lv1Bgm, lv2Bgm, lv3Bgm, IntroSound1, IntroSound2, epilogueSound,bose1Bgm,bose2Bgm,bose3Bgm,overBgm]; //난이도랑 인덱스랑 맞춰놓음. 789가 bosebgm
+const bgmList = [mainBgm, lv1Bgm, lv2Bgm, lv3Bgm, IntroSound1, IntroSound2, epilogueSound, bose1Bgm, bose2Bgm, bose3Bgm, overBgm]; //난이도랑 인덱스랑 맞춰놓음. 789가 bosebgm
 let currentBgm = mainBgm; // 현재 재생 중인 음악 추적용
 let tempVolume = 0.5;
 bgmList.forEach(bgm => {
@@ -479,11 +479,11 @@ function resume() {
 //게임 오버
 function gameOver() {
 
-  isGameOver=true;
+  isGameOver = true;
   const info = document.getElementById(`level${level}`);
   const lifeEl = info.querySelector(".current-life");
   let currentLife = parseInt(lifeEl.textContent);
-  if(currentLife < 4) {
+  if (currentLife < 4) {
     paddleWidth -= 40;
   }
   currentLife--;  // 목숨 1 깎기
@@ -521,7 +521,7 @@ function gameOver() {
   }
 }
 function restart() {
-  isGameOver=false;
+  isGameOver = false;
   clearInterval(stopWatchId);
   clearInterval(timerId);
   step = 0;
@@ -554,9 +554,9 @@ function gameClear() { // 게임 클리어 함수. 나중에 텍스트 수정 �
   }
   document.querySelector("#game-clear .best-score").textContent = bestScores[level];
 
-  if(level==3){ // 난이도 3 클리어일 경우 next버튼만 나오게.
-    document.getElementById("next-level-btn").innerHTML="Next";
-    document.getElementById("game-clear-main-btn").style.display="none";
+  if (level == 3) { // 난이도 3 클리어일 경우 next버튼만 나오게.
+    document.getElementById("next-level-btn").innerHTML = "Next";
+    document.getElementById("game-clear-main-btn").style.display = "none";
   }
   document.getElementById("game-clear").style.display = "block";
 }
@@ -678,7 +678,7 @@ function lifeAdd() {
   const info = document.getElementById(`level${level}`);
   const lifeEl = info.querySelector(".current-life");
   let currentLife = parseInt(lifeEl.textContent);
-  if(currentLife < 4) {
+  if (currentLife < 4) {
     paddleWidth += 40;
   }
   currentLife++;  // 목숨 1 추가
@@ -693,7 +693,7 @@ function damageBuff(i) {
   const info = document.getElementById(`level${level}`);
   const damageEl = info.querySelector(".damageBuff-status");
   availableDamage = parseInt(damageEl.textContent);
-  if(i == 0) {
+  if (i == 0) {
     availableDamage = 0;
   } else {
     availableDamage += i;
@@ -705,7 +705,7 @@ function attack(i) {
   const info = document.getElementById(`level${level}`);
   const attackEl = info.querySelector(".attack-status");
   availableAttack = parseInt(attackEl.textContent);
-  if(i == 0) {
+  if (i == 0) {
     availableAttack = 0;
   } else {
     availableAttack += i;
@@ -717,7 +717,7 @@ function invisiblity(i) {
   const info = document.getElementById(`level${level}`);
   const invEl = info.querySelector(".invisiblity-status");
   availableInv = parseInt(invEl.textContent);
-  if(i == 0) {
+  if (i == 0) {
     availableInv = 0;
   } else {
     availableInv += i;
@@ -740,7 +740,7 @@ function damageTime(i) {
         sec.style.color = "white";
         sec.textContent = '\'S\'';
       }
-      if (damageSec <= 0) { 
+      if (damageSec <= 0) {
         clearInterval(damageTimerId);
         damageTimerId = null;
         if (damageEnable == true) {
@@ -772,7 +772,7 @@ function attackTime(i) {
         sec.style.color = "white";
         sec.textContent = '\'A\'';
       }
-      if (attackSec <= 0) { 
+      if (attackSec <= 0) {
         clearInterval(attackTimerId);
         attackTimerId = null;
         attackCool = false;
@@ -849,7 +849,7 @@ document.addEventListener("keydown", function (e) {
 function gameStart(level) {
   gameFlag = true;
   // 초기화
-  if (stopWatchId) { clearInterval(stopWatchId); stopWatchId = null; step = 0;}
+  if (stopWatchId) { clearInterval(stopWatchId); stopWatchId = null; step = 0; }
   if (timerId) { clearInterval(timerId); timerId = null; }
   if (addRowIntervalId) { clearInterval(addRowIntervalId); addRowIntervalId = null; }
   initItem();
@@ -889,7 +889,7 @@ function gameStart(level) {
     if (!paused) {
       step++;
       console.log(step);
-      if((step + 10) % 20 == 0) {
+      if ((step + 10) % 20 == 0) {
         makeRandomItemBrick();
       }
     }
@@ -970,16 +970,16 @@ function draw() {
       if (b.status) {
         const bx = c * brickWidth;
         const by = r * brickHeight;
-  
+
         // 배경색 결정
         if (b.isItem) {
           ctx.fillStyle = "black";  // 아이템 벽돌 내부는 검정
         } else {
           ctx.fillStyle = brickColor;  // 일반 벽돌 색
         }
-  
+
         ctx.fillRect(bx + 1, by + 1, brickWidth - 2, brickHeight - 2);
-  
+
         if (b.isItem) {
           // 아이템 벽돌일 때만 테두리 그림
           ctx.strokeStyle = b.outlineColor;
@@ -1000,7 +1000,7 @@ function draw() {
   function drawBall() {
     ctx.beginPath();
     ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
-  
+
     if (invEnable && damageEnable) {
       ctx.shadowColor = "red";
       ctx.shadowBlur = 30;
@@ -1014,19 +1014,19 @@ function draw() {
       ctx.stroke();
     } else {
       ctx.fillStyle = ballColor;
-  
+
       if (damageEnable) {
         ctx.shadowColor = "red";
         ctx.shadowBlur = 30;
       } else {
         ctx.shadowBlur = 0;
       }
-  
+
       ctx.fill();
     }
-  
+
     ctx.closePath();
-  
+
     // 공 외 오브젝트에 영향 없도록 초기화
     ctx.shadowBlur = 0;
     ctx.shadowColor = 'transparent';
@@ -1053,7 +1053,7 @@ function draw() {
         startBumpSfx();
 
         // 이전 위치로 방향 판정
-        if(invEnable == false) {
+        if (invEnable == false) {
           const prevX = x - dx;
           const prevY = y - dy;
 
@@ -1063,17 +1063,17 @@ function draw() {
             dx = -dx;  // 좌우에서 충돌
           }
         }
-        
+
         b.status = 0;
-        if(b.isItem) {
-          if(damageEnable == true) {
+        if (b.isItem) {
+          if (damageEnable == true) {
             score += 300;
           } else {
             score += 200;
           }
           applyItemEffect(b.itemType);
         } else {
-          if(damageEnable == true) {
+          if (damageEnable == true) {
             score += 200;
           } else {
             score += 100;
@@ -1109,17 +1109,17 @@ function draw() {
   }
   // 3) 패들 충돌 (공이 위에서 내려올 때만)
   else if (dy > 0                             // ↓ 방향일 때
-          && y + ballRadius <= paddleTop      // 현재는 패들 면 위에 있고
-          && nextY + ballRadius >= paddleTop  // 다음 프레임에 패들 면을 넘길 때
-        ) {
-  // 공이 패들 위에 있을 때만 X범위 체크
-  if (nextX > paddleX && nextX < paddleX + paddleWidth) {
-     startShieldSfx();
-     dy = -dy;
-     // 튕긴 후 위치 보정
-     y = paddleTop - ballRadius;
-   }
- }
+    && y + ballRadius <= paddleTop      // 현재는 패들 면 위에 있고
+    && nextY + ballRadius >= paddleTop  // 다음 프레임에 패들 면을 넘길 때
+  ) {
+    // 공이 패들 위에 있을 때만 X범위 체크
+    if (nextX > paddleX && nextX < paddleX + paddleWidth) {
+      startShieldSfx();
+      dy = -dy;
+      // 튕긴 후 위치 보정
+      y = paddleTop - ballRadius;
+    }
+  }
 
   // 4) 바닥 충돌 (항상 검사)
   if (nextY + ballRadius > canvas.height) {
@@ -1142,7 +1142,7 @@ function draw() {
   x += dx; y += dy;
   requestAnimationFrame(draw);
 
-  if(damageEnable) {
+  if (damageEnable) {
     info.querySelector(".current-score").style.color = "lime";
   } else {
     info.querySelector(".current-score").style.color = "white";
