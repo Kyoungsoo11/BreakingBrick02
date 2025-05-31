@@ -759,9 +759,9 @@ function damageTime(i) {
 }
 
 function attackTime(i) {
-  sec.style.color = "red";
   attackSec = i;
   const sec = document.getElementById("level" + level).querySelector(".attack-time");
+  sec.style.color = "red";
   sec.textContent = attackSec;
   attackTimerId = setInterval(() => {
     if (!paused) {
@@ -828,9 +828,9 @@ document.addEventListener("keydown", function (e) {
 
   if (e.key === "s" || e.key === "S") {
     if (availableDamage > 0 && damageCool == false) {
+      damageEnable = true;
       damageCool = true;
       damageBuff(-1);
-      damageEnable = true;
       damageTime(30);
       // 실제 damage buff 기능 추가 가능
     }
@@ -1138,5 +1138,11 @@ function draw() {
   // 이동
   x += dx; y += dy;
   requestAnimationFrame(draw);
+
+  if(damageEnable) {
+    info.querySelector(".current-score").style.color = "lime";
+  } else {
+    info.querySelector(".current-score").style.color = "white";
+  }
 }
 
