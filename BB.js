@@ -321,7 +321,13 @@ function goNextLevel() { //클리어 후 다음 레벨로
   projectiles = [];
   gameFlag = false;
 
-  if (level == 3) { //난이도 3 클리어 후 ui변경된거 다시 초기화
+  // 보스 상태 초기화
+  boss.active = false;
+  boss.hp = 0;
+  if (boss.frameTimer) clearInterval(boss.frameTimer);
+  if (boss.moveTimer) clearInterval(boss.moveTimer);
+
+  if (level == 3) {
     document.getElementById("next-level-btn").innerHTML = "Next Level";
     document.getElementById("game-clear-main-btn").style.display = "block";
   }
@@ -329,9 +335,9 @@ function goNextLevel() { //클리어 후 다음 레벨로
   if (level >= 3) {
     paused = false;
     changePage(6); //에필로그 실행
-    playBgm(6); //나중에 에필로그 음악으로 변경 혹은 changePage에 추가하고 이 줄 삭제
+    playBgm(6);
   } else {
-    changePage(0); //현재 페이지 일단 숨기고 레벨 올리고 다시 페이지 변경인데 게임중에 누르니까 이상함 나중에 게임 완성되면 확인 필요
+    changePage(0);
     level++;
     changePage(2);
     paused = false;
@@ -1183,20 +1189,6 @@ function draw() {
     }
   }
 
-  let allCleared = true;
-  for (let c = 0; c < brickColumnCount; c++) {
-    for (let r = 0; r < bricks[c].length; r++) {
-      if (bricks[c][r].status === 1) {
-        allCleared = false;
-        break;
-      }
-    }
-    if (!allCleared) break;
-  }
-  if (allCleared) {
-    gameClear();
-    return;  // draw 루프 종료
-  }
   if (checkBossCollision(nextX, nextY, ballRadius)) {
     // 보스의 중심 좌표 계산
     const bossCenterX = boss.x + boss.width / 2;
@@ -1300,9 +1292,13 @@ let boss = {
 
 // === 보스 프레임 로딩 ===
 function loadBossFrames() {
+  boss.imageFrames = [];
+  let folder = "boss1";
+  if (level === 2) folder = "boss2";
+  if (level === 3) folder = "boss3";
   for (let i = 1; i <= 4; i++) {
     const img = new Image();
-    img.src = `image/boss1/frame${i}.png`;
+    img.src = `image/${folder}/frame${i}.png`;
     boss.imageFrames.push(img);
   }
 }
@@ -1315,9 +1311,18 @@ function spawnBoss() {
   }
 
   boss.active = true;
-  boss.hp = 10;
-  boss.width = brickWidth * 2; // ← 여기 추가
-  boss.height = brickHeight * 4; // ← 여기 추가
+  // 레벨별 보스 체력 및 크기 설정
+  if (level === 1) {
+    boss.hp = 10;
+    boss.width = brickWidth * 2;
+  } else if (level === 2) {
+    boss.hp = 20;
+    boss.width = brickWidth * 4;
+  } else if (level === 3) {
+    boss.hp = 30;
+    boss.width = brickWidth * 4;
+  }
+  boss.height = brickHeight * 4;
   boss.x = (canvas.width - boss.width) / 2;
   boss.y = brickHeight * 3;
   boss.frameIndex = 0;
@@ -1328,14 +1333,16 @@ function spawnBoss() {
     boss.frameIndex = (boss.frameIndex + 1) % boss.imageFrames.length;
   }, 400);
 
-  // 이동
+  // 이동: 레벨 1만 움직임, 2·3은 정지
   if (boss.moveTimer) clearInterval(boss.moveTimer);
-  boss.moveTimer = setInterval(() => {
-    boss.x += boss.dx * boss.direction;
-    if (boss.x <= 0 || boss.x + boss.width >= canvas.width) {
-      boss.direction *= -1;
-    }
-  }, 20);
+  if (level === 1) {
+    boss.moveTimer = setInterval(() => {
+      boss.x += boss.dx * boss.direction;
+      if (boss.x <= 0 || boss.x + boss.width >= canvas.width) {
+        boss.direction *= -1;
+      }
+    }, 20);
+  }
 }
 
 // === 보스 그리기 ===
@@ -1352,7 +1359,10 @@ function drawBoss() {
 function drawBossHpBar() {
   const barWidth = boss.width;
   const barHeight = 10;
-  const filled = barWidth * (boss.hp / 10);
+  let maxHp = 10;
+  if (level === 2) maxHp = 20;
+  if (level === 3) maxHp = 30;
+  const filled = barWidth * (boss.hp / maxHp);
   ctx.fillStyle = "red";
   ctx.fillRect(boss.x, boss.y + boss.height + 5, filled, barHeight);
   ctx.strokeStyle = "white";
