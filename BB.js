@@ -438,7 +438,11 @@ bgmList.forEach(bgm => {
 function playBgm(i) { //음악 재생 함수
   if (currentBgm) currentBgm.pause();
   currentBgm = bgmList[i];
+  if(i>6&&i<10){ //볼륨조절용
+    currentBgm.volume = volume*0.5;
+  }else{
   currentBgm.volume = volume;
+  }
   currentBgm.currentTime = 0;
   currentBgm.play();
 }
@@ -557,9 +561,9 @@ function gameClear() { // 게임 클리어 함수. 나중에 텍스트 수정 �
 
   scoreSum=left*10+life*300;
   // Current Score 반영
-  document.querySelector("#game-clear .current-score").textContent = score+"\t· · ·  "+scoreSum+" + "+score+" = "+(scoreSum+score);
+  document.querySelector("#game-clear .current-score").textContent = score+"\t· · ·  + "+scoreSum+" + 5000"+" = "+(scoreSum+score+5000);
 
-  score+=scoreSum;
+  score+=scoreSum+5000;
   scoreSum=score-bestScores[level]; 
   let plusMinus=""
   // Best Score 갱신 & 반영
@@ -1339,12 +1343,15 @@ function spawnBoss() {
   if (level === 1) {
     boss.hp = 10;
     boss.width = brickWidth * 2;
+    playBgm(7);
   } else if (level === 2) {
     boss.hp = 20;
     boss.width = brickWidth * 4;
+    playBgm(8);
   } else if (level === 3) {
     boss.hp = 30;
     boss.width = brickWidth * 4;
+    playBgm(9);
   }
 
   boss.height = boss.width; // 정사각형으로 설정
