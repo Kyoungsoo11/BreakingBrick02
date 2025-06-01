@@ -318,6 +318,8 @@ function goLv3() {
   changePage(2);
 }
 function goNextLevel() { //클리어 후 다음 레벨로 
+  projectiles = []; 
+
   if (level == 3) { //난이도 3 클리어 후 ui변경된거 다시 초기화
     document.getElementById("next-level-btn").innerHTML = "Next Level";
     document.getElementById("game-clear-main-btn").style.display = "block";
