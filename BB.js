@@ -318,7 +318,7 @@ function goLv3() {
   changePage(2);
 }
 function goNextLevel() { //클리어 후 다음 레벨로 
-  projectiles = []; 
+  projectiles = [];
 
   if (level == 3) { //난이도 3 클리어 후 ui변경된거 다시 초기화
     document.getElementById("next-level-btn").innerHTML = "Next Level";
@@ -823,7 +823,7 @@ document.addEventListener("keydown", function (e) {
       attack(-1);
       attackCool = true;
       attackTime(10);
-      
+
       const projY = canvas.height - paddleHeight - imgH;
       const projXCenter = paddleX + paddleWidth / 2;
 
@@ -857,7 +857,7 @@ function createProjectile(x, y) {
     y,
     radius: paddleWidth / 2,
     speed: 8,
-    projLife: 120, 
+    projLife: 120,
   };
 }
 
@@ -903,12 +903,20 @@ function gameStart(level) {
   stopWatchId = setInterval(() => {
     if (!paused) {
       step++;
-      console.log(step);
+
       if ((step + 10) % 15 == 0) {
         makeRandomItemBrick();
       }
+
+      // 보스 등장 조건 (레벨1이고, 아직 보스 안나왔고, 남은 시간이 150 이하)
+      if (level == 1 && !boss.active && left <= 150) {
+        console.log("보스 등장 조건 충족");
+        spawnBoss();
+      }
     }
   }, 1000);
+
+
 
   // canvas
   const lv = document.getElementById("level" + level);
@@ -943,6 +951,12 @@ function gameStart(level) {
   // 시작
   paused = false;
   requestAnimationFrame(draw);  // draw 함수에서 재호출
+
+  //전갈갈
+  if (level === 1) {
+    loadBossFrames();  // 전갈 보스 이미지 프레임 로딩
+  }
+
 }
 
 // 벽돌 배열 초기화
@@ -965,7 +979,6 @@ function addBrickRow() {
 
 // 그리기 루프
 function draw() {
-
   const info = document.getElementById(`level${level}`);
   info.querySelector(".current-score").textContent = score;
 
@@ -1047,7 +1060,7 @@ function draw() {
   function drawProjectiles() {
     for (let i = projectiles.length - 1; i >= 0; i--) {
       const p = projectiles[i];
-  
+
       // 반원 위쪽 방향 그리기
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.radius, Math.PI, 0); // 반원
@@ -1055,29 +1068,29 @@ function draw() {
       ctx.lineWidth = 2;
       ctx.stroke();
       ctx.closePath();
-  
+
       // 위로 이동
       p.y -= p.speed;
       p.projLife--;
-  
+
       // 벽돌 충돌 처리
       for (let c = 0; c < brickColumnCount; c++) {
         for (let r = 0; r < bricks[c].length; r++) {
           let b = bricks[c][r];
           if (!b.status) continue;
-    
+
           const bx = c * brickWidth;
           const by = r * brickHeight;
           const bw = brickWidth;
           const bh = brickHeight;
           const pr = p.radius;
-    
+
           if (
             p.x + pr > bx && p.x - pr < bx + bw &&
             p.y + pr > by && p.y - pr < by + bh
           ) {
             startBumpSfx();
-            if(invEnable == false) {
+            if (invEnable == false) {
               projectiles.splice(i, 1);
             }
             b.status = 0;
@@ -1100,7 +1113,13 @@ function draw() {
           }
         }
       }
-  
+      if (checkBossCollision(p.x, p.y, p.radius)) {
+        if (!invEnable) {
+          projectiles.splice(i, 1);
+        }
+      }
+
+
       if (p.y < -10 || p.projLife <= 0) {
         projectiles.splice(i, 1);
       }
@@ -1176,6 +1195,10 @@ function draw() {
     gameClear();
     return;  // draw 루프 종료
   }
+  if (checkBossCollision(nextX, nextY, ballRadius)) {
+    dy = -dy;
+  }
+
 
   // 1) 좌우 벽 충돌
   if (nextX + ballRadius > canvas.width || nextX - ballRadius < 0) {
@@ -1215,6 +1238,10 @@ function draw() {
   ctx.beginPath();
   ctx.rect(paddleX, canvas.height - paddleHeight - imgH + 6, paddleWidth, paddleHeight);
   ctx.fillStyle = "white"; ctx.fill(); ctx.closePath();
+  //보스 그리기
+  if (boss.active) {
+    drawBoss();
+  }
 
   // 이동
   x += dx; y += dy;
@@ -1227,3 +1254,108 @@ function draw() {
   }
 }
 
+// === 보스 관련 코드 ===
+// === 전역 변수 ===
+let boss = {
+  active: false,
+  hp: 10,
+  x: 100,
+  y: brickHeight * 3,
+  width: 0,
+  height: 0,
+  dx: 2,
+  direction: 1,
+  frameIndex: 0,
+  imageFrames: [],
+  frameTimer: null,
+  moveTimer: null
+};
+
+// === 보스 프레임 로딩 ===
+function loadBossFrames() {
+  for (let i = 1; i <= 4; i++) {
+    const img = new Image();
+    img.src = `image/boss1/frame${i}.png`;
+    boss.imageFrames.push(img);
+  }
+}
+
+// === 보스 등장 ===
+function spawnBoss() {
+  console.log("보스 등장!");
+  for (let c = 0; c < brickColumnCount; c++) {
+    bricks[c].splice(3, 4);  // 3~6번째 줄 제거
+  }
+
+  boss.active = true;
+  boss.hp = 10;
+  boss.width = brickWidth * 2; // ← 여기 추가
+  boss.height = brickHeight * 4; // ← 여기 추가
+  boss.x = (canvas.width - boss.width) / 2;
+  boss.y = brickHeight * 3;
+  boss.frameIndex = 0;
+
+  // 애니메이션
+  if (boss.frameTimer) clearInterval(boss.frameTimer);
+  boss.frameTimer = setInterval(() => {
+    boss.frameIndex = (boss.frameIndex + 1) % boss.imageFrames.length;
+  }, 400);
+
+  // 이동
+  if (boss.moveTimer) clearInterval(boss.moveTimer);
+  boss.moveTimer = setInterval(() => {
+    boss.x += boss.dx * boss.direction;
+    if (boss.x <= 0 || boss.x + boss.width >= canvas.width) {
+      boss.direction *= -1;
+    }
+  }, 20);
+}
+
+// === 보스 그리기 ===
+function drawBoss() {
+  if (!boss.active || boss.imageFrames.length === 0) return;
+  const img = boss.imageFrames[boss.frameIndex];
+  if (img.complete) {
+    ctx.drawImage(img, boss.x, boss.y, boss.width, boss.height);
+    drawBossHpBar();
+  }
+}
+
+// === 체력바 그리기 ===
+function drawBossHpBar() {
+  const barWidth = boss.width;
+  const barHeight = 10;
+  const filled = barWidth * (boss.hp / 10);
+  ctx.fillStyle = "red";
+  ctx.fillRect(boss.x, boss.y + boss.height + 5, filled, barHeight);
+  ctx.strokeStyle = "white";
+  ctx.strokeRect(boss.x, boss.y + boss.height + 5, barWidth, barHeight);
+}
+
+// === 충돌 판정 ===
+function checkBossCollision(x, y, r) {
+  if (!boss.active) return false;
+  const bx = boss.x, by = boss.y, bw = boss.width, bh = boss.height;
+  const hit = (
+    x + r > bx && x - r < bx + bw &&
+    y + r > by && y - r < by + bh
+  );
+  if (hit) {
+    startBossHitSfx();
+    boss.hp--;
+    if (boss.hp <= 0) {
+      boss.active = false;
+      clearInterval(boss.frameTimer);
+      clearInterval(boss.moveTimer);
+      gameClear(); // 클리어 처리
+    }
+  }
+  return hit;
+}
+
+// === 사운드 ===
+function startBossHitSfx() {
+  const sfx = new Audio("sound/boss_hit.mp3");
+  sfx.volume = volume;
+  sfx.play();
+}
