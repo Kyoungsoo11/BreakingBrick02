@@ -1117,6 +1117,7 @@ function draw() {
       if (checkBossCollision(p.x, p.y, p.radius)) {
         if (!invEnable) {
           projectiles.splice(i, 1);
+          continue; // 보스와 충돌 시 공 제거
         }
       }
 
@@ -1197,7 +1198,32 @@ function draw() {
     return;  // draw 루프 종료
   }
   if (checkBossCollision(nextX, nextY, ballRadius)) {
-    dy = -dy;
+    // 보스의 중심 좌표 계산
+    const bossCenterX = boss.x + boss.width / 2;
+    const bossCenterY = boss.y + boss.height / 2;
+
+    // 공의 다음 위치와 보스 중심의 차이
+    const diffX = nextX - bossCenterX;
+    const diffY = nextY - bossCenterY;
+
+    // 충돌 방향 판정: x축/ y축 중 더 큰 쪽으로 반사
+    if (Math.abs(diffX) > Math.abs(diffY)) {
+      dx = -dx; // 좌우 반사
+      // 위치 보정: 좌우로 밀어냄
+      if (diffX > 0) {
+        x = boss.x + boss.width + ballRadius + 1;
+      } else {
+        x = boss.x - ballRadius - 1;
+      }
+    } else {
+      dy = -dy; // 위아래 반사
+      // 위치 보정: 위아래로 밀어냄
+      if (diffY > 0) {
+        y = boss.y + boss.height + ballRadius + 1;
+      } else {
+        y = boss.y - ballRadius - 1;
+      }
+    }
   }
 
 
