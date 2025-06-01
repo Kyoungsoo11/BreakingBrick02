@@ -623,11 +623,6 @@ itemTypes[2].image.src = "image/item/DamageBuff.jpg";
 itemTypes[3].image.src = "image/item/Attack.jpg";
 itemTypes[4].image.src = "image/item/Invisiblity.jpg";
 
-function getRandomOutlineColor() {
-  const colors = ["#1bffca", "#f6ff08"]; // 즉발형, 저장형 나뉨
-  return colors[Math.floor(Math.random() * colors.length)];
-}
-
 function makeRandomItemBrick() {
   const activeBricks = [];
   for (let c = 0; c < brickColumnCount; c++) {
@@ -688,7 +683,7 @@ function lifeAdd() {
   if (currentLife < 4) {
     paddleWidth += 40;
   }
-  currentLife++;  // 목숨 1 추가
+  currentLife++;
   lifeEl.textContent = currentLife;
 }
 
