@@ -602,6 +602,11 @@ let damageTimerId;
 let attackTimerId;
 let invTimerId;
 
+let projectiles = [];
+
+const imgW = 50;  // 캐릭터 너비
+const imgH = 60;  // 캐릭터 높이
+
 const itemTypes = [
   { type: "lifeAdd", image: new Image(), outlineColor: "#1bffca" },     // 초록
   { type: "timeAdd", image: new Image(), outlineColor: "#1bffca" },  // 초록
@@ -821,7 +826,12 @@ document.addEventListener("keydown", function (e) {
       attack(-1);
       attackCool = true;
       attackTime(10);
-      // 실제 attack 기능 추가 가능
+      
+      const projY = canvas.height - paddleHeight - imgH;
+      const projXCenter = paddleX + paddleWidth / 2;
+
+      projectiles.push(createProjectile(projXCenter, projY));
+      projectiles.push(createProjectile(projXCenter, projY - 30));
     }
   }
 
@@ -831,7 +841,6 @@ document.addEventListener("keydown", function (e) {
       damageCool = true;
       damageBuff(-1);
       damageTime(30);
-      // 실제 damage buff 기능 추가 가능
     }
   }
 
@@ -840,11 +849,20 @@ document.addEventListener("keydown", function (e) {
       invEnable = true;
       invCool = true;
       invisiblity(-1);
-      invTime(10);
-      // 실제 invisibility 기능 추가 가능
+      invTime(20);
     }
   }
 });
+
+function createProjectile(x, y) {
+  return {
+    x,
+    y,
+    radius: paddleWidth / 2,
+    speed: 8,
+    projLife: 120, 
+  };
+}
 
 function gameStart(level) {
   gameFlag = true;
@@ -951,9 +969,6 @@ function addBrickRow() {
 // 그리기 루프
 function draw() {
 
-  const imgW = 50;  // 캐릭터 너비
-  const imgH = 60;  // 캐릭터 높이
-
   const info = document.getElementById(`level${level}`);
   info.querySelector(".current-score").textContent = score;
 
@@ -1032,7 +1047,73 @@ function draw() {
     ctx.shadowColor = 'transparent';
   }
 
+  function drawProjectiles() {
+    for (let i = projectiles.length - 1; i >= 0; i--) {
+      const p = projectiles[i];
+  
+      // 반원 위쪽 방향 그리기
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.radius, Math.PI, 0); // 반원
+      ctx.strokeStyle = ballColor;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.closePath();
+  
+      // 위로 이동
+      p.y -= p.speed;
+      p.projLife--;
+  
+      // 벽돌 충돌 처리
+      for (let c = 0; c < brickColumnCount; c++) {
+        for (let r = 0; r < bricks[c].length; r++) {
+          let b = bricks[c][r];
+          if (!b.status) continue;
+    
+          const bx = c * brickWidth;
+          const by = r * brickHeight;
+          const bw = brickWidth;
+          const bh = brickHeight;
+          const pr = p.radius;
+    
+          if (
+            p.x + pr > bx && p.x - pr < bx + bw &&
+            p.y + pr > by && p.y - pr < by + bh
+          ) {
+            b.status = 0;
+            if (b.isItem) {
+              if (damageEnable == true) {
+                score += 300;
+              } else {
+                score += 200;
+              }
+              applyItemEffect(b.itemType);
+            } else {
+              if (damageEnable == true) {
+                score += 200;
+              } else {
+                score += 100;
+              }
+            }
+            startBumpSfx();
+            info.querySelector(".current-score").textContent = score;
+            if(invEnable == false) {
+              projectiles.splice(i, 1);
+            }
+            break;
+          }
+        }
+      }
+  
+      if (p.y < -10 || p.projLife <= 0) {
+        projectiles.splice(i, 1);
+      }
+    }
+  }
+
   drawBall();
+  if (projectiles.length > 0) {
+    drawProjectiles();
+  }
 
   // 충돌
   const nextX = x + dx;
