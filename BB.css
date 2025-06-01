@@ -164,7 +164,6 @@ body {
   display: flex;
   flex-direction: column;
   align-items: flex-start; /* 왼쪽 정렬 */
-  margin-right: 120px;
 }
 
 .result-number span {

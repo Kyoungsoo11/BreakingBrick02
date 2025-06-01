@@ -424,11 +424,11 @@ const lv3Bgm = new Audio("sound/lv3.mp3");
 const IntroSound1 = new Audio("sound/IntroSound1.mp3");
 const IntroSound2 = new Audio("sound/IntroSound2.mp3");
 const epilogueSound = new Audio("sound/epilogueSound.mp3");
-const bose1Bgm = new Audio("sound/lv1bose.mp3");
-const bose2Bgm = new Audio("sound/lv2bose.mp3");
-const bose3Bgm = new Audio("sound/lv3bose.mp3");
+const boss1Bgm = new Audio("sound/lv1boss.mp3");
+const boss2Bgm = new Audio("sound/lv2boss.mp3");
+const boss3Bgm = new Audio("sound/lv3boss.mp3");
 const overBgm = new Audio("sound/gameover.mp3");
-const bgmList = [mainBgm, lv1Bgm, lv2Bgm, lv3Bgm, IntroSound1, IntroSound2, epilogueSound, bose1Bgm, bose2Bgm, bose3Bgm, overBgm]; //난이도랑 인덱스랑 맞춰놓음. 789가 bosebgm
+const bgmList = [mainBgm, lv1Bgm, lv2Bgm, lv3Bgm, IntroSound1, IntroSound2, epilogueSound, boss1Bgm, boss2Bgm, boss3Bgm, overBgm]; //난이도랑 인덱스랑 맞춰놓음. 789가 bossbgm
 let currentBgm = mainBgm; // 현재 재생 중인 음악 추적용
 let tempVolume = 0.5;
 bgmList.forEach(bgm => {
@@ -542,9 +542,10 @@ function gameClear() { // 게임 클리어 함수. 나중에 텍스트 수정 �
   clearInterval(stopWatchId);
   paused = true;
 
+  let scoreSum=0;
   // Clear Time 계산 & 반영
   const clearTime = step;
-  document.getElementById("clear-time").textContent = clearTime;
+  document.getElementById("clear-time").textContent = clearTime+"\t· · ·  "+left+" * 10 = "+left*10;
   step = 0;
 
   // Life 반영
@@ -552,16 +553,21 @@ function gameClear() { // 게임 클리어 함수. 나중에 텍스트 수정 �
     `#level${level} .current-life`
   );
   const life = parseInt(lifeEl.textContent, 10);
-  document.querySelector("#game-clear .current-life").textContent = life;
+  document.querySelector("#game-clear .current-life").textContent = life+"\t· · ·  "+life+" * 300 = "+life*300;
 
+  scoreSum=left*10+life*300;
   // Current Score 반영
-  document.querySelector("#game-clear .current-score").textContent = score;
+  document.querySelector("#game-clear .current-score").textContent = score+"\t· · ·  "+scoreSum+" + "+score+" = "+(scoreSum+score);
 
+  score+=scoreSum;
+  scoreSum=score-bestScores[level]; 
+  let plusMinus=""
   // Best Score 갱신 & 반영
   if (score > bestScores[level]) {
     bestScores[level] = score;
+    plusMinus="+"
   }
-  document.querySelector("#game-clear .best-score").textContent = bestScores[level];
+  document.querySelector("#game-clear .best-score").textContent = bestScores[level]+"\t· · ·  "+score+" ["+plusMinus+scoreSum+"]";
 
   if (level == 3) { // 난이도 3 클리어일 경우 next버튼만 나오게.
     document.getElementById("next-level-btn").innerHTML = "Next";
