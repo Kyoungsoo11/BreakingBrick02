@@ -916,8 +916,9 @@ function gameStart(level) {
       }
 
       // 보스 등장 조건 (레벨1이고, 아직 보스 안나왔고, 남은 시간이 150 이하)
-      if (level == 1 && !boss.active && left <= 150) {
+      if (!boss.active && step >= 150) {
         console.log("보스 등장 조건 충족");
+        loadBossFrames();  // 보스 이미지 프레임 로딩
         spawnBoss();
       }
     }
@@ -1190,34 +1191,46 @@ function draw() {
   }
 
   if (checkBossCollision(nextX, nextY, ballRadius)) {
-    // 보스의 중심 좌표 계산
-    const bossCenterX = boss.x + boss.width / 2;
-    const bossCenterY = boss.y + boss.height / 2;
+    const bossLeft = boss.x;
+    const bossRight = boss.x + boss.width;
+    const bossTop = boss.y;
+    const bossBottom = boss.y + boss.height;
 
-    // 공의 다음 위치와 보스 중심의 차이
-    const diffX = nextX - bossCenterX;
-    const diffY = nextY - bossCenterY;
+    const prevX = x - dx;
+    const prevY = y - dy;
 
-    // 충돌 방향 판정: x축/ y축 중 더 큰 쪽으로 반사
-    if (Math.abs(diffX) > Math.abs(diffY)) {
-      dx = -dx; // 좌우 반사
-      // 위치 보정: 좌우로 밀어냄
-      if (diffX > 0) {
-        x = boss.x + boss.width + ballRadius + 1;
-      } else {
-        x = boss.x - ballRadius - 1;
-      }
+    // 이전 위치가 보스의 위/아래였다면 dy 반전
+    if (prevY + ballRadius <= bossTop) {
+      dy = -Math.abs(dy); // 위에서 충돌, 위로 반사
+      y = bossTop - ballRadius - 1;
+    } else if (prevY - ballRadius >= bossBottom) {
+      dy = Math.abs(dy); // 아래에서 충돌, 아래로 반사
+      y = bossBottom + ballRadius + 1;
+    }
+    // 이전 위치가 보스의 좌/우였다면 dx 반전
+    else if (prevX + ballRadius <= bossLeft) {
+      dx = -Math.abs(dx); // 왼쪽에서 충돌, 왼쪽으로 반사
+      x = bossLeft - ballRadius - 1;
+    } else if (prevX - ballRadius >= bossRight) {
+      dx = Math.abs(dx); // 오른쪽에서 충돌, 오른쪽으로 반사
+      x = bossRight + ballRadius + 1;
     } else {
-      dy = -dy; // 위아래 반사
-      // 위치 보정: 위아래로 밀어냄
-      if (diffY > 0) {
-        y = boss.y + boss.height + ballRadius + 1;
+      // 대각선 등 애매한 경우, 기존 방식 유지(더 가까운 축 반전)
+      const bossCenterX = boss.x + boss.width / 2;
+      const bossCenterY = boss.y + boss.height / 2;
+      const diffX = nextX - bossCenterX;
+      const diffY = nextY - bossCenterY;
+      if (Math.abs(diffX) > Math.abs(diffY)) {
+        dx = -dx;
+        if (diffX > 0) x = boss.x + boss.width + ballRadius + 1;
+        else x = boss.x - ballRadius - 1;
       } else {
-        y = boss.y - ballRadius - 1;
+        dy = -dy;
+        if (diffY > 0) y = boss.y + boss.height + ballRadius + 1;
+        else y = boss.y - ballRadius - 1;
       }
     }
   }
-
 
   // 1) 좌우 벽 충돌
   if (nextX + ballRadius > canvas.width || nextX - ballRadius < 0) {
@@ -1322,7 +1335,8 @@ function spawnBoss() {
     boss.hp = 30;
     boss.width = brickWidth * 4;
   }
-  boss.height = brickHeight * 4;
+
+  boss.height = boss.width; // 정사각형으로 설정
   boss.x = (canvas.width - boss.width) / 2;
   boss.y = brickHeight * 3;
   boss.frameIndex = 0;
@@ -1349,8 +1363,10 @@ function spawnBoss() {
 function drawBoss() {
   if (!boss.active || boss.imageFrames.length === 0) return;
   const img = boss.imageFrames[boss.frameIndex];
+  // 정사각형으로 출력: 높이를 너비와 동일하게
+  const size = boss.width;
   if (img.complete) {
-    ctx.drawImage(img, boss.x, boss.y, boss.width, boss.height);
+    ctx.drawImage(img, boss.x, boss.y, size, size);
     drawBossHpBar();
   }
 }
