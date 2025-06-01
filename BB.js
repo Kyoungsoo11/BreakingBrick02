@@ -907,7 +907,7 @@ function gameStart(level) {
     if (!paused) {
       step++;
       console.log(step);
-      if ((step + 10) % 20 == 0) {
+      if ((step + 10) % 15 == 0) {
         makeRandomItemBrick();
       }
     }
@@ -1079,6 +1079,10 @@ function draw() {
             p.x + pr > bx && p.x - pr < bx + bw &&
             p.y + pr > by && p.y - pr < by + bh
           ) {
+            startBumpSfx();
+            if(invEnable == false) {
+              projectiles.splice(i, 1);
+            }
             b.status = 0;
             if (b.isItem) {
               if (damageEnable == true) {
@@ -1094,11 +1098,7 @@ function draw() {
                 score += 100;
               }
             }
-            startBumpSfx();
             info.querySelector(".current-score").textContent = score;
-            if(invEnable == false) {
-              projectiles.splice(i, 1);
-            }
             break;
           }
         }
