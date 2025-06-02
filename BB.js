@@ -925,7 +925,7 @@ function gameStart(level) {
       }
 
       if (!boss.active) {
-        if ((step + 10) % 35 == 0) {
+        if ((step + 10) % 15 == 0) {
           if (!paused) addBrickRow();
         }
       } else {
@@ -935,7 +935,7 @@ function gameStart(level) {
       }
 
       // 보스 등장 조건 (레벨1이고, 아직 보스 안나왔고, 남은 시간이 150 이하)
-      if (!boss.active && step >= 20) {
+      if (!boss.active && step >= 150) {
         console.log("보스 등장 조건 충족");
         loadBossFrames();  // 보스 이미지 프레임 로딩
         spawnBoss();
