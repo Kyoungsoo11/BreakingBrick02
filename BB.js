@@ -1427,7 +1427,7 @@ function checkBossCollision(x, y, r) {
   );
   if (hit) {
     startBossHitSfx();
-    if(damageEnable == ture) {
+    if(damageEnable == true) {
       boss.hp -= 2;
     } else {
       boss.hp--;
