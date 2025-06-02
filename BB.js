@@ -1048,6 +1048,16 @@ function draw() {
     }
   }
 
+  //보스 그리기
+  if (boss.active) {
+    drawBoss();
+    // 레벨2 보스 불기둥 패턴
+    if (level === 2) {
+      drawFirePattern();
+      handleFirePatternHit();
+    }
+  }
+
   function drawBall() {
     ctx.beginPath();
     ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
@@ -1208,43 +1218,46 @@ function draw() {
   }
 
   if (checkBossCollision(nextX, nextY, ballRadius)) {
-    const bossLeft = boss.x;
-    const bossRight = boss.x + boss.width;
-    const bossTop = boss.y;
-    const bossBottom = boss.y + boss.height;
-
-    const prevX = x - dx;
-    const prevY = y - dy;
-
-    // 이전 위치가 보스의 위/아래였다면 dy 반전
-    if (prevY + ballRadius <= bossTop) {
-      dy = -Math.abs(dy); // 위에서 충돌, 위로 반사
-      y = bossTop - ballRadius - 1;
-    } else if (prevY - ballRadius >= bossBottom) {
-      dy = Math.abs(dy); // 아래에서 충돌, 아래로 반사
-      y = bossBottom + ballRadius + 1;
-    }
-    // 이전 위치가 보스의 좌/우였다면 dx 반전
-    else if (prevX + ballRadius <= bossLeft) {
-      dx = -Math.abs(dx); // 왼쪽에서 충돌, 왼쪽으로 반사
-      x = bossLeft - ballRadius - 1;
-    } else if (prevX - ballRadius >= bossRight) {
-      dx = Math.abs(dx); // 오른쪽에서 충돌, 오른쪽으로 반사
-      x = bossRight + ballRadius + 1;
-    } else {
-      // 대각선 등 애매한 경우, 기존 방식 유지(더 가까운 축 반전)
-      const bossCenterX = boss.x + boss.width / 2;
-      const bossCenterY = boss.y + boss.height / 2;
-      const diffX = nextX - bossCenterX;
-      const diffY = nextY - bossCenterY;
-      if (Math.abs(diffX) > Math.abs(diffY)) {
-        dx = -dx;
-        if (diffX > 0) x = boss.x + boss.width + ballRadius + 1;
-        else x = boss.x - ballRadius - 1;
-      } else {
-        dy = -dy;
-        if (diffY > 0) y = boss.y + boss.height + ballRadius + 1;
-        else y = boss.y - ballRadius - 1;
+    if (invEnable == false) {
+      const bossLeft = boss.x;
+      const bossRight = boss.x + boss.width;
+      const bossTop = boss.y;
+      const bossBottom = boss.y + boss.height;
+  
+      const prevX = x - dx;
+      const prevY = y - dy;
+  
+      // 위/아래 충돌
+      if (prevY + ballRadius <= bossTop) {
+        dy = -Math.abs(dy);
+        y = bossTop - ballRadius - 1;
+      } else if (prevY - ballRadius >= bossBottom) {
+        dy = Math.abs(dy);
+        y = bossBottom + ballRadius + 1;
+      }
+      // 좌/우 충돌
+      else if (prevX + ballRadius <= bossLeft) {
+        dx = -Math.abs(dx);
+        x = bossLeft - ballRadius - 1;
+      } else if (prevX - ballRadius >= bossRight) {
+        dx = Math.abs(dx);
+        x = bossRight + ballRadius + 1;
+      }
+      // 대각선 충돌
+      else {
+        const bossCenterX = boss.x + boss.width / 2;
+        const bossCenterY = boss.y + boss.height / 2;
+        const diffX = nextX - bossCenterX;
+        const diffY = nextY - bossCenterY;
+        if (Math.abs(diffX) > Math.abs(diffY)) {
+          dx = -dx;
+          if (diffX > 0) x = boss.x + boss.width + ballRadius + 1;
+          else x = boss.x - ballRadius - 1;
+        } else {
+          dy = -dy;
+          if (diffY > 0) y = boss.y + boss.height + ballRadius + 1;
+          else y = boss.y - ballRadius - 1;
+        }
       }
     }
   }
@@ -1287,15 +1300,6 @@ function draw() {
   ctx.beginPath();
   ctx.rect(paddleX, canvas.height - paddleHeight - imgH + 6, paddleWidth, paddleHeight);
   ctx.fillStyle = "white"; ctx.fill(); ctx.closePath();
-  //보스 그리기
-  if (boss.active) {
-    drawBoss();
-    // 레벨2 보스 불기둥 패턴
-    if (level === 2) {
-      drawFirePattern();
-      handleFirePatternHit();
-    }
-  }
 
   // 이동
   x += dx; y += dy;
@@ -1435,7 +1439,7 @@ function checkBossCollision(x, y, r) {
   if (hit) {
     const now = Date.now();
 
-    if (lastBossHitTime === 0 || now - lastBossHitTime >= 1000) {
+    if (lastBossHitTime === 0 || now - lastBossHitTime >= 500) {
       lastBossHitTime = now;
       startBossHitSfx();
       if (damageEnable === true) {
