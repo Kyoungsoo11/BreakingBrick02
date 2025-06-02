@@ -527,8 +527,8 @@ function gameOver() {
     // paddleX, x, y, dx, dy만 재설정
     x = canvas.width / 2;
     y = canvas.height - 30;
-    dx = 2 + level * 0.5;
-    dy = -(2 + level * 0.5);
+    dx = 2 + level * 2;
+    dy = -(2 + level * 2);
     paused = false;
     requestAnimationFrame(draw);
   }
@@ -591,7 +591,7 @@ let canvas, ctx, paddleX;
 let bricks = [], brickRowCount, brickWidth;
 let ballRadius = 8, x, y, dx, dy;
 let rightPressed = false, leftPressed = false;
-let timerId = null, addRowIntervalId = null, stopWatchId = null;
+let timerId = null, stopWatchId = null;
 let score = 0;
 const bestScores = { 1: 0, 2: 0, 3: 0 };  // 레벨별 bestScores 객체 선언
 
@@ -883,7 +883,6 @@ function gameStart(level) {
   // 초기화
   if (stopWatchId) { clearInterval(stopWatchId); stopWatchId = null; step = 0; }
   if (timerId) { clearInterval(timerId); timerId = null; }
-  if (addRowIntervalId) { clearInterval(addRowIntervalId); addRowIntervalId = null; }
   initItem();
 
   const info = document.getElementById(`level${level}`);
@@ -925,8 +924,18 @@ function gameStart(level) {
         makeRandomItemBrick();
       }
 
+      if (!boss.active) {
+        if ((step + 10) % 35 == 0) {
+          if (!paused) addBrickRow();
+        }
+      } else {
+        if ((step + 10) % 35 == 0) {
+          if (!paused) addBrickRow();
+        }
+      }
+
       // 보스 등장 조건 (레벨1이고, 아직 보스 안나왔고, 남은 시간이 150 이하)
-      if (!boss.active && step >= 150) {
+      if (!boss.active && step >= 20) {
         console.log("보스 등장 조건 충족");
         loadBossFrames();  // 보스 이미지 프레임 로딩
         spawnBoss();
@@ -955,14 +964,11 @@ function gameStart(level) {
   // 공/패들
   paddleX = (canvas.width - paddleWidth) / 2;
   x = canvas.width / 2; y = canvas.height - 30;
-  dx = 2 + level * 0.5; dy = -(2 + level * 0.5);
+  dx = 2 + level * 2; dy = -(2 + level * 2);
 
   // 벽돌
   brickRowCount = initialBrickRows;
   initBricks();
-  // addRowIntervalId = setInterval(() => {    // 벽돌 10초에 한줄씩 추가 => 게임 클리어 작동하는지 확인용. 주석 해제하셔도 됩니다
-  //   if (!paused) addBrickRow();
-  // }, 10000);
 
   paddleWidth = 170;
 
@@ -1132,9 +1138,14 @@ function draw() {
         }
       }
       if (checkBossCollision(p.x, p.y, p.radius)) {
+        if(damageEnable == true) {
+          boss.hp -= 3;
+        } else {
+          boss.hp--;
+        }
         if (!invEnable) {
           projectiles.splice(i, 1);
-          continue; // 보스와 충돌 시 공 제거
+          continue; // 보스와 충돌 시 투사체 제거
         }
       }
 
@@ -1200,7 +1211,7 @@ function draw() {
     }
   }
 
-  if (checkBossCollision(nextX, nextY, ballRadius)) {
+  if (checkBossCollision(nextX, nextY, ballRadius) || invEnable == true) {
     const bossLeft = boss.x;
     const bossRight = boss.x + boss.width;
     const bossTop = boss.y;
@@ -1416,7 +1427,11 @@ function checkBossCollision(x, y, r) {
   );
   if (hit) {
     startBossHitSfx();
-    boss.hp--;
+    if(damageEnable == ture) {
+      boss.hp -= 2;
+    } else {
+      boss.hp--;
+    }
     if (boss.hp <= 0) {
       boss.active = false;
       clearInterval(boss.frameTimer);
