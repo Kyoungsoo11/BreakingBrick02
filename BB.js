@@ -318,14 +318,10 @@ function goLv3() {
   changePage(2);
 }
 function goNextLevel() { //클리어 후 다음 레벨로 
-  projectiles = [];
   gameFlag = false;
 
   // 보스 상태 초기화
-  boss.active = false;
-  boss.hp = 0;
-  if (boss.frameTimer) clearInterval(boss.frameTimer);
-  if (boss.moveTimer) clearInterval(boss.moveTimer);
+  initBoss();
 
   if (level == 3) {
     document.getElementById("next-level-btn").innerHTML = "Next Level";
@@ -349,6 +345,7 @@ function goIntro() {
   showNextParagraph();
 }
 function clearToMain() {
+  gameFlag = false;
   document.getElementById("game-clear").style.display = "none";
   goMain();
   playBgm(0);
@@ -358,6 +355,7 @@ function overToMain() {
   document.getElementById("gameToMain").style.display = "block";
 }
 function gameToMain() {
+  projectiles = [];
   clickGameToMain = false;
   paused = false;
   isGameOver = false;
@@ -688,9 +686,9 @@ function applyItemEffect(type) {
 }
 
 function initItem() {
-  damageBuff(0);
-  attack(0);
-  invisiblity(0);
+  damageBuff(1); 
+  attack(1);
+  invisiblity(1);
 }
 
 function lifeAdd() {
@@ -712,8 +710,8 @@ function damageBuff(i) {
   const info = document.getElementById(`level${level}`);
   const damageEl = info.querySelector(".damageBuff-status");
   availableDamage = parseInt(damageEl.textContent);
-  if (i == 0) {
-    availableDamage = 0;
+  if (i == 1) {
+    availableDamage = 1;
   } else {
     availableDamage += i;
   }
@@ -724,8 +722,8 @@ function attack(i) {
   const info = document.getElementById(`level${level}`);
   const attackEl = info.querySelector(".attack-status");
   availableAttack = parseInt(attackEl.textContent);
-  if (i == 0) {
-    availableAttack = 0;
+  if (i == 1) {
+    availableAttack = 1;
   } else {
     availableAttack += i;
   }
@@ -736,8 +734,8 @@ function invisiblity(i) {
   const info = document.getElementById(`level${level}`);
   const invEl = info.querySelector(".invisiblity-status");
   availableInv = parseInt(invEl.textContent);
-  if (i == 0) {
-    availableInv = 0;
+  if (i == 1) {
+    availableInv = 1;
   } else {
     availableInv += i;
   }
@@ -879,7 +877,9 @@ function createProjectile(x, y) {
 }
 
 function gameStart(level) {
+  projectiles.splice(1, 2);
   gameFlag = true;
+  initBoss();
   // 초기화
   if (stopWatchId) { clearInterval(stopWatchId); stopWatchId = null; step = 0; }
   if (timerId) { clearInterval(timerId); timerId = null; }
@@ -929,13 +929,13 @@ function gameStart(level) {
           if (!paused) addBrickRow();
         }
       } else {
-        if ((step + 10) % 35 == 0) {
+        if (step % 40 == 0) {
           if (!paused) addBrickRow();
         }
       }
 
       // 보스 등장 조건 (레벨1이고, 아직 보스 안나왔고, 남은 시간이 150 이하)
-      if (!boss.active && step >= 150) {
+      if (!boss.active && step >= 10) {
         console.log("보스 등장 조건 충족");
         loadBossFrames();  // 보스 이미지 프레임 로딩
         spawnBoss();
@@ -1145,7 +1145,6 @@ function draw() {
         }
         if (!invEnable) {
           projectiles.splice(i, 1);
-          continue; // 보스와 충돌 시 투사체 제거
         }
       }
 
@@ -1211,7 +1210,7 @@ function draw() {
     }
   }
 
-  if (checkBossCollision(nextX, nextY, ballRadius) || invEnable == true) {
+  if (checkBossCollision(nextX, nextY, ballRadius)) {
     const bossLeft = boss.x;
     const bossRight = boss.x + boss.width;
     const bossTop = boss.y;
@@ -1329,6 +1328,13 @@ let boss = {
   moveTimer: null
 };
 
+function initBoss() {
+  boss.active = false;
+  boss.hp = 0;
+  if (boss.frameTimer) clearInterval(boss.frameTimer);
+  if (boss.moveTimer) clearInterval(boss.moveTimer);
+}
+
 // === 보스 프레임 로딩 ===
 function loadBossFrames() {
   boss.imageFrames = [];
@@ -1418,16 +1424,24 @@ function drawBossHpBar() {
 }
 
 // === 충돌 판정 ===
+let lastBossHitTime = 0; // 마지막 충돌 시각 저장용 변수
+
 function checkBossCollision(x, y, r) {
   if (!boss.active) return false;
+
+  const now = Date.now(); // 현재 시간(ms)
+  if (now - lastBossHitTime < 1000) return false; // 1초 이내면 무시
+
   const bx = boss.x, by = boss.y, bw = boss.width, bh = boss.height;
   const hit = (
     x + r > bx && x - r < bx + bw &&
     y + r > by && y - r < by + bh
   );
+
   if (hit) {
+    lastBossHitTime = now; // 충돌 시간 업데이트
     startBossHitSfx();
-    if(damageEnable == true) {
+    if (damageEnable === true) {
       boss.hp -= 2;
     } else {
       boss.hp--;
@@ -1436,9 +1450,10 @@ function checkBossCollision(x, y, r) {
       boss.active = false;
       clearInterval(boss.frameTimer);
       clearInterval(boss.moveTimer);
-      gameClear(); // 클리어 처리
+      gameClear();
     }
   }
+
   return hit;
 }
 
