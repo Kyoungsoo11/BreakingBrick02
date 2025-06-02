@@ -1204,9 +1204,13 @@ function draw() {
       const bw = brickWidth;
       const bh = brickHeight;
 
-      if (b.status &&
-        x > bx && x < bx + bw &&
-        y > by && y < by + bh) {
+      if (
+        b.status &&
+        nextX + r > bx &&           // 공의 오른쪽 경계가 벽돌 왼쪽을 넘어섰는가
+        nextX - r < bx + bw &&      // 공의 왼쪽 경계가 벽돌 오른쪽을 넘지 않았는가
+        nextY + r > by &&           // 공의 아래쪽 경계가 벽돌 위쪽을 넘어섰는가
+        nextY - r < by + bh         // 공의 위쪽 경계가 벽돌 아래쪽을 넘지 않았는가
+      ) {
         startBumpSfx();
 
         // 이전 위치로 방향 판정
