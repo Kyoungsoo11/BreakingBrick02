@@ -527,8 +527,8 @@ function gameOver() {
     // paddleX, x, y, dx, dy만 재설정
     x = canvas.width / 2;
     y = canvas.height - 30;
-    dx = 2 + level * 0.5;
-    dy = -(2 + level * 0.5);
+    dx = 3 + level * 1;
+    dy = -(3 + level * 1);
     paused = false;
     requestAnimationFrame(draw);
   }
@@ -955,7 +955,7 @@ function gameStart(level) {
   // 공/패들
   paddleX = (canvas.width - paddleWidth) / 2;
   x = canvas.width / 2; y = canvas.height - 30;
-  dx = 2 + level * 0.5; dy = -(2 + level * 0.5);
+  dx = 3 + level * 1; dy = -(3 + level * 1);        // 공 속도
 
   // 벽돌
   brickRowCount = initialBrickRows;
