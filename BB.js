@@ -527,8 +527,8 @@ function gameOver() {
     // paddleX, x, y, dx, dy만 재설정
     x = canvas.width / 2;
     y = canvas.height - 30;
-    dx = 3 + level * 1;
-    dy = -(3 + level * 1);
+    dx = 3 + level * 1;           // 공 속도 dx
+    dy = -(3 + level * 1);        // 공 속도 dy
     paused = false;
     requestAnimationFrame(draw);
   }
