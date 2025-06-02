@@ -227,7 +227,6 @@ function stopKeyboardSfx() {
   keyboard.currentTime = 0;
 }
 
-
 var index = 7; //현재 페이지의 인덱스 저장
 var page = ["main-menu", "select-level", "game", "setting", "game-over", "intro", "epilogue", "start-screen", "game-clear"]; // 페이지 추가는 맨뒤에 해주세요
 var level = 0;
@@ -412,6 +411,26 @@ function initStory() {
 
   goMain();
   playBgm(0);
+}
+
+function dangerInfo() {
+  const info = document.getElementById("level" + level);
+  info.querySelector(".pause-info").innerHTML = "&lt; Danger! Danger! Here comes the boss! &gt;";
+  info.querySelector(".pause-info").style.color = "red";
+  info.querySelector(".game-area").style.boxShadow = "0 0 10px red";
+  info.querySelector(".game-area").style.border = "2px solid red";
+  info.querySelector(".game-info").style.boxShadow = "0 0 10px red";
+  info.querySelector(".game-info").style.border = "2px solid red";
+}
+
+function dangerClear() {
+  const info = document.getElementById("level" + level);
+  info.querySelector(".pause-info").innerHTML = "&lt; press Space to pause &gt;";
+  info.querySelector(".pause-info").style.color = "white";
+  info.querySelector(".game-area").style.boxShadow = "0 0 10px white";
+  info.querySelector(".game-area").style.border = "2px solid white";
+  info.querySelector(".game-info").style.boxShadow = "0 0 10px white";
+  info.querySelector(".game-info").style.border = "2px solid white";
 }
 
 // setting 관련
@@ -880,6 +899,7 @@ function gameStart(level) {
   projectiles.splice(1, 2);
   gameFlag = true;
   initBoss();
+  dangerClear();
   // 초기화
   if (stopWatchId) { clearInterval(stopWatchId); stopWatchId = null; step = 0; }
   if (timerId) { clearInterval(timerId); timerId = null; }
@@ -937,15 +957,19 @@ function gameStart(level) {
       }
 
       // 보스 등장 조건 (레벨1이고, 아직 보스 안나왔고, 남은 시간이 150 이하)
+      if (!boss.active && step >= 5) {
+        console.log("보스 등장 경고");
+        dangerInfo();
+      }
+
       if (!boss.active && step >= 10) {
         console.log("보스 등장 조건 충족");
+        dangerClear();
         loadBossFrames();  // 보스 이미지 프레임 로딩
         spawnBoss();
       }
     }
   }, 1000);
-
-
 
   // canvas
   const lv = document.getElementById("level" + level);
