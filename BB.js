@@ -929,8 +929,10 @@ function gameStart(level) {
           if (!paused) addBrickRow();
         }
       } else {
-        if (step % 40 == 0) {
-          if (!paused) addBrickRow();
+        if (brickRowCount < 3) {
+          if ((step + 10) % 15 == 0) {
+            if (!paused) addBrickRow();
+          }
         }
       }
 
@@ -1138,11 +1140,6 @@ function draw() {
         }
       }
       if (checkBossCollision(p.x, p.y, p.radius)) {
-        if(damageEnable == true) {
-          boss.hp -= 3;
-        } else {
-          boss.hp--;
-        }
         if (!invEnable) {
           projectiles.splice(i, 1);
         }
@@ -1424,13 +1421,10 @@ function drawBossHpBar() {
 }
 
 // === 충돌 판정 ===
-let lastBossHitTime = 0; // 마지막 충돌 시각 저장용 변수
+let lastBossHitTime = 0;
 
 function checkBossCollision(x, y, r) {
   if (!boss.active) return false;
-
-  const now = Date.now(); // 현재 시간(ms)
-  if (now - lastBossHitTime < 1000) return false; // 1초 이내면 무시
 
   const bx = boss.x, by = boss.y, bw = boss.width, bh = boss.height;
   const hit = (
@@ -1439,22 +1433,29 @@ function checkBossCollision(x, y, r) {
   );
 
   if (hit) {
-    lastBossHitTime = now; // 충돌 시간 업데이트
-    startBossHitSfx();
-    if (damageEnable === true) {
-      boss.hp -= 2;
-    } else {
-      boss.hp--;
+    const now = Date.now();
+
+    if (lastBossHitTime === 0 || now - lastBossHitTime >= 1000) {
+      lastBossHitTime = now;
+      startBossHitSfx();
+      if (damageEnable === true) {
+        boss.hp -= 2;
+      } else {
+        boss.hp--;
+      }
+
+      if (boss.hp <= 0) {
+        boss.active = false;
+        clearInterval(boss.frameTimer);
+        clearInterval(boss.moveTimer);
+        gameClear();
+      }
     }
-    if (boss.hp <= 0) {
-      boss.active = false;
-      clearInterval(boss.frameTimer);
-      clearInterval(boss.moveTimer);
-      gameClear();
-    }
+
+    return true; // 충돌 자체는 항상 true 반환
   }
 
-  return hit;
+  return false;
 }
 
 // === 사운드 ===
