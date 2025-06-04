@@ -57,7 +57,6 @@ function pageLoad() {
   document.getElementById("skip-btn1").onclick = () => { playClickSfx(); storyToMain(); };
   document.getElementById("skip-btn2").onclick = () => { playClickSfx(); storyToMain(); };
   document.getElementById("next-level-btn").onclick = () => { playClickSfx(); goNextLevel(); };
-  // document.getElementById("epilogue-btn").onclick=() => { playClickSfx(); changePage(6); };
   clickSfx.preload = "auto";
   clickSfx.load();  // 명시적 로드
 
@@ -233,9 +232,9 @@ var level = 0;
 let ballColor = "#FFFFFF"; //공 색상
 let brickColor = "#5F5F5F"; //벽돌 색상
 const initialTimes = {
-  1: 300,
-  2: 350,
-  3: 400
+  1: 150,
+  2: 165,
+  3: 180
 };
 
 document.addEventListener("click", function (e) { // 게임화면에서 메인메뉴버튼 여러개라서 이걸로 한꺼번에 처리함
@@ -351,6 +350,7 @@ function clearToMain() {
   paused = false;
 }
 function overToMain() {
+  stopAllTimers();
   document.getElementById("gameToMain").style.display = "block";
 }
 function gameToMain() {
@@ -705,9 +705,33 @@ function applyItemEffect(type) {
 }
 
 function initItem() {
-  damageBuff(1);
-  attack(1);
-  invisiblity(1);
+  damageBuff('I');
+  attack('I');
+  invisiblity('I');
+}
+
+function startAtkSfx() {
+  const atk = new Audio("sound/attack.mp3");
+  atk.volume = volume;
+  atk.play();
+}
+
+function startInvSfx() {
+  const inv = new Audio("sound/inv.mp3");
+  inv.volume = volume;
+  inv.play();
+}
+
+function startBuffSfx() {
+  const buff = new Audio("sound/buff.mp3");
+  buff.volume = volume;
+  buff.play();
+}
+
+function startDgrSfx() {
+  const danger = new Audio("sound/danger.mp3");
+  danger.volume = volume;
+  danger.play();
 }
 
 function lifeAdd() {
@@ -755,8 +779,9 @@ function damageBuff(i) {
   const info = document.getElementById(`level${level}`);
   const damageEl = info.querySelector(".damageBuff-status");
   availableDamage = parseInt(damageEl.textContent);
-  if (i == 1) {
-    availableDamage = 1;
+  if (i == 'I') {
+    if(level == 1 || level == 2) availableDamage = 1;
+    else if(level == 3) availableDamage = 0;
   } else {
     availableDamage += i;
   }
@@ -767,8 +792,9 @@ function attack(i) {
   const info = document.getElementById(`level${level}`);
   const attackEl = info.querySelector(".attack-status");
   availableAttack = parseInt(attackEl.textContent);
-  if (i == 1) {
-    availableAttack = 1;
+  if (i == 'I') {
+    if(level == 1 || level == 2) availableAttack = 1;
+    else if(level == 3) availableAttack = 0;
   } else {
     availableAttack += i;
   }
@@ -779,8 +805,9 @@ function invisiblity(i) {
   const info = document.getElementById(`level${level}`);
   const invEl = info.querySelector(".invisiblity-status");
   availableInv = parseInt(invEl.textContent);
-  if (i == 1) {
-    availableInv = 1;
+  if (i == 'I') {
+    if(level == 1) availableInv = 1;
+    else if(level == 2 || level == 3) availableInv = 0;
   } else {
     availableInv += i;
   }
@@ -882,7 +909,8 @@ document.addEventListener("keydown", function (e) {
     if (availableAttack > 0 && attackCool == false) {
       attack(-1);
       attackCool = true;
-      attackTime(10);
+      attackTime(5);
+      startAtkSfx();
 
       const projY = canvas.height - paddleHeight - imgH;
       const projXCenter = paddleX + paddleWidth / 2;
@@ -898,6 +926,7 @@ document.addEventListener("keydown", function (e) {
       damageCool = true;
       damageBuff(-1);
       damageTime(30);
+      startBuffSfx();
     }
   }
 
@@ -907,6 +936,7 @@ document.addEventListener("keydown", function (e) {
       invCool = true;
       invisiblity(-1);
       invTime(15);
+      startInvSfx();
     }
   }
 });
@@ -983,12 +1013,13 @@ function gameStart(level) {
       }
 
       // 보스 등장 조건 (레벨1이고, 아직 보스 안나왔고, 남은 시간이 150 이하)
-      if (!boss.active && step >= 5) {
+      if (!boss.active && step > 65) {
         console.log("보스 등장 경고");
+        startDgrSfx();
         dangerInfo();
       }
 
-      if (!boss.active && step >= 10) {
+      if (!boss.active && step > 70) {
         console.log("보스 등장 조건 충족");
         dangerClear();
         loadBossFrames();  // 보스 이미지 프레임 로딩
@@ -1413,11 +1444,11 @@ function spawnBoss() {
     playBgm(7);
   } else if (level === 2) {
     boss.hp = 20;
-    boss.width = brickWidth * 3;
+    boss.width = brickWidth * 4;
     playBgm(8);
   } else if (level === 3) {
     boss.hp = 30;
-    boss.width = brickWidth * 3;
+    boss.width = brickWidth * 4;
     playBgm(9);
   }
 
