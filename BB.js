@@ -710,6 +710,18 @@ function initItem() {
   invisiblity('I');
 }
 
+function startLifeSfx() {
+  const lif = new Audio("sound/life.mp3");
+  lif.volume = volume;
+  lif.play();
+}
+
+function startClockSfx() {
+  const clk = new Audio("sound/clock.mp3");
+  clk.volume = volume;
+  clk.play();
+}
+
 function startAtkSfx() {
   const atk = new Audio("sound/attack.mp3");
   atk.volume = volume;
@@ -743,9 +755,11 @@ function lifeAdd() {
   }
   currentLife++;
   lifeEl.textContent = currentLife;
+  startLifeSfx();
 }
 
 function timeAdd() {
+  startClockSfx();
   left += 10;
 }
 
@@ -992,6 +1006,7 @@ function gameStart(level) {
 
   // 게임 시작 스톱워치
   step = 0;
+  let dgrflag = true;
   stopWatchId = setInterval(() => {
     if (!paused) {
       step++;
@@ -1015,7 +1030,10 @@ function gameStart(level) {
       // 보스 등장 조건 (레벨1이고, 아직 보스 안나왔고, 남은 시간이 150 이하)
       if (!boss.active && step > 65) {
         console.log("보스 등장 경고");
-        startDgrSfx();
+        if(dgrflag) {
+          dgrflag = false;
+          startDgrSfx();
+        }
         dangerInfo();
       }
 
