@@ -1101,11 +1101,6 @@ function draw() {
   //보스 그리기
   if (boss.active) {
     drawBoss();
-    // 레벨2 보스 불기둥 패턴
-    if (level === 2) {
-      drawFirePattern();
-      handleFirePatternHit();
-    }
   }
 
   function drawBall() {
@@ -1446,9 +1441,6 @@ function spawnBoss() {
         boss.direction *= -1;
       }
     }, 20);
-  }
-  if (level === 2) {
-    setTimeout(startFirePattern, 1000); // 보스 등장 1초 후 패턴 시작
   }
 }
 
