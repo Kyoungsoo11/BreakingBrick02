@@ -317,10 +317,10 @@ function goLv3() {
   changePage(2);
 }
 function goNextLevel() { //클리어 후 다음 레벨로 
-  gameFlag = false;
-
   // 보스 상태 초기화
   initBoss();
+  stopAllTimers();
+  gameFlag = false;
 
   if (level == 3) {
     document.getElementById("next-level-btn").innerHTML = "Next Level";
@@ -723,6 +723,32 @@ function lifeAdd() {
 
 function timeAdd() {
   left += 10;
+}
+
+function stopAllTimers() {
+  if (damageTimerId) {
+    clearInterval(damageTimerId);
+    damageTimerId = null;
+    damageEnable = false;
+    damageCool = false;
+    document.querySelector(".damageBuff-time").textContent = "'S'";
+    document.querySelector(".damageBuff-time").style.color = "white";
+  }
+  if (attackTimerId) {
+    clearInterval(attackTimerId);
+    attackTimerId = null;
+    attackCool = false;
+    document.querySelector(".attack-time").textContent = "'A'";
+    document.querySelector(".attack-time").style.color = "white";
+  }
+  if (invTimerId) {
+    clearInterval(invTimerId);
+    invTimerId = null;
+    invEnable = false;
+    invCool = false;
+    document.querySelector(".invisiblity-time").textContent = "'D'";
+    document.querySelector(".invisiblity-time").style.color = "white";
+  }
 }
 
 function damageBuff(i) {
