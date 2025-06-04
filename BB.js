@@ -455,10 +455,10 @@ bgmList.forEach(bgm => {
 function playBgm(i) { //음악 재생 함수
   if (currentBgm) currentBgm.pause();
   currentBgm = bgmList[i];
-  if(i>6&&i<10){ //볼륨조절용
-    currentBgm.volume = volume*0.5;
-  }else{
-  currentBgm.volume = volume;
+  if (i > 6 && i < 10) { //볼륨조절용
+    currentBgm.volume = volume * 0.5;
+  } else {
+    currentBgm.volume = volume;
   }
   currentBgm.currentTime = 0;
   currentBgm.play();
@@ -563,10 +563,10 @@ function gameClear() { // 게임 클리어 함수. 나중에 텍스트 수정 �
   clearInterval(stopWatchId);
   paused = true;
 
-  let scoreSum=0;
+  let scoreSum = 0;
   // Clear Time 계산 & 반영
   const clearTime = step;
-  document.getElementById("clear-time").textContent = clearTime+"\t· · ·  "+left+" * 10 = "+left*10;
+  document.getElementById("clear-time").textContent = clearTime + "\t· · ·  " + left + " * 10 = " + left * 10;
   step = 0;
 
   // Life 반영
@@ -574,21 +574,21 @@ function gameClear() { // 게임 클리어 함수. 나중에 텍스트 수정 �
     `#level${level} .current-life`
   );
   const life = parseInt(lifeEl.textContent, 10);
-  document.querySelector("#game-clear .current-life").textContent = life+"\t· · ·  "+life+" * 300 = "+life*300;
+  document.querySelector("#game-clear .current-life").textContent = life + "\t· · ·  " + life + " * 300 = " + life * 300;
 
-  scoreSum=left*10+life*300;
+  scoreSum = left * 10 + life * 300;
   // Current Score 반영
-  document.querySelector("#game-clear .current-score").textContent = score+"\t· · ·  + "+scoreSum+" + 5000"+" = "+(scoreSum+score+5000);
+  document.querySelector("#game-clear .current-score").textContent = score + "\t· · ·  + " + scoreSum + " + 5000" + " = " + (scoreSum + score + 5000);
 
-  score+=scoreSum+5000;
-  scoreSum=score-bestScores[level]; 
-  let plusMinus=""
+  score += scoreSum + 5000;
+  scoreSum = score - bestScores[level];
+  let plusMinus = ""
   // Best Score 갱신 & 반영
   if (score > bestScores[level]) {
     bestScores[level] = score;
-    plusMinus="+"
+    plusMinus = "+"
   }
-  document.querySelector("#game-clear .best-score").textContent = bestScores[level]+"\t· · ·  "+score+" ["+plusMinus+scoreSum+"]";
+  document.querySelector("#game-clear .best-score").textContent = bestScores[level] + "\t· · ·  " + score + " [" + plusMinus + scoreSum + "]";
 
   if (level == 3) { // 난이도 3 클리어일 경우 next버튼만 나오게.
     document.getElementById("next-level-btn").innerHTML = "Next";
@@ -705,7 +705,7 @@ function applyItemEffect(type) {
 }
 
 function initItem() {
-  damageBuff(1); 
+  damageBuff(1);
   attack(1);
   invisiblity(1);
 }
@@ -1251,10 +1251,10 @@ function draw() {
       const bossRight = boss.x + boss.width;
       const bossTop = boss.y;
       const bossBottom = boss.y + boss.height;
-  
+
       const prevX = x - dx;
       const prevY = y - dy;
-  
+
       // 위/아래 충돌
       if (prevY + ballRadius <= bossTop) {
         dy = -Math.abs(dy);
@@ -1497,175 +1497,6 @@ function startBossHitSfx() {
   sfx.play();
 }
 
-//보스 공격
-// === 전역 변수 추가 ===
-let firePatternPhase = 0; // 0: idle, 1: 세줄 경고, 2: 세줄 불기둥, 3: 두줄 경고, 4: 두줄 불기둥, 5: 대기, 6: 다른 공격
-let firePatternTimer = null;
-let fireWarningActive = false;
-let fireActive = false;
-let fireLines = []; // 불기둥 위치 인덱스 배열
-let fireWarningStart = 0;
-let fireStart = 0;
-let fireType = 0; // 1: 세줄, 2: 두줄
-let fireAnimProgress = 0; // 0~1, 내려오는 애니메이션용
-const warningImg = new Image();
-warningImg.src = "image/boss2/warningfire.png";
-const fireImg = new Image();
-fireImg.src = "image/boss2/fire.png";
-// === 불기둥 공격 패턴 시작 ===
-function startFirePattern() {
-  if (level !== 2 || !boss.active) return;
-  firePatternPhase = 1;
-  fireType = 1; // 세줄
-  fireLines = [1, 3, 5];
-  fireWarningActive = true;
-  fireWarningStart = performance.now();
-  fireActive = false;
-  fireAnimProgress = 0;
-  scheduleNextFirePhase();
-}
-
-function scheduleNextFirePhase() {
-  if (firePatternTimer) clearTimeout(firePatternTimer);
-
-  if (firePatternPhase === 1) { // 세줄 경고
-    firePatternTimer = setTimeout(() => {
-      firePatternPhase = 2;
-      fireWarningActive = false;
-      fireActive = true;
-      fireStart = performance.now();
-      fireAnimProgress = 0;
-      scheduleNextFirePhase();
-    }, 5000); // 5초 경고
-  } else if (firePatternPhase === 2) { // 세줄 불기둥
-    firePatternTimer = setTimeout(() => {
-      firePatternPhase = 3;
-      fireActive = false;
-      fireType = 2;
-      fireLines = [2, 4];
-      fireWarningActive = true;
-      fireWarningStart = performance.now();
-      fireAnimProgress = 0;
-      scheduleNextFirePhase();
-    }, 2000); // 1초 내려옴 + 1초 유지
-  } else if (firePatternPhase === 3) { // 두줄 경고
-    firePatternTimer = setTimeout(() => {
-      firePatternPhase = 4;
-      fireWarningActive = false;
-      fireActive = true;
-      fireStart = performance.now();
-      fireAnimProgress = 0;
-      scheduleNextFirePhase();
-    }, 5000);
-  } else if (firePatternPhase === 4) { // 두줄 불기둥
-    firePatternTimer = setTimeout(() => {
-      firePatternPhase = 5;
-      fireActive = false;
-      fireAnimProgress = 0;
-      scheduleNextFirePhase();
-    }, 2000);
-  } else if (firePatternPhase === 5) { // 대기 후 다른 공격
-    firePatternTimer = setTimeout(() => {
-      firePatternPhase = 6;
-      // TODO: 다른 공격 함수 호출
-      firePatternTimer = setTimeout(() => {
-        // 다시 세줄 경고로 루프
-        firePatternPhase = 1;
-        fireType = 1;
-        fireLines = [1, 3, 5];
-        fireWarningActive = true;
-        fireWarningStart = performance.now();
-        fireAnimProgress = 0;
-        scheduleNextFirePhase();
-      }, 7000);
-    }, 7000);
-  }
-}
-// === draw에서 불기둥/경고 그리기 ===
-function drawFirePattern() {
-  if (level !== 2 || !boss.active) return;
-  const now = performance.now();
-  const lineCount = 6;
-  const lineWidth = brickWidth / 2;
-  const fireHeight = canvas.height;
-  const warningSize = lineWidth;
-  const warningAnim = Math.abs(Math.sin((now / 300))); // 0.3초 주기 깜빡임
-  // === 패들 좌우 위치 계산 추가 ===
-  const paddleLeft = paddleX;
-  const paddleRight = paddleX + paddleWidth;
-
-  for (let idx of fireLines) {
-    const sectionWidth = canvas.width / lineCount;
-    const x = sectionWidth * idx + sectionWidth / 2 - lineWidth / 2;
-    // 패들과 불기둥 충돌 판정
-    if (
-      paddleRight > x &&
-      paddleLeft < x + lineWidth
-    ) {
-      if (!fireHitCool) {
-        fireHitCool = true;
-        startDamageSfx();
-        flashCharacter();
-        loseLife();
-        setTimeout(() => { fireHitCool = false; }, 1000); // 쿨타임
-      }
-    }
-    // 경고
-    if (fireWarningActive && warningImg.complete) {
-      ctx.save();
-      ctx.globalAlpha = 0.5 + 0.5 * warningAnim;
-      ctx.drawImage(warningImg, x, 0, warningSize, warningSize);
-      ctx.restore();
-    }
-
-    // 불기둥
-    if (fireActive && fireImg.complete) {
-      let elapsed = (now - fireStart) / 1000;
-      let visibleHeight = 0;
-      if (elapsed < 1) {
-        visibleHeight = fireHeight * (elapsed / 1);
-      } else {
-        visibleHeight = fireHeight;
-      }
-      ctx.drawImage(fireImg, x, 0, lineWidth, visibleHeight);
-    }
-  }
-}
-// === 불기둥 피격 판정 및 피격 이펙트 ===
-let fireHitCool = false;
-function handleFirePatternHit() {
-  if (!fireActive) return;
-  // 캐릭터(패들) 위치 계산
-  const paddleTop = canvas.height - paddleHeight - imgH + 6;
-  const paddleBottom = canvas.height - imgH + 6;
-  const paddleLeft = paddleX;
-  const paddleRight = paddleX + paddleWidth;
-
-  const lineCount = 6;
-  const lineWidth = brickWidth / 2;
-
-  for (let idx of fireLines) {
-    const sectionWidth = canvas.width / lineCount;
-    const x = sectionWidth * idx + sectionWidth / 2 - lineWidth / 2;
-  }
-}
-
-// === 공용 피격 이펙트 ===
-function flashCharacter() {
-  const lv = document.getElementById("level" + level);
-  const canvasElem = lv.querySelector("canvas");
-  let flashCount = 0;
-  function flash() {
-    if (flashCount >= 6) {
-      canvasElem.style.filter = "";
-      return;
-    }
-    canvasElem.style.filter = flashCount % 2 === 0 ? "brightness(2)" : "brightness(0.5)";
-    flashCount++;
-    setTimeout(flash, 80);
-  }
-  flash();
-}
 
 // === 목숨 감소 공용 함수 ===
 function loseLife() {
