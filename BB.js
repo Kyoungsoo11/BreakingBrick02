@@ -1413,11 +1413,11 @@ function spawnBoss() {
     playBgm(7);
   } else if (level === 2) {
     boss.hp = 20;
-    boss.width = brickWidth * 4;
+    boss.width = brickWidth * 3;
     playBgm(8);
   } else if (level === 3) {
     boss.hp = 30;
-    boss.width = brickWidth * 4;
+    boss.width = brickWidth * 3;
     playBgm(9);
   }
 
