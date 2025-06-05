@@ -542,10 +542,11 @@ function gameOver() {
     // 공의 상태만 게임 처음 시작처럼 초기화
     // (목숨은 깎지 않고, 벽돌/점수/시간 등은 그대로)
     // paddleX, x, y, dx, dy만 재설정
+    ballAttached = true;
     x = canvas.width / 2;
     y = canvas.height - 30;
-    dx = 3 + level * 1;           // 공 속도 dx
-    dy = -(3 + level * 1);        // 공 속도 dy
+    dx = 0;           // 공 속도 dx
+    dy = 0;        // 공 속도 dy
     paused = false;
     requestAnimationFrame(draw);
   }
@@ -642,6 +643,7 @@ let projectiles = [];
 
 const imgW = 50;  // 캐릭터 너비
 const imgH = 60;  // 캐릭터 높이
+let ballAttached = false;
 
 const itemTypes = [
   { type: "lifeAdd", image: new Image(), outlineColor: "#1bffca" },     // 초록
@@ -965,9 +967,80 @@ function createProjectile(x, y) {
   };
 }
 
+// 참격(A) 그리기
+function drawProjectiles() {
+  for (let i = projectiles.length - 1; i >= 0; i--) {
+    const p = projectiles[i];
+
+    // 반원 위쪽 방향 그리기
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.radius, Math.PI, 0); // 반원
+    ctx.strokeStyle = ballColor;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.closePath();
+
+    // 위로 이동
+    p.y -= p.speed;
+    p.projLife--;
+
+    // 벽돌 충돌 처리
+    for (let c = 0; c < brickColumnCount; c++) {
+      for (let r = 0; r < bricks[c].length; r++) {
+        let b = bricks[c][r];
+        if (!b.status) continue;
+
+        const bx = c * brickWidth;
+        const by = r * brickHeight;
+        const bw = brickWidth;
+        const bh = brickHeight;
+        const pr = p.radius;
+
+        if (
+          p.x + pr > bx && p.x - pr < bx + bw &&
+          p.y + pr > by && p.y - pr < by + bh
+        ) {
+          startBumpSfx();
+          if (invEnable == false) {
+            projectiles.splice(i, 1);
+          }
+          b.status = 0;
+          if (b.isItem) {
+            if (damageEnable == true) {     
+              score += 300;
+            } else {
+              score += 200;
+            }
+            applyItemEffect(b.itemType);
+          } else {
+            if (damageEnable == true) {
+              score += 200;
+            } else {
+              score += 100;
+            }
+          }
+          info.querySelector(".current-score").textContent = score;
+          break;
+        }
+      }
+    }
+    if (checkBossCollision(p.x, p.y, p.radius)) {
+      if (!invEnable) {
+        projectiles.splice(i, 1);
+      }
+    }
+
+
+    if (p.y < -10 || p.projLife <= 0) {
+      projectiles.splice(i, 1);
+    }
+  }
+}
+
 function gameStart(level) {
   projectiles.splice(1, 2);
   gameFlag = true;
+  ballAttached = false;
   initBoss();
   dangerClear();
   // 초기화
@@ -1057,6 +1130,15 @@ function gameStart(level) {
     paddleX = mx - paddleWidth / 2;               // 패들 중앙이 마우스 위치에 오도록
     if (paddleX < 0) paddleX = 0;                 // 패들이 캔버스 바깥으로 나가지 않도록 경계 체크
     if (paddleX > canvas.width - paddleWidth) paddleX = canvas.width - paddleWidth;
+  });
+
+  // 마우스 클릭으로 공 발사
+  canvas.addEventListener("click", () => {
+    if (ballAttached) {
+    ballAttached = false;
+    dx = 3 + level * 1;
+    dy = -(3 + level * 1);
+    }
   });
 
   // 공/패들
@@ -1183,134 +1265,74 @@ function draw() {
     ctx.shadowColor = 'transparent';
   }
 
-  // 참격(A) 그리기
-  function drawProjectiles() {
-    for (let i = projectiles.length - 1; i >= 0; i--) {
-      const p = projectiles[i];
+  // 5-1) 공이 패들 위에 “붙어 있는 상태”라면 패들 바로 위에 고정하고 그리기만 함
+  if (ballAttached) {
+    x = paddleX + paddleWidth / 2;
+    y = canvas.height - paddleHeight - imgH - ballRadius - 1;
+    drawBall();
+  }
+  // 5-2) 공이 날아가고 있는 상태라면, 원래대로 공을 그린 뒤 이동·충돌 로직 실행
+  else {
 
-      // 반원 위쪽 방향 그리기
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.radius, Math.PI, 0); // 반원
-      ctx.strokeStyle = ballColor;
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      ctx.closePath();
+    drawBall();   // 매 프레임(requestAnimationFrame 탈 때마다) 메인 공 그리기, 아무 의미 없이 중간 위치에 호출
+    if (projectiles.length > 0) {
+      drawProjectiles();
+   }
 
-      // 위로 이동
-      p.y -= p.speed;
-      p.projLife--;
+    // 충돌
+    const nextX = x + dx;
+    const nextY = y + dy;
+    const paddleTop = canvas.height - paddleHeight - imgH + 10;
+    // 벽돌 충돌
+    for (let c = 0; c < brickColumnCount; c++) {
+      for (let r = 0; r < bricks[c].length; r++) {
+        let b = bricks[c][r];
+        const bx = c * brickWidth;
+        const by = r * brickHeight;
+        const bw = brickWidth;
+        const bh = brickHeight;
 
-      // 벽돌 충돌 처리
-      for (let c = 0; c < brickColumnCount; c++) {
-        for (let r = 0; r < bricks[c].length; r++) {
-          let b = bricks[c][r];
-          if (!b.status) continue;
+        if (
+          b.status &&
+          nextX + r > bx &&           // 공의 오른쪽 경계가 벽돌 왼쪽을 넘어섰는가
+          nextX - r < bx + bw &&      // 공의 왼쪽 경계가 벽돌 오른쪽을 넘지 않았는가
+          nextY + r > by &&           // 공의 아래쪽 경계가 벽돌 위쪽을 넘어섰는가
+          nextY - r < by + bh         // 공의 위쪽 경계가 벽돌 아래쪽을 넘지 않았는가
+        ) {
+          startBumpSfx();
 
-          const bx = c * brickWidth;
-          const by = r * brickHeight;
-          const bw = brickWidth;
-          const bh = brickHeight;
-          const pr = p.radius;
+          // 이전 위치로 충돌 방향 판정
+          if (!invEnable) {
+            const prevX = x - dx;
+            const prevY = y - dy;
 
-          if (
-            p.x + pr > bx && p.x - pr < bx + bw &&
-            p.y + pr > by && p.y - pr < by + bh
-          ) {
-            startBumpSfx();
-            if (invEnable == false) {
-              projectiles.splice(i, 1);
+            if (prevY <= by || prevY >= by + bh) {  // 위아래에서 충돌
+              dy = -dy;  
+            } else {    // 좌우에서 충돌
+              dx = -dx;  
             }
-            b.status = 0;
-            if (b.isItem) {
-              if (damageEnable == true) {
-                score += 300;
-              } else {
-                score += 200;
-              }
-              applyItemEffect(b.itemType);
+          }
+
+          b.status = 0;
+          if (b.isItem) {
+            if (damageEnable) {
+              score += 300;
             } else {
-              if (damageEnable == true) {
-                score += 200;
-              } else {
-                score += 100;
-              }
+              score += 200;
             }
-            info.querySelector(".current-score").textContent = score;
-            break;
+            applyItemEffect(b.itemType);
+          } else {
+            if (damageEnable) {
+              score += 200;
+            } else {
+              score += 100;
+            }
           }
+          info.querySelector(".current-score").textContent = score;
         }
-      }
-      if (checkBossCollision(p.x, p.y, p.radius)) {
-        if (!invEnable) {
-          projectiles.splice(i, 1);
-        }
-      }
-
-
-      if (p.y < -10 || p.projLife <= 0) {
-        projectiles.splice(i, 1);
       }
     }
-  }
-
-  drawBall();   // 매 프레임(requestAnimationFrame 탈 때마다) 메인 공 그리기, 아무 의미 없이 중간 위치에 호출
-  if (projectiles.length > 0) {
-    drawProjectiles();
-  }
-
-  // 충돌
-  const nextX = x + dx;
-  const nextY = y + dy;
-  const paddleTop = canvas.height - paddleHeight - imgH + 10;
-  // 벽돌 충돌
-  for (let c = 0; c < brickColumnCount; c++) {
-    for (let r = 0; r < bricks[c].length; r++) {
-      let b = bricks[c][r];
-      const bx = c * brickWidth;
-      const by = r * brickHeight;
-      const bw = brickWidth;
-      const bh = brickHeight;
-
-      if (
-        b.status &&
-        nextX + r > bx &&           // 공의 오른쪽 경계가 벽돌 왼쪽을 넘어섰는가
-        nextX - r < bx + bw &&      // 공의 왼쪽 경계가 벽돌 오른쪽을 넘지 않았는가
-        nextY + r > by &&           // 공의 아래쪽 경계가 벽돌 위쪽을 넘어섰는가
-        nextY - r < by + bh         // 공의 위쪽 경계가 벽돌 아래쪽을 넘지 않았는가
-      ) {
-        startBumpSfx();
-
-        // 이전 위치로 충돌 방향 판정
-        if (invEnable == false) {
-          const prevX = x - dx;
-          const prevY = y - dy;
-
-          if (prevY <= by || prevY >= by + bh) {  // 위아래에서 충돌
-            dy = -dy;  
-          } else {    // 좌우에서 충돌
-            dx = -dx;  
-          }
-        }
-
-        b.status = 0;
-        if (b.isItem) {
-          if (damageEnable == true) {
-            score += 300;
-          } else {
-            score += 200;
-          }
-          applyItemEffect(b.itemType);
-        } else {
-          if (damageEnable == true) {
-            score += 200;
-          } else {
-            score += 100;
-          }
-        }
-        info.querySelector(".current-score").textContent = score;
-      }
-    }
-  }
+  
 
   if (checkBossCollision(nextX, nextY, ballRadius)) {
     if (invEnable == false) {
@@ -1374,8 +1396,7 @@ function draw() {
     if (nextX > paddleX && nextX < paddleX + paddleWidth) {
       startShieldSfx();
       dy = -dy;
-      // 튕긴 후 위치 보정
-      y = paddleTop - ballRadius;
+      y = paddleTop - ballRadius; // 공의 y 좌표 패들 면 바로 위로 보정 (부딪힌 후 위치 보정)
     }
   }
 
@@ -1384,19 +1405,21 @@ function draw() {
     gameOver();
     return;
   }
+}
 
+  // 캐릭터 이미지 그리기
   if (charImg.complete) {
     const imgX = paddleX + (paddleWidth - imgW) / 2;
     const imgY = canvas.height - imgH;
     ctx.drawImage(charImg, imgX, imgY, imgW, imgH);
   }
 
-  // 패들
+  // 패들 그리기
   ctx.beginPath();
   ctx.rect(paddleX, canvas.height - paddleHeight - imgH + 6, paddleWidth, paddleHeight);
   ctx.fillStyle = "white"; ctx.fill(); ctx.closePath();
 
-  // 이동
+  // 공 위치 업데이트 (ballAttached === false일 때만 의미가 있음)
   x += dx; y += dy;
   requestAnimationFrame(draw);
 
