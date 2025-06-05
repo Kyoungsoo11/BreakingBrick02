@@ -599,9 +599,9 @@ function gameClear() { // 게임 클리어 함수. 나중에 텍스트 수정 �
 // 게임 시작 (여기부터 게임 구현), 참고: level= 1,2,3 난이도 저장되어있음, 벽돌 색상은 brickColor, 공 색상은 ballColor에 지정.
 // ****************setInterval할때 반드시 paused==false 체크해주세요!!!!!!!!!!
 const paddleHeight = 10,
-  brickColumnCount = 8,
-  brickHeight = 20,
-  initialBrickRows = 3;
+brickColumnCount = 8,
+brickHeight = 20,
+initialBrickRows = 3;
 
 let paddleWidth = 170;
 let canvas, ctx, paddleX;
@@ -1015,12 +1015,12 @@ function gameStart(level) {
         makeRandomItemBrick();
       }
 
-      if (!boss.active) {
+      if (!boss.active) {                 // 보스 미출현 시 벽돌을 한 줄 씩 추가
         if ((step + 10) % 15 == 0) {
           if (!paused) addBrickRow();
         }
       } else {
-        if (brickRowCount < 3) {
+        if (brickRowCount < 3) {          // 보스 출현 후, 벽돌 줄 수 최대 3줄 제한
           if ((step + 10) % 15 == 0) {
             if (!paused) addBrickRow();
           }
@@ -1046,38 +1046,34 @@ function gameStart(level) {
     }
   }, 1000);
 
-  // canvas
+  // canvas 설정 및 마우스 이벤트 등록
   const lv = document.getElementById("level" + level);
   canvas = lv.querySelector("canvas");
   ctx = canvas.getContext("2d");
 
   canvas.addEventListener("mousemove", e => {
     const rect = canvas.getBoundingClientRect();  // <canvas>가 차지하는 영역의 위치와 크기 정보를 구함
-    // 마우스 X 좌표를 캔버스 기준으로 계산
-    const mx = e.clientX - rect.left;
-    // 패들 중앙이 마우스 위치에 오도록
-    paddleX = mx - paddleWidth / 2;
-    // 패들이 캔버스 바깥으로 나가지 않도록 경계 체크
-    if (paddleX < 0) paddleX = 0;
+    const mx = e.clientX - rect.left;             // 마우스 X 좌표를 캔버스 기준으로 계산
+    paddleX = mx - paddleWidth / 2;               // 패들 중앙이 마우스 위치에 오도록
+    if (paddleX < 0) paddleX = 0;                 // 패들이 캔버스 바깥으로 나가지 않도록 경계 체크
     if (paddleX > canvas.width - paddleWidth) paddleX = canvas.width - paddleWidth;
   });
 
   // 공/패들
   paddleX = (canvas.width - paddleWidth) / 2;
   x = canvas.width / 2; y = canvas.height - 30;
-  dx = 3 + level * 1; dy = -(3 + level * 1);
+  dx = 3 + level * 1; dy = -(3 + level * 1);       // !-- 공 속도 --!
+  paddleWidth = 170;
 
   // 벽돌
   brickRowCount = initialBrickRows;
   initBricks();
 
-  paddleWidth = 170;
-
   // 시작
   paused = false;
   requestAnimationFrame(draw);  // draw 함수에서 재호출
 
-  //전갈갈
+  //전갈
   if (level === 1) {
     loadBossFrames();  // 전갈 보스 이미지 프레임 로딩
   }
@@ -1109,7 +1105,7 @@ function draw() {
 
   if (paused) return;
 
-  // 배경
+  // 캔버스 전체 지워서 이전 프레임 흔적 제거
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   // 벽돌
@@ -1121,7 +1117,7 @@ function draw() {
         const bx = c * brickWidth;
         const by = r * brickHeight;
 
-        // 배경색 결정
+        // 배경색 결정 (아이템 벽돌 or 일반 벽돌)
         if (b.isItem) {
           ctx.fillStyle = "black";  // 아이템 벽돌 내부는 검정
         } else {
@@ -1156,13 +1152,13 @@ function draw() {
     ctx.beginPath();
     ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
 
-    if (invEnable && damageEnable) {
+    if (invEnable && damageEnable) {    
       ctx.shadowColor = "red";
       ctx.shadowBlur = 30;
       ctx.strokeStyle = ballColor;
       ctx.lineWidth = 2;
       ctx.stroke();
-    } else if (invEnable) {
+    } else if (invEnable) {             
       ctx.shadowBlur = 0;
       ctx.strokeStyle = ballColor;
       ctx.lineWidth = 2;
@@ -1187,6 +1183,7 @@ function draw() {
     ctx.shadowColor = 'transparent';
   }
 
+  // 참격(A) 그리기
   function drawProjectiles() {
     for (let i = projectiles.length - 1; i >= 0; i--) {
       const p = projectiles[i];
@@ -1256,7 +1253,7 @@ function draw() {
     }
   }
 
-  drawBall();
+  drawBall();   // 매 프레임(requestAnimationFrame 탈 때마다) 메인 공 그리기, 아무 의미 없이 중간 위치에 호출
   if (projectiles.length > 0) {
     drawProjectiles();
   }
@@ -1283,15 +1280,15 @@ function draw() {
       ) {
         startBumpSfx();
 
-        // 이전 위치로 방향 판정
+        // 이전 위치로 충돌 방향 판정
         if (invEnable == false) {
           const prevX = x - dx;
           const prevY = y - dy;
 
-          if (prevY <= by || prevY >= by + bh) {
-            dy = -dy;  // 위아래에서 충돌
-          } else {
-            dx = -dx;  // 좌우에서 충돌
+          if (prevY <= by || prevY >= by + bh) {  // 위아래에서 충돌
+            dy = -dy;  
+          } else {    // 좌우에서 충돌
+            dx = -dx;  
           }
         }
 
@@ -1370,8 +1367,8 @@ function draw() {
   }
   // 3) 패들 충돌 (공이 위에서 내려올 때만)
   else if (dy > 0                             // ↓ 방향일 때
-    && y + ballRadius <= paddleTop      // 현재는 패들 면 위에 있고
-    && nextY + ballRadius >= paddleTop  // 다음 프레임에 패들 면을 넘길 때
+    && y + ballRadius <= paddleTop            // 현재는 패들 면 위에 있고
+    && nextY + ballRadius >= paddleTop        // 다음 프레임에 패들 면을 넘길 때
   ) {
     // 공이 패들 위에 있을 때만 X범위 체크
     if (nextX > paddleX && nextX < paddleX + paddleWidth) {
