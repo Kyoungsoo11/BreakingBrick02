@@ -967,76 +967,6 @@ function createProjectile(x, y) {
   };
 }
 
-// 참격(A) 그리기
-function drawProjectiles() {
-  for (let i = projectiles.length - 1; i >= 0; i--) {
-    const p = projectiles[i];
-
-    // 반원 위쪽 방향 그리기
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.radius, Math.PI, 0); // 반원
-    ctx.strokeStyle = ballColor;
-    ctx.lineWidth = 2;
-    ctx.stroke();
-    ctx.closePath();
-
-    // 위로 이동
-    p.y -= p.speed;
-    p.projLife--;
-
-    // 벽돌 충돌 처리
-    for (let c = 0; c < brickColumnCount; c++) {
-      for (let r = 0; r < bricks[c].length; r++) {
-        let b = bricks[c][r];
-        if (!b.status) continue;
-
-        const bx = c * brickWidth;
-        const by = r * brickHeight;
-        const bw = brickWidth;
-        const bh = brickHeight;
-        const pr = p.radius;
-
-        if (
-          p.x + pr > bx && p.x - pr < bx + bw &&
-          p.y + pr > by && p.y - pr < by + bh
-        ) {
-          startBumpSfx();
-          if (invEnable == false) {
-            projectiles.splice(i, 1);
-          }
-          b.status = 0;
-          if (b.isItem) {
-            if (damageEnable == true) {     
-              score += 300;
-            } else {
-              score += 200;
-            }
-            applyItemEffect(b.itemType);
-          } else {
-            if (damageEnable == true) {
-              score += 200;
-            } else {
-              score += 100;
-            }
-          }
-          info.querySelector(".current-score").textContent = score;
-          break;
-        }
-      }
-    }
-    if (checkBossCollision(p.x, p.y, p.radius)) {
-      if (!invEnable) {
-        projectiles.splice(i, 1);
-      }
-    }
-
-
-    if (p.y < -10 || p.projLife <= 0) {
-      projectiles.splice(i, 1);
-    }
-  }
-}
-
 function gameStart(level) {
   projectiles.splice(1, 2);
   gameFlag = true;
@@ -1180,7 +1110,9 @@ function addBrickRow() {
   }
 }
 
-// 그리기 루프
+// ========================
+//  그리기 함수 draw()
+// ========================
 function draw() {
   const info = document.getElementById(`level${level}`);
   info.querySelector(".current-score").textContent = score;
@@ -1265,19 +1197,89 @@ function draw() {
     ctx.shadowColor = 'transparent';
   }
 
-  // 5-1) 공이 패들 위에 “붙어 있는 상태”라면 패들 바로 위에 고정하고 그리기만 함
+  // 참격(A) 그리기
+  function drawProjectiles() {
+    for (let i = projectiles.length - 1; i >= 0; i--) {
+      const p = projectiles[i];
+
+      // 반원 위쪽 방향 그리기
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.radius, Math.PI, 0); // 반원
+      ctx.strokeStyle = ballColor;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.closePath();
+
+      // 위로 이동
+      p.y -= p.speed;
+      p.projLife--;
+
+      // 벽돌 충돌 처리
+      for (let c = 0; c < brickColumnCount; c++) {
+        for (let r = 0; r < bricks[c].length; r++) {
+          let b = bricks[c][r];
+          if (!b.status) continue;
+
+          const bx = c * brickWidth;
+          const by = r * brickHeight;
+          const bw = brickWidth;
+          const bh = brickHeight;
+          const pr = p.radius;
+
+          if (
+            p.x + pr > bx && p.x - pr < bx + bw &&
+            p.y + pr > by && p.y - pr < by + bh
+          ) {
+            startBumpSfx();
+            if (invEnable == false) {
+              projectiles.splice(i, 1);
+            }
+            b.status = 0;
+            if (b.isItem) {
+              if (damageEnable == true) {     
+                score += 300;
+              } else {
+                score += 200;
+              }
+              applyItemEffect(b.itemType);
+            } else {
+              if (damageEnable == true) {
+                score += 200;
+              } else {
+                score += 100;
+              }
+            }
+            info.querySelector(".current-score").textContent = score;
+            break;
+          }
+        }
+      }
+      if (checkBossCollision(p.x, p.y, p.radius)) {
+        if (!invEnable) {
+          projectiles.splice(i, 1);
+        }
+      }
+
+
+      if (p.y < -10 || p.projLife <= 0) {
+        projectiles.splice(i, 1);
+      }
+    }
+  }
+
+  drawBall();   // 매 프레임(requestAnimationFrame 탈 때마다) 메인 공 그리기, 아무 의미 없이 중간 위치에 호출
+  if (projectiles.length > 0) {
+    drawProjectiles();
+  }
+
+  // 공이 패들 위에 “붙어 있는 상태”라면 패들 바로 위에 고정하고 그리기만 함
   if (ballAttached) {
     x = paddleX + paddleWidth / 2;
     y = canvas.height - paddleHeight - imgH - ballRadius - 1;
     drawBall();
   }
-  // 5-2) 공이 날아가고 있는 상태라면, 원래대로 공을 그린 뒤 이동·충돌 로직 실행
+  // 공이 날아가고 있는 상태라면, 원래대로 공을 그린 뒤 이동·충돌 로직 실행
   else {
-
-    drawBall();   // 매 프레임(requestAnimationFrame 탈 때마다) 메인 공 그리기, 아무 의미 없이 중간 위치에 호출
-    if (projectiles.length > 0) {
-      drawProjectiles();
-   }
 
     // 충돌
     const nextX = x + dx;
