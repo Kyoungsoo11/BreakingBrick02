@@ -1733,6 +1733,7 @@ let blinkFrame = 0;
 function loseLife() {
   const info = document.getElementById(`level${level}`);
   const lifeEl = info.querySelector(".current-life");
+    startDamageSfx();
   let currentLife = parseInt(lifeEl.textContent);
   if (currentLife < 4) {
     paddleWidth -= 40;
