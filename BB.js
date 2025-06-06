@@ -1468,13 +1468,31 @@ function draw() {
   if (bossProjectiles.length > 0) {
     drawBossProjectiles();
   }
-  // draw 함수 내, 남은 시간이 10으로 나눠떨어질 때마다 공격
-  if (boss.active && (left % 10 === 0) && left !== 0 && !boss.lastAttackTime) {
-    bossAttack();
-    boss.lastAttackTime = true;
-  }
-  if (boss.active && (left % 10 !== 0)) {
-    boss.lastAttackTime = false;
+  
+  boss.warningShown = false;
+
+  if (boss.active) {
+    // 공격 0.5초 전: frame_atk.png 표시
+    if ((left % 10 === 1) && left !== 0 && !boss.warningShown && level === 3) {
+      boss.warningImage = new Image();
+      boss.warningImage.src = `image/boss3/frame_atk.png`; // 확정적으로 boss3만 사용
+      boss.warningShown = true;
+    }
+  
+    // 공격 실행
+    if ((left % 10 === 0) && left !== 0 && !boss.lastAttackTime) {
+      bossAttack();
+      boss.lastAttackTime = true;
+    }
+  
+    // draw 함수 내, 남은 시간이 10으로 나눠떨어질 때마다 공격
+    if (left % 10 !== 0) {
+      boss.lastAttackTime = false;
+    }
+    if (left % 10 !== 1) {
+      boss.warningShown = false;
+      boss.warningImage = null;
+    }
   }
 }
 
@@ -1564,9 +1582,19 @@ function spawnBoss() {
 
 // === 보스 그리기 ===
 function drawBoss() {
-  if (!boss.active || boss.imageFrames.length === 0) return;
-  const img = boss.imageFrames[boss.frameIndex];
-  // 정사각형으로 출력: 높이를 너비와 동일하게
+  if (!boss.active) return;
+
+  let img;
+
+  // 공격 예고 이미지가 설정된 경우 우선 출력
+  if (boss.warningShown && boss.warningImage?.complete) {
+    img = boss.warningImage;
+  } else if (boss.imageFrames.length > 0) {
+    img = boss.imageFrames[boss.frameIndex];
+  } else {
+    return; // 프레임이 없으면 그리지 않음
+  }
+
   const size = boss.width;
   if (img.complete) {
     ctx.drawImage(img, boss.x, boss.y, size, size);
@@ -1603,7 +1631,7 @@ function drawBossProjectiles() {
       ctx.lineTo(p.x - p.radius, p.y - p.radius);
       ctx.lineTo(p.x + p.radius, p.y - p.radius);
       ctx.closePath();
-      ctx.fillStyle = "#00a6d9";    // 3단계 보스는 푸른른색
+      ctx.fillStyle = "#00a6d9";    // 3단계 보스는 푸른색
     }
     ctx.fill();
     ctx.closePath();
