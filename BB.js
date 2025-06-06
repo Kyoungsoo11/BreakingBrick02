@@ -319,6 +319,7 @@ function goNextLevel() { //클리어 후 다음 레벨로
   // 보스 상태 초기화
   initBoss();
   gameFlag = false;
+  ballAttached = false;
 
   if (level == 3) {
     document.getElementById("next-level-btn").innerHTML = "Next Level";
@@ -344,6 +345,7 @@ function goIntro() {
 }
 function clearToMain() {
   gameFlag = false;
+  ballAttached = false;
   document.getElementById("game-clear").style.display = "none";
   goMain();
   playBgm(0);
@@ -365,6 +367,7 @@ function gameToMain() {
   goMain();
   playBgm(0);
   gameFlag = false;
+  ballAttached = false;
   clearInterval(timerId);
 }
 function gameToMainNo() {
@@ -518,10 +521,10 @@ function gameOver() {
   }
   currentLife--;  // 목숨 1 깎기
   lifeEl.textContent = currentLife;
-  startDamageSfx();
 
-  if (currentLife <= 0) {
+  if (currentLife <= 0 || left <= 0) {
     // 게임 오버 직전에 best score 갱신
+    ballAttached = false;
     playBgm(10);
     if (score > bestScores[level]) {
       bestScores[level] = score;
@@ -542,6 +545,7 @@ function gameOver() {
     // 공의 상태만 게임 처음 시작처럼 초기화
     // (목숨은 깎지 않고, 벽돌/점수/시간 등은 그대로)
     // paddleX, x, y, dx, dy만 재설정
+    startDamageSfx();
     ballAttached = true;
     x = canvas.width / 2;
     y = canvas.height - 30;
@@ -557,6 +561,7 @@ function restart() {
   clearInterval(timerId);
   step = 0;
   gameFlag = false;
+  ballAttached = false;
   changePage(2);
 }
 function gameClear() { // 게임 클리어 함수. 나중에 텍스트 수정 구현
@@ -1538,7 +1543,7 @@ function loadBossFrames() {
 function spawnBoss() {
   console.log("보스 등장!");
   for (let c = 0; c < brickColumnCount; c++) {
-    bricks[c].splice(3, 4);  // 3~6번째 줄 제거
+    bricks[c].splice(3, 6);  // 3~6번째 줄 제거
   }
 
   boss.active = true;
