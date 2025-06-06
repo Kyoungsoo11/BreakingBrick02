@@ -1440,15 +1440,21 @@ function draw() {
 
   // 캐릭터 이미지 그리기
   if (charImg.complete) {
-    const imgX = paddleX + (paddleWidth - imgW) / 2;
-    const imgY = canvas.height - imgH;
-    ctx.drawImage(charImg, imgX, imgY, imgW, imgH);
+    if (!isBlinking || (blinkFrame % 2 === 0)) {
+      const imgX = paddleX + (paddleWidth - imgW) / 2;
+      const imgY = canvas.height - imgH;
+      ctx.drawImage(charImg, imgX, imgY, imgW, imgH);
+    }
   }
 
   // 패들 그리기
-  ctx.beginPath();
-  ctx.rect(paddleX, canvas.height - paddleHeight - imgH + 6, paddleWidth, paddleHeight);
-  ctx.fillStyle = "white"; ctx.fill(); ctx.closePath();
+  if (!isBlinking || (blinkFrame % 2 === 0)) {
+    ctx.beginPath();
+    ctx.rect(paddleX, canvas.height - paddleHeight - imgH + 6, paddleWidth, paddleHeight);
+    ctx.fillStyle = "white";
+    ctx.fill();
+    ctx.closePath();
+  }
 
   // 공 위치 업데이트 (ballAttached === false일 때만 의미가 있음)
   x += dx; y += dy;
@@ -1664,6 +1670,9 @@ function startBossHitSfx() {
 
 
 // === 목숨 감소 공용 함수 ===
+let blinkTimer = null;
+let isBlinking = false;
+let blinkFrame = 0;
 function loseLife() {
   const info = document.getElementById(`level${level}`);
   const lifeEl = info.querySelector(".current-life");
@@ -1675,5 +1684,18 @@ function loseLife() {
   lifeEl.textContent = currentLife;
   if (currentLife <= 0) {
     gameOver();
+  } else {
+    // 깜빡임 시작
+    isBlinking = true;
+    blinkFrame = 0;
+    if (blinkTimer) clearInterval(blinkTimer);
+    blinkTimer = setInterval(() => {
+      blinkFrame++;
+      if (blinkFrame > 10) { // 약 2초간(10프레임) 깜빡임
+        isBlinking = false;
+        clearInterval(blinkTimer);
+        blinkTimer = null;
+      }
+    }, 200); // 0.2초마다 토글
   }
 }
