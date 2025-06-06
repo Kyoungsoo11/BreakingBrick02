@@ -1594,9 +1594,17 @@ function drawBossProjectiles() {
 
     // 그리기
     ctx.beginPath();
-    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-    if (level === 2) ctx.fillStyle = "orange";  // 2단계 보스는 주황색
-    if (level === 3) ctx.fillStyle = "#00a6d9";    // 3단계 보스는 빨간색
+    if (level === 2) {
+      ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+      ctx.fillStyle = "orange";  // 2단계 보스는 주황색
+    }
+    if (level === 3) {
+      ctx.moveTo(p.x, p.y + p.radius);
+      ctx.lineTo(p.x - p.radius, p.y - p.radius);
+      ctx.lineTo(p.x + p.radius, p.y - p.radius);
+      ctx.closePath();
+      ctx.fillStyle = "#00a6d9";    // 3단계 보스는 푸른른색
+    }
     ctx.fill();
     ctx.closePath();
 
