@@ -600,9 +600,9 @@ function gameClear() { // 게임 클리어 함수. 나중에 텍스트 수정 �
 // 게임 시작 (여기부터 게임 구현), 참고: level= 1,2,3 난이도 저장되어있음, 벽돌 색상은 brickColor, 공 색상은 ballColor에 지정.
 // ****************setInterval할때 반드시 paused==false 체크해주세요!!!!!!!!!!
 const paddleHeight = 10,
-brickColumnCount = 8,
-brickHeight = 20,
-initialBrickRows = 3;
+  brickColumnCount = 8,
+  brickHeight = 20,
+  initialBrickRows = 3;
 
 let paddleWidth = 170;
 let canvas, ctx, paddleX;
@@ -796,8 +796,8 @@ function damageBuff(i) {
   const damageEl = info.querySelector(".damageBuff-status");
   availableDamage = parseInt(damageEl.textContent);
   if (i == 'I') {
-    if(level == 1 || level == 2) availableDamage = 1;
-    else if(level == 3) availableDamage = 0;
+    if (level == 1 || level == 2) availableDamage = 1;
+    else if (level == 3) availableDamage = 0;
   } else {
     availableDamage += i;
   }
@@ -809,8 +809,8 @@ function attack(i) {
   const attackEl = info.querySelector(".attack-status");
   availableAttack = parseInt(attackEl.textContent);
   if (i == 'I') {
-    if(level == 1 || level == 2) availableAttack = 1;
-    else if(level == 3) availableAttack = 0;
+    if (level == 1 || level == 2) availableAttack = 1;
+    else if (level == 3) availableAttack = 0;
   } else {
     availableAttack += i;
   }
@@ -822,8 +822,8 @@ function invisiblity(i) {
   const invEl = info.querySelector(".invisiblity-status");
   availableInv = parseInt(invEl.textContent);
   if (i == 'I') {
-    if(level == 1) availableInv = 1;
-    else if(level == 2 || level == 3) availableInv = 0;
+    if (level == 1) availableInv = 1;
+    else if (level == 2 || level == 3) availableInv = 0;
   } else {
     availableInv += i;
   }
@@ -1033,7 +1033,7 @@ function gameStart(level) {
       // 보스 등장 조건 (레벨1이고, 아직 보스 안나왔고, 남은 시간이 150 이하)
       if (!boss.active && step > 65) {
         console.log("보스 등장 경고");
-        if(dgrflag) {
+        if (dgrflag) {
           dgrflag = false;
           startDgrSfx();
         }
@@ -1065,9 +1065,9 @@ function gameStart(level) {
   // 마우스 클릭으로 공 발사
   canvas.addEventListener("click", () => {
     if (ballAttached) {
-    ballAttached = false;
-    dx = 3 + level * 1;
-    dy = -(3 + level * 1);
+      ballAttached = false;
+      dx = 3 + level * 1;
+      dy = -(3 + level * 1);
     }
   });
 
@@ -1107,6 +1107,35 @@ function addBrickRow() {
   brickRowCount++;
   for (let c = 0; c < brickColumnCount; c++) {
     bricks[c].unshift({ status: 1 });
+  }
+}
+//===================
+//  보스 관련 변수 및 함수
+let bossProjectiles = [];
+function bossAttack() {
+  if (!boss.active) return;
+
+  // 2단계: 보스 정면에서 1개
+  if (level === 2) {
+    const projX = boss.x + boss.width / 2;
+    const projY = boss.y + boss.height;
+    bossProjectiles.push({
+      x: projX,
+      y: projY,
+      radius: 16,
+      dy: 6
+    });
+  }
+
+  // 3단계: 보스 정면 + 양 옆에서 3개
+  if (level === 3) {
+    const leftX = boss.x + boss.width * 0.2;
+    const centerX = boss.x + boss.width / 2;
+    const rightX = boss.x + boss.width * 0.8;
+    const projY = boss.y + boss.height;
+    bossProjectiles.push({ x: leftX, y: projY, radius: 16, dy: 6 });
+    bossProjectiles.push({ x: centerX, y: projY, radius: 16, dy: 6 });
+    bossProjectiles.push({ x: rightX, y: projY, radius: 16, dy: 6 });
   }
 }
 
@@ -1166,13 +1195,13 @@ function draw() {
     ctx.beginPath();
     ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
 
-    if (invEnable && damageEnable) {    
+    if (invEnable && damageEnable) {
       ctx.shadowColor = "red";
       ctx.shadowBlur = 30;
       ctx.strokeStyle = ballColor;
       ctx.lineWidth = 2;
       ctx.stroke();
-    } else if (invEnable) {             
+    } else if (invEnable) {
       ctx.shadowBlur = 0;
       ctx.strokeStyle = ballColor;
       ctx.lineWidth = 2;
@@ -1236,7 +1265,7 @@ function draw() {
             }
             b.status = 0;
             if (b.isItem) {
-              if (damageEnable == true) {     
+              if (damageEnable == true) {
                 score += 300;
               } else {
                 score += 200;
@@ -1309,9 +1338,9 @@ function draw() {
             const prevY = y - dy;
 
             if (prevY <= by || prevY >= by + bh) {  // 위아래에서 충돌
-              dy = -dy;  
+              dy = -dy;
             } else {    // 좌우에서 충돌
-              dx = -dx;  
+              dx = -dx;
             }
           }
 
@@ -1334,80 +1363,80 @@ function draw() {
         }
       }
     }
-  
 
-  if (checkBossCollision(nextX, nextY, ballRadius)) {
-    if (invEnable == false) {
-      const bossLeft = boss.x;
-      const bossRight = boss.x + boss.width;
-      const bossTop = boss.y;
-      const bossBottom = boss.y + boss.height;
 
-      const prevX = x - dx;
-      const prevY = y - dy;
+    if (checkBossCollision(nextX, nextY, ballRadius)) {
+      if (invEnable == false) {
+        const bossLeft = boss.x;
+        const bossRight = boss.x + boss.width;
+        const bossTop = boss.y;
+        const bossBottom = boss.y + boss.height;
 
-      // 위/아래 충돌
-      if (prevY + ballRadius <= bossTop) {
-        dy = -Math.abs(dy);
-        y = bossTop - ballRadius - 1;
-      } else if (prevY - ballRadius >= bossBottom) {
-        dy = Math.abs(dy);
-        y = bossBottom + ballRadius + 1;
-      }
-      // 좌/우 충돌
-      else if (prevX + ballRadius <= bossLeft) {
-        dx = -Math.abs(dx);
-        x = bossLeft - ballRadius - 1;
-      } else if (prevX - ballRadius >= bossRight) {
-        dx = Math.abs(dx);
-        x = bossRight + ballRadius + 1;
-      }
-      // 대각선 충돌
-      else {
-        const bossCenterX = boss.x + boss.width / 2;
-        const bossCenterY = boss.y + boss.height / 2;
-        const diffX = nextX - bossCenterX;
-        const diffY = nextY - bossCenterY;
-        if (Math.abs(diffX) > Math.abs(diffY)) {
-          dx = -dx;
-          if (diffX > 0) x = boss.x + boss.width + ballRadius + 1;
-          else x = boss.x - ballRadius - 1;
-        } else {
-          dy = -dy;
-          if (diffY > 0) y = boss.y + boss.height + ballRadius + 1;
-          else y = boss.y - ballRadius - 1;
+        const prevX = x - dx;
+        const prevY = y - dy;
+
+        // 위/아래 충돌
+        if (prevY + ballRadius <= bossTop) {
+          dy = -Math.abs(dy);
+          y = bossTop - ballRadius - 1;
+        } else if (prevY - ballRadius >= bossBottom) {
+          dy = Math.abs(dy);
+          y = bossBottom + ballRadius + 1;
+        }
+        // 좌/우 충돌
+        else if (prevX + ballRadius <= bossLeft) {
+          dx = -Math.abs(dx);
+          x = bossLeft - ballRadius - 1;
+        } else if (prevX - ballRadius >= bossRight) {
+          dx = Math.abs(dx);
+          x = bossRight + ballRadius + 1;
+        }
+        // 대각선 충돌
+        else {
+          const bossCenterX = boss.x + boss.width / 2;
+          const bossCenterY = boss.y + boss.height / 2;
+          const diffX = nextX - bossCenterX;
+          const diffY = nextY - bossCenterY;
+          if (Math.abs(diffX) > Math.abs(diffY)) {
+            dx = -dx;
+            if (diffX > 0) x = boss.x + boss.width + ballRadius + 1;
+            else x = boss.x - ballRadius - 1;
+          } else {
+            dy = -dy;
+            if (diffY > 0) y = boss.y + boss.height + ballRadius + 1;
+            else y = boss.y - ballRadius - 1;
+          }
         }
       }
     }
-  }
 
-  // 1) 좌우 벽 충돌
-  if (nextX + ballRadius > canvas.width || nextX - ballRadius < 0) {
-    dx = -dx;
-  }
-  // 2) 천장 충돌
-  else if (nextY - ballRadius < 0) {
-    dy = -dy;
-  }
-  // 3) 패들 충돌 (공이 위에서 내려올 때만)
-  else if (dy > 0                             // ↓ 방향일 때
-    && y + ballRadius <= paddleTop            // 현재는 패들 면 위에 있고
-    && nextY + ballRadius >= paddleTop        // 다음 프레임에 패들 면을 넘길 때
-  ) {
-    // 공이 패들 위에 있을 때만 X범위 체크
-    if (nextX > paddleX && nextX < paddleX + paddleWidth) {
-      startShieldSfx();
+    // 1) 좌우 벽 충돌
+    if (nextX + ballRadius > canvas.width || nextX - ballRadius < 0) {
+      dx = -dx;
+    }
+    // 2) 천장 충돌
+    else if (nextY - ballRadius < 0) {
       dy = -dy;
-      y = paddleTop - ballRadius; // 공의 y 좌표 패들 면 바로 위로 보정 (부딪힌 후 위치 보정)
+    }
+    // 3) 패들 충돌 (공이 위에서 내려올 때만)
+    else if (dy > 0                             // ↓ 방향일 때
+      && y + ballRadius <= paddleTop            // 현재는 패들 면 위에 있고
+      && nextY + ballRadius >= paddleTop        // 다음 프레임에 패들 면을 넘길 때
+    ) {
+      // 공이 패들 위에 있을 때만 X범위 체크
+      if (nextX > paddleX && nextX < paddleX + paddleWidth) {
+        startShieldSfx();
+        dy = -dy;
+        y = paddleTop - ballRadius; // 공의 y 좌표 패들 면 바로 위로 보정 (부딪힌 후 위치 보정)
+      }
+    }
+
+    // 4) 바닥 충돌 (항상 검사)
+    if (nextY + ballRadius > canvas.height) {
+      gameOver();
+      return;
     }
   }
-
-  // 4) 바닥 충돌 (항상 검사)
-  if (nextY + ballRadius > canvas.height) {
-    gameOver();
-    return;
-  }
-}
 
   // 캐릭터 이미지 그리기
   if (charImg.complete) {
@@ -1430,7 +1459,19 @@ function draw() {
   } else {
     info.querySelector(".current-score").style.color = "white";
   }
+  if (bossProjectiles.length > 0) {
+    drawBossProjectiles();
+  }
+  // draw 함수 내, 남은 시간이 10으로 나눠떨어질 때마다 공격
+  if (boss.active && (left % 10 === 0) && left !== 0 && !boss.lastAttackTime) {
+    bossAttack();
+    boss.lastAttackTime = true;
+  }
+  if (boss.active && (left % 10 !== 0)) {
+    boss.lastAttackTime = false;
+  }
 }
+
 
 // === 보스 관련 코드 ===
 // === 전역 변수 ===
@@ -1484,11 +1525,11 @@ function spawnBoss() {
     playBgm(7);
   } else if (level === 2) {
     boss.hp = 20;
-    boss.width = brickWidth * 4;
+    boss.width = brickWidth * 3;
     playBgm(8);
   } else if (level === 3) {
     boss.hp = 30;
-    boss.width = brickWidth * 4;
+    boss.width = brickWidth * 3;
     playBgm(9);
   }
 
@@ -1539,6 +1580,41 @@ function drawBossHpBar() {
   ctx.fillRect(boss.x, boss.y + boss.height + 5, filled, barHeight);
   ctx.strokeStyle = "white";
   ctx.strokeRect(boss.x, boss.y + boss.height + 5, barWidth, barHeight);
+}
+function drawBossProjectiles() {
+  for (let i = bossProjectiles.length - 1; i >= 0; i--) {
+    const p = bossProjectiles[i];
+    p.y += p.dy;
+
+    // 그리기
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+    if (level === 2) ctx.fillStyle = "orange";  // 2단계 보스는 주황색
+    if (level === 3) ctx.fillStyle = "#00a6d9";    // 3단계 보스는 빨간색
+    ctx.fill();
+    ctx.closePath();
+
+    // 패들과 충돌 판정
+    const paddleTop = canvas.height - paddleHeight - imgH + 6;
+    const paddleBottom = canvas.height - imgH + 6;
+    const paddleLeft = paddleX;
+    const paddleRight = paddleX + paddleWidth;
+    if (
+      p.y + p.radius > paddleTop &&
+      p.y - p.radius < paddleBottom &&
+      p.x + p.radius > paddleLeft &&
+      p.x - p.radius < paddleRight
+    ) {
+      bossProjectiles.splice(i, 1);
+      loseLife();
+      continue;
+    }
+
+    // 바닥에 닿으면 제거
+    if (p.y - p.radius > canvas.height) {
+      bossProjectiles.splice(i, 1);
+    }
+  }
 }
 
 // === 충돌 판정 ===
