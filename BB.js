@@ -1570,12 +1570,28 @@ function spawnBoss() {
 
   // 이동: 레벨 1만 움직임, 2·3은 정지
   if (boss.moveTimer) clearInterval(boss.moveTimer);
+  let tt=false;
   if (level === 1) {
     boss.moveTimer = setInterval(() => {
+      let t=step%10
+      if(t==9){
+        boss.direction*=-1;
+        boss.x += boss.dx * boss.direction;
+        tt=true;
+      }else if(t==0&&boss.y<=canvas.height-200&&tt){ //레벨1 보스 공격 추가
+        boss.y+=20;
+      }else if(boss.y>brickHeight*3){
+        if(paddleX<(boss.x + boss.width)&&(paddleX+paddleWidth)>boss.x&&tt){
+          loseLife();
+        }
+        tt=false;
+        boss.y-=15;
+      }else{
+        boss.y=brickHeight*3;
       boss.x += boss.dx * boss.direction;
       if (boss.x <= 0 || boss.x + boss.width >= canvas.width) {
         boss.direction *= -1;
-      }
+      }}
     }, 20);
   }
 }
