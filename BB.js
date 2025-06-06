@@ -318,7 +318,6 @@ function goLv3() {
 function goNextLevel() { //클리어 후 다음 레벨로 
   // 보스 상태 초기화
   initBoss();
-  stopAllTimers();
   gameFlag = false;
 
   if (level == 3) {
@@ -331,6 +330,7 @@ function goNextLevel() { //클리어 후 다음 레벨로
     changePage(6); //에필로그 실행
     playBgm(6);
   } else {
+    stopAllTimers();
     changePage(0);
     level++;
     changePage(2);
