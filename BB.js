@@ -1263,19 +1263,19 @@ function draw() {
             p.y + pr > by && p.y - pr < by + bh
           ) {
             startBumpSfx();
-            if (invEnable == false) {
+            if (!invEnable) {
               projectiles.splice(i, 1);
             }
             b.status = 0;
             if (b.isItem) {
-              if (damageEnable == true) {
+              if (damageEnable) {
                 score += 300;
               } else {
                 score += 200;
               }
               applyItemEffect(b.itemType);
             } else {
-              if (damageEnable == true) {
+              if (damageEnable) {
                 score += 200;
               } else {
                 score += 100;
@@ -1312,7 +1312,7 @@ function draw() {
   }
   // 공이 날아가고 있는 상태라면, 원래대로 공을 그린 뒤 이동·충돌 로직 실행
   else {
-
+    
     // 충돌
     const nextX = x + dx;
     const nextY = y + dy;
@@ -1369,7 +1369,7 @@ function draw() {
 
 
     if (checkBossCollision(nextX, nextY, ballRadius)) {
-      if (invEnable == false) {
+      if (!invEnable) {
         const bossLeft = boss.x;
         const bossRight = boss.x + boss.width;
         const bossTop = boss.y;
@@ -1696,7 +1696,7 @@ function checkBossCollision(x, y, r) {
     if (lastBossHitTime === 0 || now - lastBossHitTime >= 500) {
       lastBossHitTime = now;
       startBossHitSfx();
-      if (damageEnable === true) {
+      if (damageEnable) {
         boss.hp -= 2;
       } else {
         boss.hp--;
