@@ -515,7 +515,7 @@ function gameOver() {
   const info = document.getElementById(`level${level}`);
   const lifeEl = info.querySelector(".current-life");
   let currentLife = parseInt(lifeEl.textContent);
-  if (currentLife < 4) {
+  if (currentLife <= 4) {
     paddleWidth -= 40;
   }
   currentLife--;  // 목숨 1 깎기
@@ -1734,7 +1734,7 @@ function loseLife() {
   const lifeEl = info.querySelector(".current-life");
     startDamageSfx();
   let currentLife = parseInt(lifeEl.textContent);
-  if (currentLife < 4) {
+  if (currentLife <= 4) {
     paddleWidth -= 40;
   }
   currentLife--;
