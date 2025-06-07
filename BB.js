@@ -23,6 +23,7 @@ let currentImageIndex;
 let totalImages;
 
 let spaceLock = false;
+let animationId = null; 
 
 function pageLoad() {
   document.getElementById("volume-range").addEventListener("input", function (e) { //볼륨조절 이벤트
@@ -511,8 +512,6 @@ function resume() {
 
 //게임 오버
 function gameOver() {
-
-  isGameOver = true;
   const info = document.getElementById(`level${level}`);
   const lifeEl = info.querySelector(".current-life");
   let currentLife = parseInt(lifeEl.textContent);
@@ -524,6 +523,7 @@ function gameOver() {
 
   if (currentLife <= 0 || left <= 0) {
     // 게임 오버 직전에 best score 갱신
+    isGameOver = true;
     ballAttached = false;
     playBgm(10);
     if (score > bestScores[level]) {
@@ -537,7 +537,6 @@ function gameOver() {
     changePage(4);
 
     gameFlag = false;
-
     clearInterval(stopWatchId);
     step = 0;
   }
@@ -1151,7 +1150,7 @@ function draw() {
   const info = document.getElementById(`level${level}`);
   info.querySelector(".current-score").textContent = score;
 
-  if (paused) return;
+  if (paused || left <= 0) return;
 
   // 캔버스 전체 지워서 이전 프레임 흔적 제거
   ctx.clearRect(0, 0, canvas.width, canvas.height);
