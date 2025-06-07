@@ -23,7 +23,6 @@ let currentImageIndex;
 let totalImages;
 
 let spaceLock = false;
-let animationId = null; 
 
 function pageLoad() {
   document.getElementById("volume-range").addEventListener("input", function (e) { //볼륨조절 이벤트
