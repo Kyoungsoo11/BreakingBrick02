@@ -1597,6 +1597,15 @@ function spawnBoss() {
       }}
     }, 20);
   }
+  // else if (level === 2){
+  //   // ─── boss2: 단순 양옆 이동만. 주석 해제 하면 작동합니다!!! ───
+  //   boss.moveTimer = setInterval(() => {
+  //     boss.x += boss.dx * boss.direction;
+  //     if (boss.x <= 0 || boss.x + boss.width >= canvas.width) {
+  //       boss.direction *= -1;
+  //     }
+  //   }, 20);
+  // }
 }
 
 // === 보스 그리기 ===
