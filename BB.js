@@ -1477,9 +1477,9 @@ function draw() {
 
   if (boss.active) {
     // 공격 0.5초 전: frame_atk.png 표시
-    if ((left % 10 === 1) && left !== 0 && !boss.warningShown && level === 3) {
+    if ((left % 10 === 1) && left !== 0 && !boss.warningShown && (level === 2 || level === 3)) {
       boss.warningImage = new Image();
-      boss.warningImage.src = `image/boss3/frame_atk.png`; // 확정적으로 boss3만 사용
+      boss.warningImage.src = `image/boss${level}/frame_atk.png`; // 확정적으로 boss3만 사용
       boss.warningShown = true;
     }
   
