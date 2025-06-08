@@ -1038,12 +1038,6 @@ function gameStart(level) {
         if ((step + 10) % 15 == 0) {
           if (!paused) addBrickRow();
         }
-      } else {
-        if (brickRowCount < 3) {          // 보스 출현 후, 벽돌 줄 수 최대 3줄 제한
-          if ((step + 10) % 15 == 0) {
-            if (!paused) addBrickRow();
-          }
-        }
       }
 
       // 보스 등장 조건 (레벨1이고, 아직 보스 안나왔고, 남은 시간이 150 이하)
@@ -1280,6 +1274,9 @@ function draw() {
               projectiles.splice(i, 1);
             }
             b.status = 0;
+
+            
+
             if (b.isItem) {
               if (damageEnable) {
                 score += 300;
