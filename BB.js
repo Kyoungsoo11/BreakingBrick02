@@ -320,6 +320,9 @@ function goNextLevel() { //클리어 후 다음 레벨로
   initBoss();
   gameFlag = false;
   ballAttached = false;
+  paused = false;
+  document.getElementById("gameToMain").style.display="none";
+  document.getElementById("pause").style.display="none";
 
   if (level == 3) {
     document.getElementById("next-level-btn").innerHTML = "Next Level";
@@ -327,7 +330,6 @@ function goNextLevel() { //클리어 후 다음 레벨로
   }
   document.getElementById("game-clear").style.display = "none";
   if (level >= 3) {
-    paused = false;
     changePage(6); //에필로그 실행
     playBgm(6);
   } else {
@@ -335,7 +337,6 @@ function goNextLevel() { //클리어 후 다음 레벨로
     changePage(0);
     level++;
     changePage(2);
-    paused = false;
   }
 }
 function goIntro() {
