@@ -206,6 +206,12 @@ function startBumpSfx() {
   bumpSfx.currentTime = 0;
   bumpSfx.play();
 }
+function bossAtkSfx() {
+  const bossAtkSfx = new Audio("sound/boss"+level+"atk.mp3");
+  bossAtkSfx.volume = volume;
+  bossAtkSfx.currentTime = 0;
+  bossAtkSfx.play();
+}
 function startShieldSfx() {
   const shieldSfx = new Audio("sound/shield.mp3");
   shieldSfx.volume = volume;
@@ -1492,6 +1498,7 @@ function draw() {
     // 공격 실행
     if ((left % 10 === 0) && left !== 0 && !boss.lastAttackTime) {
       bossAttack();
+      bossAtkSfx();
       boss.lastAttackTime = true;
     }
   
@@ -1587,6 +1594,8 @@ function spawnBoss() {
       if(t==4){
         boss.direction*=-1;
         boss.x += boss.dx * boss.direction;
+        if(tt==false) 
+          bossAtkSfx();
         tt=true;
       }else if(t==5&&boss.y<=canvas.height-200&&tt){ //레벨1 보스 공격 추가
         boss.y+=20;
