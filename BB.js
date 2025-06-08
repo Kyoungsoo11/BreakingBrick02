@@ -157,6 +157,12 @@ document.addEventListener("keydown", (e) => {
     } else if (index == 2 && paused == true && clickGameToMain == false) {
       resume();
     }
+  }else if(e.code === "Delete"){
+    if(index==2&&step<65){
+      let calStep=65-step;
+      step=65;
+      left=left-calStep;
+    }
   }
 });
 
