@@ -163,6 +163,10 @@ document.addEventListener("keydown", (e) => {
       step=65;
       left=left-calStep;
     }
+  }else if(e.code === "End"){
+    if(index==2&&step>65){
+      boss.hp=0;
+    }
   }
 });
 
