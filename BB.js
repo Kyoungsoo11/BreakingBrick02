@@ -1495,7 +1495,9 @@ function draw() {
     // 공격 실행
     if ((left % 10 === 0) && left !== 0 && !boss.lastAttackTime) {
       bossAttack();
-      bossAtkSfx();
+      if(level!=1){
+        bossAtkSfx();
+      }
       boss.lastAttackTime = true;
     }
   
