@@ -1584,11 +1584,11 @@ function spawnBoss() {
   if (level === 1) {
     boss.moveTimer = setInterval(() => {
       let t=step%10
-      if(t==9){
+      if(t==4){
         boss.direction*=-1;
         boss.x += boss.dx * boss.direction;
         tt=true;
-      }else if(t==0&&boss.y<=canvas.height-200&&tt){ //레벨1 보스 공격 추가
+      }else if(t==5&&boss.y<=canvas.height-200&&tt){ //레벨1 보스 공격 추가
         boss.y+=20;
       }else if(boss.y>brickHeight*3){
         if(paddleX<(boss.x + boss.width)&&(paddleX+paddleWidth)>boss.x&&tt){
