@@ -386,6 +386,7 @@ function gameToMain() {
   gameFlag = false;
   ballAttached = false;
   clearInterval(timerId);
+  console.log("타이머 정지");
 }
 function gameToMainNo() {
   clickGameToMain = false;
@@ -582,6 +583,8 @@ function restart() {
 function gameClear() { // 게임 클리어 함수. 나중에 텍스트 수정 구현
   document.getElementById("pause").style.display = "none";
   clearInterval(stopWatchId);
+  clearInterval(timerId);
+  console.log("타이머 정지");
   paused = true;
 
   let scoreSum = 0;
